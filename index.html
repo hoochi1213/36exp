@@ -141,6 +141,9 @@ section{padding-block:72px 8px;scroll-margin-top:56px}
 /* camera list */
 .cams{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));border-top:1px solid var(--rule)}
 .cam{padding:18px 18px 20px 0;border-bottom:1px solid var(--rule);display:flex;flex-direction:column;gap:6px;min-width:0}
+.cam .shot{margin:0 0 6px;position:relative}
+.cam .shot img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--rule)}
+.cam .shot figcaption{position:absolute;left:0;bottom:0;background:var(--paper);color:var(--ink-2);font-size:9.5px;padding:4px 7px 0 0;text-transform:none;letter-spacing:.04em}
 .cam h4{margin:0;font-family:var(--f-display);font-weight:500;font-size:19px;letter-spacing:-.02em;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .cam h4 .mono{color:var(--ink-2);font-weight:400;font-size:10px;white-space:nowrap}
 .cam p{margin:0;font-size:13.5px}
@@ -715,6 +718,16 @@ footer p{margin:0;max-width:60ch}
       <li><b>Velvia</b> <a href="https://commons.wikimedia.org/wiki/File:Autumn_house_Velvia.jpg">Autumn house Velvia</a> · Peter.shaman · CC BY-SA 4.0</li>
       <li><b>HP5 Plus</b> <a href="https://commons.wikimedia.org/wiki/File:1_Landungsbruecken_190217.jpg">Landungsbrücken</a> · NAC · CC BY-SA 4.0</li>
       <li><b>Tri-X 400</b> <a href="https://commons.wikimedia.org/wiki/File:Unitarian_Meeting_House_Madison_Wisconsin_2023_Tri-X_400-000024480021.jpg">Unitarian Meeting House, Madison</a> · Paul R. Burley · CC BY-SA 4.0</li>
+      <li><b>똑딱이</b> <a href="https://commons.wikimedia.org/wiki/File:Olympus_%CE%BC_mju_II.jpg">Olympus μ mju II</a> · 多多123 · CC BY 4.0</li>
+      <li><b>수동 SLR</b> <a href="https://commons.wikimedia.org/wiki/File:Pentax_K1000_(6301325288).jpg">Pentax K1000</a> · Terry Presley · CC BY 2.0</li>
+      <li><b>AF SLR</b> <a href="https://commons.wikimedia.org/wiki/File:Nikon_F100.jpg">Nikon F100</a> · Jakub T. Jankiewicz · CC BY-SA 4.0</li>
+      <li><b>레인지파인더</b> <a href="https://commons.wikimedia.org/wiki/File:Leica_M6.jpg">Leica M6</a> · Noqqe · CC0</li>
+      <li><b>하프프레임</b> <a href="https://commons.wikimedia.org/wiki/File:Olympus_Pen_EE-2_241-2599.jpg">Olympus Pen EE-2</a> · Jastrow · Public domain</li>
+      <li><b>이안반사</b> <a href="https://commons.wikimedia.org/wiki/File:Retro_Rolleiflex_2.8F.JPG">Retro Rolleiflex 2.8F</a> · Gisling · CC BY-SA 4.0</li>
+      <li><b>중형</b> <a href="https://commons.wikimedia.org/wiki/File:Hasselblad_500c_M_(145931125).jpeg">Hasselblad 500C/M</a> · Benjamin Balazs · CC0</li>
+      <li><b>대형</b> <a href="https://commons.wikimedia.org/wiki/File:Sinar_F_(profil).jpg">Sinar F (profil)</a> · Eusebius · CC BY 3.0</li>
+      <li><b>토이</b> <a href="https://commons.wikimedia.org/wiki/File:Holga_120N_Medium_Format_Camera_(52937534209).jpg">Holga 120N</a> · Tony Webster · CC BY 2.0</li>
+      <li><b>인스턴트</b> <a href="https://commons.wikimedia.org/wiki/File:Polaroid_SX-70_Land_Camera_-_MIT_Museum_-_DSC03773.JPG">Polaroid SX-70, MIT Museum</a> · Daderot · CC0</li>
     </ul>
     <p style="margin-top:10px;font-size:11.5px">모든 사진은 크기를 줄였고, 목차의 사진은 페이지에서 청색 톤으로 바꿔 보여줍니다.</p>
   </div>
@@ -740,20 +753,20 @@ footer p{margin:0;max-width:60ch}
 
   /* 카메라 */
   const CAMS=[
-    {n:'자동 똑딱이',en:'Point & Shoot',f:'135',k:['135','new'],d:'초점, 노출, 필름 감기까지 자동. 들고 다니며 일상을 찍기 좋습니다.',ex:'Olympus μ[mju:]-II · Konica Big Mini · Contax T2 · Ricoh GR1',p:'가볍고 실패가 적음',c:'인기 기종은 가격 거품, 고장 시 수리 어려움',new:true},
-    {n:'수동 SLR',en:'Manual SLR',f:'135',k:['135','new'],d:'렌즈로 들어온 상을 거울로 그대로 봅니다. 조리개와 셔터를 직접 정하며 노출을 배우기에 가장 좋습니다.',ex:'Nikon FM2 · Pentax K1000 · Canon AE-1 · Olympus OM-1',p:'렌즈 교환, 기계식은 튼튼',c:'무겁고 셔터 소리가 큼',new:true},
-    {n:'자동초점 SLR',en:'AF SLR',f:'135',k:['135'],d:'90~2000년대 자동초점 필름 SLR. 조작이 요즘 디지털 카메라와 비슷합니다.',ex:'Nikon F100 · Canon EOS 5 · Minolta α-7',p:'중고가가 비교적 저렴, 빠른 AF',c:'플라스틱 바디, 전자 고장',new:false},
-    {n:'레인지파인더',en:'Rangefinder',f:'135',k:['135'],d:'뷰파인더 속 두 개의 상을 겹쳐 초점을 맞춥니다. 거울이 없어 작고 조용합니다.',ex:'Leica M6 · Voigtländer Bessa R · Canonet QL17 GIII · Yashica Electro 35',p:'조용한 셔터, 거리 사진에 강함',c:'근접 촬영과 망원이 약함, 시차',new:false},
-    {n:'하프프레임',en:'Half frame',f:'135',k:['135','new'],d:'35mm 한 컷을 반으로 나눠 씁니다. 36장 롤로 72장. 두 장을 나란히 붙인 사진이 매력입니다.',ex:'Olympus Pen EE-3 · Pen F · Kodak Ektar H35',p:'필름값 절약, 세로 사진이 기본',c:'화질은 35mm의 절반 면적',new:true},
-    {n:'이안반사',en:'TLR',f:'120',k:['120'],d:'렌즈 두 개가 위아래로. 위는 보는 용, 아래는 찍는 용. 허리 높이에서 내려다보며 찍습니다.',ex:'Rolleiflex 2.8F · Yashica Mat-124G · Mamiya C330',p:'6×6 정사각, 중형치고 저렴한 입문',c:'좌우 반전된 상, 근접 시 시차',new:false},
-    {n:'중형 SLR · RF',en:'Medium format',f:'120',k:['120'],d:'120 필름을 쓰는 본격 중형. 35mm보다 3~4배 큰 면적이 주는 부드러운 계조가 특징입니다.',ex:'Pentax 67 · Mamiya RB67 · Hasselblad 500C/M · Mamiya 7 · Fuji GW690',p:'압도적인 디테일',c:'무겁고 비쌈, 롤당 8~16장',new:false},
-    {n:'대형 뷰카메라',en:'Large format',f:'4×5',k:['etc'],d:'시트 필름을 한 장씩 넣어 찍습니다. 렌즈와 필름면을 기울이는 무브먼트로 원근과 초점면을 조절합니다.',ex:'Chamonix · Linhof Technika · Sinar · Intrepid',p:'최고 화질, 건축·풍경',c:'삼각대 필수, 한 장 한 장 느림',new:false},
-    {n:'토이 · 일회용',en:'Toy & single-use',f:'135 / 120',k:['135','120','new'],d:'플라스틱 렌즈의 비네팅과 빛샘이 매력. 일회용 카메라는 필름이 미리 들어 있어 통째로 현상소에 맡깁니다.',ex:'Holga 120N · Diana F+ · Lomo LC-A · 일회용 카메라',p:'싸고 우연한 결과',c:'노출 조절이 거의 없음',new:true},
-    {n:'인스턴트',en:'Instant',f:'인스턴트',k:['etc','new'],d:'찍으면 바로 사진이 나옵니다. 현상소가 필요 없습니다.',ex:'Polaroid SX-70 · 600 · i-Type · Instax mini · wide · square',p:'세상에 단 한 장',c:'장당 비용이 높고 온도에 민감',new:true},
+    {n:'자동 똑딱이',img:'ps',cap:'Olympus μ[mju:]-II Zoom 80',en:'Point & Shoot',f:'135',k:['135','new'],d:'초점, 노출, 필름 감기까지 자동. 들고 다니며 일상을 찍기 좋습니다.',ex:'Olympus μ[mju:]-II · Konica Big Mini · Contax T2 · Ricoh GR1',p:'가볍고 실패가 적음',c:'인기 기종은 가격 거품, 고장 시 수리 어려움',new:true},
+    {n:'수동 SLR',img:'slr',cap:'Pentax K1000',en:'Manual SLR',f:'135',k:['135','new'],d:'렌즈로 들어온 상을 거울로 그대로 봅니다. 조리개와 셔터를 직접 정하며 노출을 배우기에 가장 좋습니다.',ex:'Nikon FM2 · Pentax K1000 · Canon AE-1 · Olympus OM-1',p:'렌즈 교환, 기계식은 튼튼',c:'무겁고 셔터 소리가 큼',new:true},
+    {n:'자동초점 SLR',img:'af',cap:'Nikon F100',en:'AF SLR',f:'135',k:['135'],d:'90~2000년대 자동초점 필름 SLR. 조작이 요즘 디지털 카메라와 비슷합니다.',ex:'Nikon F100 · Canon EOS 5 · Minolta α-7',p:'중고가가 비교적 저렴, 빠른 AF',c:'플라스틱 바디, 전자 고장',new:false},
+    {n:'레인지파인더',img:'rf',cap:'Leica M6',en:'Rangefinder',f:'135',k:['135'],d:'뷰파인더 속 두 개의 상을 겹쳐 초점을 맞춥니다. 거울이 없어 작고 조용합니다.',ex:'Leica M6 · Voigtländer Bessa R · Canonet QL17 GIII · Yashica Electro 35',p:'조용한 셔터, 거리 사진에 강함',c:'근접 촬영과 망원이 약함, 시차',new:false},
+    {n:'하프프레임',img:'half',cap:'Olympus Pen EE-2',en:'Half frame',f:'135',k:['135','new'],d:'35mm 한 컷을 반으로 나눠 씁니다. 36장 롤로 72장. 두 장을 나란히 붙인 사진이 매력입니다.',ex:'Olympus Pen EE-3 · Pen F · Kodak Ektar H35',p:'필름값 절약, 세로 사진이 기본',c:'화질은 35mm의 절반 면적',new:true},
+    {n:'이안반사',img:'tlr',cap:'Rolleiflex 2.8F',en:'TLR',f:'120',k:['120'],d:'렌즈 두 개가 위아래로. 위는 보는 용, 아래는 찍는 용. 허리 높이에서 내려다보며 찍습니다.',ex:'Rolleiflex 2.8F · Yashica Mat-124G · Mamiya C330',p:'6×6 정사각, 중형치고 저렴한 입문',c:'좌우 반전된 상, 근접 시 시차',new:false},
+    {n:'중형 SLR · RF',img:'mf',cap:'Hasselblad 500C/M',en:'Medium format',f:'120',k:['120'],d:'120 필름을 쓰는 본격 중형. 35mm보다 3~4배 큰 면적이 주는 부드러운 계조가 특징입니다.',ex:'Pentax 67 · Mamiya RB67 · Hasselblad 500C/M · Mamiya 7 · Fuji GW690',p:'압도적인 디테일',c:'무겁고 비쌈, 롤당 8~16장',new:false},
+    {n:'대형 뷰카메라',img:'lf',cap:'Sinar F',en:'Large format',f:'4×5',k:['etc'],d:'시트 필름을 한 장씩 넣어 찍습니다. 렌즈와 필름면을 기울이는 무브먼트로 원근과 초점면을 조절합니다.',ex:'Chamonix · Linhof Technika · Sinar · Intrepid',p:'최고 화질, 건축·풍경',c:'삼각대 필수, 한 장 한 장 느림',new:false},
+    {n:'토이 · 일회용',img:'toy',cap:'Holga 120N',en:'Toy & single-use',f:'135 / 120',k:['135','120','new'],d:'플라스틱 렌즈의 비네팅과 빛샘이 매력. 일회용 카메라는 필름이 미리 들어 있어 통째로 현상소에 맡깁니다.',ex:'Holga 120N · Diana F+ · Lomo LC-A · 일회용 카메라',p:'싸고 우연한 결과',c:'노출 조절이 거의 없음',new:true},
+    {n:'인스턴트',img:'inst',cap:'Polaroid SX-70',en:'Instant',f:'인스턴트',k:['etc','new'],d:'찍으면 바로 사진이 나옵니다. 현상소가 필요 없습니다.',ex:'Polaroid SX-70 · 600 · i-Type · Instax mini · wide · square',p:'세상에 단 한 장',c:'장당 비용이 높고 온도에 민감',new:true},
   ];
   function renderCams(k){
     $('#cams').innerHTML=CAMS.filter(c=>k==='all'||c.k.includes(k)).map(c=>`
-      <article class="cam"><h4>${esc(c.n)} <span class="mono">${esc(c.f)}</span></h4>
+      <article class="cam"><figure class="shot"><img src="photos/cam-${c.img}.jpg" alt="${esc(c.cap)}" loading="lazy"><figcaption class="mono">${esc(c.cap)}</figcaption></figure><h4>${esc(c.n)} <span class="mono">${esc(c.f)}</span></h4>
       <p>${esc(c.d)}</p><p class="ex">${esc(c.ex)}</p>
       <dl class="pc"><dt>좋은 점</dt><dd>${esc(c.p)}</dd><dt>아쉬운 점</dt><dd>${esc(c.c)}</dd></dl>
       ${c.new?'<span class="tag">입문 추천</span>':''}</article>`).join('');
