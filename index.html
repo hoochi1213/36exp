@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="필름카메라, 필름 종류, 촬영, 현상, 인화, 스캔, 보관, 현상소 이용법을 한곳에 모은 필름 사진 아카이브.">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>36 EXP.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@300;500;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: 밀착 인화지(컨택트 시트) — 상단 필름 스트립이 목차, 아래는 현상소 메뉴판처럼 작고 촘촘한 섹션들. 각 섹션 머리엔 필름 가장자리 프레임 번호.
+   Color: 시아노타입(청사진). 프러시안 블루 잉크가 흰 수채화지 위에 앉은 색. 어두운 모드는 인화가 끝난 청사진 한 장. */
+:root{
+  --paper:#EFE8DB;      /* 베이지 수채화지 */
+  --panel:#F7F2E8;
+  --ink:#2A2E35;        /* 먹빛 남색 */
+  --ink-2:#6E675B;      /* 바랜 갈색 회색 */
+  --rule:#DAD0BE;
+  --accent:#56719A;     /* 바랜 시아노타입 파랑 */
+  --base:#5B7598;       /* 프레임 바탕, 먼지 낀 파랑 */
+  --base-deep:#465E80;
+  --base-ink:#F2ECE0;
+  --on-photo:#F7F1E6;
+  --f-display:"Hahmlet","Nanum Myeongjo","Batang",serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"Consolas",monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#1E2127; --panel:#252930; --ink:#EDE4D3; --ink-2:#ADA493; --rule:#3A3E45;
+    --accent:#A8BAD3; --base:#435A7A; --base-deep:#344863; --base-ink:#F2ECE0; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1E2127; --panel:#252930; --ink:#EDE4D3; --ink-2:#ADA493; --rule:#3A3E45;
+  --accent:#A8BAD3; --base:#435A7A; --base-deep:#344863; --base-ink:#F2ECE0; color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px}
+.mono{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+
+/* ── top bar ── */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--ink)}
+.bar .wrap{display:flex;align-items:center;gap:16px;min-height:48px}
+.logo{display:flex;align-items:baseline;gap:10px;text-decoration:none;flex-shrink:0}
+.logo b{font-family:var(--f-display);font-weight:700;font-size:19px;letter-spacing:-.01em}
+.logo span{color:var(--ink-2)}
+.nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.nav::-webkit-scrollbar{display:none}
+.nav a{text-decoration:none;font-size:13px;padding:4px 8px;white-space:nowrap;border-radius:2px}
+.nav a:hover{background:var(--ink);color:var(--paper)}
+.safe{flex-shrink:0;font:500 11px/1 var(--f-mono);letter-spacing:.08em;background:none;color:var(--ink);border:1px solid var(--ink);padding:7px 10px;cursor:pointer;display:flex;gap:7px;align-items:center}
+.safe i{width:8px;height:8px;border-radius:50%;background:var(--ink-2);display:block}
+:root[data-theme="dark"] .safe i{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .safe i{background:var(--accent);box-shadow:0 0 8px var(--accent)}}
+
+/* ── ticker ── */
+.ticker{border-bottom:1px solid var(--rule);overflow:hidden;white-space:nowrap;padding:6px 0;color:var(--ink-2)}
+.ticker div{display:inline-block;animation:tick 60s linear infinite;padding-left:100%}
+.ticker span{margin-right:48px}
+.ticker b{color:var(--accent);font-weight:500}
+@keyframes tick{to{transform:translateX(-100%)}}
+@media (prefers-reduced-motion: reduce){.ticker div{animation:none;padding-left:20px}}
+
+/* ── hero ── */
+.hero{padding-block:56px 28px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:40px;align-items:end}
+.hero h1{font-family:var(--f-display);font-weight:300;font-size:clamp(40px,7vw,84px);line-height:1.02;letter-spacing:-.035em;margin:0;text-wrap:balance}
+.hero h1 em{font-style:normal;font-weight:700;color:var(--accent)}
+.hero .intro{margin:0;color:var(--ink-2);font-size:14.5px;max-width:42ch}
+.hero .intro strong{color:var(--ink);font-weight:500}
+.hero .meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;color:var(--ink-2)}
+@media (max-width:760px){.hero{grid-template-columns:1fr;gap:20px;padding-block:36px 20px}}
+
+/* ── contact sheet (목차) ── */
+.sheet-label{display:flex;justify-content:space-between;gap:12px;color:var(--ink-2);margin:8px 0 10px;flex-wrap:wrap}
+.sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));row-gap:14px;background:var(--paper)}
+.frame{position:relative;display:block;text-decoration:none;background:var(--base);color:var(--base-ink);padding:22px 6px;transition:background .25s,color .25s}
+.frame::before,.frame::after{content:"";position:absolute;left:0;right:0;height:9px;
+  background:repeating-linear-gradient(90deg,transparent 0 7px,var(--paper) 7px 14px,transparent 14px 19px);
+  background-size:19px 9px;opacity:.9}
+.frame::before{top:5px}
+.frame::after{bottom:5px}
+.frame .edge{position:absolute;top:-1px;left:10px;right:10px;display:flex;justify-content:space-between;font:500 9px/1 var(--f-mono);letter-spacing:.12em;opacity:.0}
+.frame .img{position:relative;overflow:hidden;aspect-ratio:3/2;background:var(--base-deep);color:var(--on-photo);display:flex;flex-direction:column;justify-content:space-between;padding:12px 14px}
+/* 사진은 시아노타입처럼: 흑백으로 바꾼 뒤 파랑을 screen으로 얹어 그림자만 파랗게. 마우스를 올리면 원래 색 */
+.frame .img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.15) brightness(.95);transition:filter .35s}
+.frame .img::before{content:"";position:absolute;inset:0;background:var(--base);mix-blend-mode:screen;transition:opacity .35s}
+.frame .img::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(38,36,40,.82),rgba(38,36,40,0) 62%),linear-gradient(to bottom,rgba(38,36,40,.45),rgba(38,36,40,0) 30%)}
+.frame .img > span,.frame .img > div{position:relative;z-index:1}
+.frame .num{font:500 10px/1 var(--f-mono);letter-spacing:.14em;opacity:.85}
+.frame .t{font-family:var(--f-display);font-size:24px;font-weight:500;line-height:1.1;letter-spacing:-.02em}
+.frame .s{font-size:11.5px;opacity:.85;line-height:1.4}
+.frame:hover .img img,.frame:focus-visible .img img{filter:none}
+.frame:hover .img::before,.frame:focus-visible .img::before{opacity:0}
+@media (prefers-reduced-motion: reduce){.frame .img img,.frame .img::before{transition:none}}
+
+/* 필름 예시 갤러리 */
+.looks{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px 14px}
+.looks figure{margin:0;min-width:0}
+.looks img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;background:var(--rule)}
+.looks figcaption{display:flex;justify-content:space-between;gap:8px;align-items:baseline;padding-top:7px;border-top:1px solid var(--ink);margin-top:8px;font-size:13px;font-weight:500}
+.looks figcaption .mono{font-size:10px;color:var(--ink-2);font-weight:400}
+.credits{margin:14px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:4px 24px;font-size:11.5px}
+.credits a{color:var(--ink-2)}
+.credits b{color:var(--ink);font-weight:500}
+
+/* ── sections ── */
+section{padding-block:72px 8px;scroll-margin-top:56px}
+.sec-head{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;border-top:1px solid var(--ink);padding-top:14px;margin-bottom:34px}
+.sec-head .edge{color:var(--accent);margin:0;line-height:1.6}
+.sec-head h2{font-family:var(--f-display);font-weight:700;font-size:clamp(32px,4.6vw,52px);letter-spacing:-.035em;line-height:1.05;margin:0 0 10px}
+.sec-head h2 small{font-weight:300;font-size:.45em;letter-spacing:0;color:var(--ink-2);margin-left:10px}
+.sec-head p.lede{margin:0;max-width:62ch;color:var(--ink-2)}
+@media (max-width:760px){.sec-head{grid-template-columns:1fr;gap:4px}}
+
+.body{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px}
+.body > .side{color:var(--ink-2);font-size:12.5px;line-height:1.6}
+.body > .main{min-width:0;display:flex;flex-direction:column;gap:40px}
+@media (max-width:760px){.body{grid-template-columns:1fr}.body > .side{display:none}}
+.sub{font-family:var(--f-display);font-weight:500;font-size:22px;letter-spacing:-.02em;margin:0 0 12px;display:flex;align-items:baseline;gap:10px}
+.sub .mono{color:var(--ink-2);font-weight:400}
+.prose{max-width:66ch}
+.prose p{margin:0 0 12px}
+.note{border-left:2px solid var(--accent);padding:4px 0 4px 14px;color:var(--ink-2);font-size:13.5px;max-width:66ch}
+.note b{color:var(--ink);font-weight:500}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{font:500 12px/1 var(--f-body);padding:8px 12px;border:1px solid var(--rule);background:transparent;color:var(--ink);cursor:pointer;border-radius:999px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip:hover{border-color:var(--ink)}
+
+/* camera list */
+.cams{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));border-top:1px solid var(--rule)}
+.cam{padding:18px 18px 20px 0;border-bottom:1px solid var(--rule);display:flex;flex-direction:column;gap:6px;min-width:0}
+.cam h4{margin:0;font-family:var(--f-display);font-weight:500;font-size:19px;letter-spacing:-.02em;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.cam h4 .mono{color:var(--ink-2);font-weight:400;font-size:10px;white-space:nowrap}
+.cam p{margin:0;font-size:13.5px}
+.cam .ex{font-size:12.5px;color:var(--ink-2)}
+.cam .pc{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:12.5px;margin-top:4px}
+.cam .pc dt{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-2);padding-top:2px}
+.cam .pc dd{margin:0}
+.tag{display:inline-block;font:500 10px/1 var(--f-mono);letter-spacing:.08em;padding:4px 6px;border:1px solid var(--accent);color:var(--accent);align-self:flex-start;margin-top:4px}
+
+/* format diagram */
+.scroll{overflow-x:auto}
+.formats{min-width:640px;width:100%;height:auto;display:block}
+.formats rect{fill:var(--base);stroke:var(--ink);stroke-width:1}
+.formats .nm{fill:var(--ink);font:500 12px var(--f-body)}
+.formats .mm{fill:var(--ink-2);font:400 10px var(--f-mono)}
+.formats .ct{fill:var(--accent);font:500 10px var(--f-mono)}
+.formats line{stroke:var(--ink);stroke-width:1}
+
+/* tables */
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{text-align:left;font:500 10.5px/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);padding:8px 12px 8px 0;border-bottom:1px solid var(--ink);white-space:nowrap}
+td{padding:10px 12px 10px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.nm{font-weight:500;white-space:nowrap}
+.pill{display:inline-block;font:500 10px/1 var(--f-mono);padding:4px 6px;border-radius:2px;white-space:nowrap;letter-spacing:.04em}
+.p-c41{background:var(--base);color:var(--base-ink)}
+.p-bw{background:var(--ink);color:var(--paper)}
+.p-e6{border:1px solid var(--accent);color:var(--accent)}
+.p-ecn{border:1px dashed var(--ink-2);color:var(--ink-2)}
+.search{width:100%;max-width:340px;font:14px var(--f-body);padding:9px 12px;border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:0}
+.search:focus{border-color:var(--ink);outline:none}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.toolbar .chips{margin:0}
+
+/* steps */
+ol.steps{list-style:none;padding:0;margin:0;counter-reset:s;display:grid;gap:0;max-width:72ch}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:44px 1fr;gap:8px;padding:12px 0;border-bottom:1px solid var(--rule)}
+ol.steps li::before{content:counter(s,decimal-leading-zero);font:500 12px/1.9 var(--f-mono);color:var(--accent)}
+ol.steps b{font-weight:500}
+
+/* two col compare */
+.duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0;border-top:1px solid var(--ink)}
+.duo > div{padding:16px 20px 18px 0;min-width:0}
+.duo > div + div{border-left:1px solid var(--rule);padding-left:20px}
+@media (max-width:600px){.duo > div + div{border-left:0;padding-left:0;border-top:1px solid var(--rule)}}
+.duo h4{margin:0 0 6px;font-family:var(--f-display);font-weight:500;font-size:18px}
+.duo ul{margin:0;padding-left:18px;font-size:13.5px}
+
+/* tools (instrument panels) */
+.tool{background:var(--panel);border:1px solid var(--ink);padding:20px;display:grid;gap:16px}
+.tool-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline;border-bottom:1px dashed var(--rule);padding-bottom:10px}
+.tool-head h4{margin:0;font-family:var(--f-display);font-weight:500;font-size:20px}
+.tool label.mono{display:block;color:var(--ink-2);margin-bottom:6px}
+select{font:14px var(--f-body);padding:8px 10px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);max-width:100%}
+.pairs{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px}
+.pair{border:1px solid var(--rule);padding:10px 10px 8px;display:flex;flex-direction:column;gap:2px;background:var(--paper)}
+.pair .f{font:500 15px/1.2 var(--f-mono)}
+.pair .t{font:400 13px/1.2 var(--f-mono);font-variant-numeric:tabular-nums}
+.pair .w{font-size:10.5px;color:var(--ink-2);min-height:1.4em;line-height:1.3}
+.pair.key{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.pair.slow .w{color:var(--accent)}
+.pair.out{opacity:.4}
+.ev{font:500 13px var(--f-mono);color:var(--ink-2)}
+.ev b{color:var(--accent);font-weight:500}
+
+/* dev timer */
+.timer{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:24px;align-items:start}
+@media (max-width:700px){.timer{grid-template-columns:1fr}}
+.clock{font:500 clamp(56px,10vw,96px)/1 var(--f-mono);font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.now{font-family:var(--f-display);font-size:22px;font-weight:500}
+.agit{display:inline-flex;align-items:center;gap:8px;font:500 12px var(--f-mono);letter-spacing:.08em;padding:6px 10px;border:1px solid var(--rule);color:var(--ink-2);min-height:30px}
+.agit.on{border-color:var(--accent);color:var(--paper);background:var(--accent)}
+.btns{display:flex;gap:6px;flex-wrap:wrap}
+.btn{font:500 13px var(--f-body);padding:9px 16px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:hover{opacity:.85}
+.plan{list-style:none;margin:0;padding:0;font-size:13.5px}
+.plan li{display:grid;grid-template-columns:1fr auto;gap:10px;padding:8px 0;border-bottom:1px solid var(--rule);color:var(--ink-2)}
+.plan li span:last-child{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.plan li.cur{color:var(--ink);font-weight:500}
+.plan li.cur span:first-child::before{content:"▸ ";color:var(--accent)}
+.plan li.done{text-decoration:line-through;opacity:.55}
+
+/* glossary */
+.gloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));column-gap:28px}
+.gloss div{padding:12px 0;border-bottom:1px solid var(--rule);min-width:0}
+.gloss dt{font-weight:500;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.gloss dt .mono{color:var(--ink-2);font-size:10px}
+.gloss dd{margin:2px 0 0;font-size:13.5px;color:var(--ink-2)}
+.empty{color:var(--ink-2);font-size:13.5px;padding:12px 0}
+
+/* start box */
+.start{border:1px solid var(--ink);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:36px}
+.start > div{padding:16px 18px;min-width:0}
+.start > div + div{border-left:1px solid var(--rule)}
+@media (max-width:640px){.start > div + div{border-left:0;border-top:1px solid var(--rule)}}
+.start h3{margin:0 0 4px;font:500 11px var(--f-mono);letter-spacing:.1em;color:var(--accent)}
+.start p{margin:0;font-size:14px}
+.start p small{display:block;color:var(--ink-2);font-size:12.5px;margin-top:2px}
+
+footer{margin-top:96px;border-top:1px solid var(--ink);padding-block:22px 48px;color:var(--ink-2);font-size:12.5px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer p{margin:0;max-width:60ch}
+</style>
+
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="logo" href="#top"><b>36 EXP.</b><span class="mono">Film Archive</span></a>
+    <nav class="nav" aria-label="섹션">
+      <a href="#camera">카메라</a><a href="#film">필름</a><a href="#shoot">촬영</a><a href="#develop">현상</a><a href="#print">인화</a><a href="#scan">스캔</a><a href="#keep">보관</a><a href="#lab">현상소</a><a href="#words">용어</a>
+    </nav>
+    <button class="safe" id="safe" type="button" aria-pressed="false"><i></i>청사진</button>
+  </div>
+</header>
+
+<div class="ticker mono" aria-hidden="true"><div>
+  <span><b>●</b> 현상 맡기기 전, 필름을 끝까지 되감았는지 한 번 더</span>
+  <span><b>●</b> 여름 차 안에 필름을 두지 마세요</span>
+  <span><b>●</b> 네거티브는 노출 과다에 관대합니다 — 애매하면 한 스톱 더</span>
+  <span><b>●</b> 공항 검색대에선 핸드 체크를 요청하세요</span>
+  <span><b>●</b> 냉장고에서 꺼낸 필름은 2~3시간 뒤에 뜯기</span>
+  <span><b>●</b> 정착액은 하수구에 버리지 않습니다</span>
+</div></div>
+
+<main class="wrap" id="top">
+  <div class="hero">
+    <h1>필름에 관한<br><em>거의</em> 모든 것</h1>
+    <div>
+      <p class="intro">카메라를 고르는 일부터 필름을 넣고, 찍고, 현상하고, 인화하고, 서랍에 넣어두기까지. 처음 필름을 손에 쥔 사람이 <strong>한 롤을 끝까지 완주할 수 있도록</strong> 필요한 정보를 한 장의 밀착 인화지처럼 펼쳐두었습니다.</p>
+      <div class="meta mono"><span>135 FORMAT</span><span>ISO 400</span><span>9 FRAMES</span><span>2026 ED.</span></div>
+    </div>
+  </div>
+
+  <div class="sheet-label mono"><span>▸ 목차 — 프레임을 눌러 이동</span><span>SAFETY FILM ▸ 135</span></div>
+  <nav class="sheet" aria-label="목차">
+    <a class="frame" href="#camera"><div class="img"><img src="photos/camera.jpg" alt=""><span class="num">▸ 1 · 1A</span><div><div class="t">카메라</div><div class="s">판형과 형식, 처음 살 때</div></div></div></a>
+    <a class="frame" href="#film"><div class="img"><img src="photos/film.jpg" alt=""><span class="num">▸ 2 · 2A</span><div><div class="t">필름</div><div class="s">컬러 네거·흑백·슬라이드</div></div></div></a>
+    <a class="frame" href="#shoot"><div class="img"><img src="photos/shoot.jpg" alt=""><span class="num">▸ 3 · 3A</span><div><div class="t">촬영</div><div class="s">노출, 써니 16, 장전</div></div></div></a>
+    <a class="frame" href="#develop"><div class="img"><img src="photos/develop.jpg" alt=""><span class="num">▸ 4 · 4A</span><div><div class="t">현상</div><div class="s">C-41·E-6·흑백 자가현상</div></div></div></a>
+    <a class="frame" href="#print"><div class="img"><img src="photos/print.jpg" alt=""><span class="num">▸ 5 · 5A</span><div><div class="t">인화</div><div class="s">암실과 디지털 인화</div></div></div></a>
+    <a class="frame" href="#scan"><div class="img"><img src="photos/scan.jpg" alt=""><span class="num">▸ 6 · 6A</span><div><div class="t">스캔</div><div class="s">현상소 스캔, 카메라 스캔</div></div></div></a>
+    <a class="frame" href="#keep"><div class="img"><img src="photos/keep.jpg" alt=""><span class="num">▸ 7 · 7A</span><div><div class="t">보관</div><div class="s">냉장, 공항, 네거 슬리브</div></div></div></a>
+    <a class="frame" href="#lab"><div class="img"><img src="photos/lab.jpg" alt=""><span class="num">▸ 8 · 8A</span><div><div class="t">현상소</div><div class="s">맡기는 법과 요청 사항</div></div></div></a>
+    <a class="frame" href="#words"><div class="img"><img src="photos/words.jpg" alt=""><span class="num">▸ 9 · 9A</span><div><div class="t">용어</div><div class="s">처음 듣는 말 찾아보기</div></div></div></a>
+  </nav>
+
+  <div class="start">
+    <div><h3>처음이라면 · 카메라</h3><p>자동 똑딱이 하나<small>초점·노출을 카메라가 알아서. 찍는 재미부터.</small></p></div>
+    <div><h3>처음이라면 · 필름</h3><p>ISO 200~400 컬러 네거티브<small>관용도가 넓어 실패가 적고, 어느 현상소든 받습니다.</small></p></div>
+    <div><h3>처음이라면 · 조건</h3><p>맑은 날 낮, 야외에서<small>빛이 충분하면 대부분 잘 나옵니다.</small></p></div>
+    <div><h3>처음이라면 · 마무리</h3><p>현상 + 스캔 맡기기<small>파일로 받아 보고, 마음에 드는 컷만 인화.</small></p></div>
+  </div>
+
+  <!-- 01 CAMERA -->
+  <section id="camera">
+    <header class="sec-head">
+      <p class="edge mono">▸ 1 &nbsp; 1A<br>Camera</p>
+      <div><h2>카메라 <small>판형과 형식</small></h2>
+      <p class="lede">필름 카메라는 두 가지 기준으로 나눠 보면 쉽습니다. 어떤 크기의 필름을 쓰는지(판형), 그리고 어떤 방식으로 보고 초점을 맞추는지(형식). 판형은 화질과 롤당 장수를, 형식은 찍는 경험을 결정합니다.</p></div>
+    </header>
+    <div class="body">
+      <aside class="side mono">판형이 크면<br>디테일↑ 계조↑<br>장수↓ 무게↑</aside>
+      <div class="main">
+        <div>
+          <h3 class="sub">판형별 실제 크기 <span class="mono">1 : 1.5 scale, mm</span></h3>
+          <div class="scroll">
+            <svg class="formats" viewBox="0 0 770 236" role="img" aria-label="필름 판형별 화면 크기 비교: 하프프레임 18×24, 35mm 36×24, 6×4.5, 6×6, 6×7, 6×9, 4×5인치">
+              <rect x="10" y="134" width="27" height="36"/>
+              <rect x="52" y="134" width="54" height="36"/>
+              <rect x="121" y="107.75" width="84" height="62.25"/>
+              <rect x="220" y="86" width="84" height="84"/>
+              <rect x="319" y="86" width="104.25" height="84"/>
+              <rect x="438.25" y="86" width="126" height="84"/>
+              <rect x="579.25" y="27.5" width="180" height="142.5"/>
+              <line x1="0" y1="170.5" x2="770" y2="170.5"/>
+              <g text-anchor="middle">
+                <text class="nm" x="23.5" y="190">하프</text><text class="mm" x="23.5" y="205">18×24</text><text class="ct" x="23.5" y="221">72장</text>
+                <text class="nm" x="79" y="190">35mm</text><text class="mm" x="79" y="205">36×24</text><text class="ct" x="79" y="221">36장</text>
+                <text class="nm" x="163" y="190">6×4.5</text><text class="mm" x="163" y="205">56×41.5</text><text class="ct" x="163" y="221">15–16장</text>
+                <text class="nm" x="262" y="190">6×6</text><text class="mm" x="262" y="205">56×56</text><text class="ct" x="262" y="221">12장</text>
+                <text class="nm" x="371" y="190">6×7</text><text class="mm" x="371" y="205">56×69.5</text><text class="ct" x="371" y="221">10장</text>
+                <text class="nm" x="501" y="190">6×9</text><text class="mm" x="501" y="205">56×84</text><text class="ct" x="501" y="221">8장</text>
+                <text class="nm" x="669" y="190">4×5 인치</text><text class="mm" x="669" y="205">약 120×95</text><text class="ct" x="669" y="221">시트 1장</text>
+              </g>
+            </svg>
+          </div>
+          <p class="note" style="margin-top:12px"><b>135</b>는 35mm 필름의 규격 번호, <b>120</b>은 중형 필름(롤 필름)의 규격 번호입니다. 장수는 35mm 36매 롤, 120 롤 기준입니다. 35mm 롤은 24매짜리도 있습니다.</p>
+        </div>
+
+        <div>
+          <h3 class="sub">형식별 카메라</h3>
+          <div class="chips" id="camChips">
+            <button class="chip" type="button" data-k="all" aria-pressed="true">전체</button>
+            <button class="chip" type="button" data-k="135" aria-pressed="false">35mm</button>
+            <button class="chip" type="button" data-k="120" aria-pressed="false">120 중형</button>
+            <button class="chip" type="button" data-k="etc" aria-pressed="false">대형·인스턴트</button>
+            <button class="chip" type="button" data-k="new" aria-pressed="false">입문 추천</button>
+          </div>
+          <div class="cams" id="cams"></div>
+        </div>
+
+        <div>
+          <h3 class="sub">중고로 살 때 확인할 것</h3>
+          <ol class="steps">
+            <li><div><b>셔터</b> — 1초, 1/30, 1/500처럼 서로 다른 속도로 눌러 보고 소리 길이가 확실히 다른지 들어봅니다. 느린 속도에서 끝까지 닫히지 않으면 수리 대상입니다.</div></li>
+            <li><div><b>뒷판을 열고 렌즈 들여다보기</b> — 셔터를 B(벌브)나 1초에 두고 누른 채 렌즈 반대편을 플래시로 비춰 봅니다. 거미줄 같은 곰팡이, 뿌연 흐림, 기름 자국을 확인합니다.</div></li>
+            <li><div><b>라이트 씰</b> — 뒷판 홈에 있는 검은 스펀지가 끈적이거나 부스러지면 빛샘의 원인이 됩니다. 교체는 저렴하고 직접도 가능합니다.</div></li>
+            <li><div><b>노출계와 배터리</b> — 오래된 카메라 중엔 단종된 수은전지(PX625 등)를 쓰는 기종이 있어 어댑터가 필요합니다. 배터리 규격부터 검색해 보세요.</div></li>
+            <li><div><b>자동 똑딱이는 전자 부품</b> — 액정이나 모터가 고장 나면 수리가 어렵거나 불가능합니다. 반품·보증 조건을 꼭 확인합니다.</div></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 FILM -->
+  <section id="film">
+    <header class="sec-head">
+      <p class="edge mono">▸ 2 &nbsp; 2A<br>Film stock</p>
+      <div><h2>필름 <small>무엇을 넣을까</small></h2>
+      <p class="lede">필름은 크게 네 갈래입니다. 색이 반대로 찍히는 컬러 네거티브, 은 입자로만 그리는 흑백, 그대로 보이는 슬라이드(포지티브), 그리고 영화 촬영용 필름을 잘라 파는 시네 필름. 각각 현상하는 약품과 공정이 다릅니다.</p></div>
+    </header>
+    <div class="body">
+      <aside class="side mono">C-41<br>컬러 네거<br><br>E-6<br>슬라이드<br><br>B&amp;W<br>흑백<br><br>ECN-2<br>영화용</aside>
+      <div class="main">
+        <div class="duo">
+          <div><h4>컬러 네거티브 <span class="pill p-c41">C-41</span></h4><p style="margin:0;font-size:13.5px">현상하면 색이 반전되고 주황빛 베이스(오렌지 마스크)가 깔립니다. 노출 관용도가 넓어 2~3스톱 오버도 살려낼 수 있습니다. 가장 흔하고, 가장 맡기기 쉽습니다.</p></div>
+          <div><h4>흑백 <span class="pill p-bw">B&amp;W</span></h4><p style="margin:0;font-size:13.5px">빛을 받은 은 입자만 남는 가장 오래된 방식. 상온 20°C에서 집에서 현상할 수 있어 자가현상 입문용입니다. 푸시(증감) 현상에도 강합니다.</p></div>
+          <div><h4>슬라이드 <span class="pill p-e6">E-6</span></h4><p style="margin:0;font-size:13.5px">현상하면 눈에 보이는 그대로의 양화가 나옵니다. 색이 선명하지만 관용도가 좁아 노출을 정확히 맞춰야 합니다. 라이트박스에 올려 보는 맛이 있습니다.</p></div>
+          <div><h4>영화용 <span class="pill p-ecn">ECN-2</span></h4><p style="margin:0;font-size:13.5px">영화 필름을 35mm 카트리지에 재포장한 것. 뒷면 검은 렘젯 층 때문에 일반 C-41 기계에 넣으면 안 됩니다. 받는 현상소인지 먼저 확인하세요.</p></div>
+        </div>
+
+        <div>
+          <h3 class="sub">필름마다 다른 얼굴 <span class="mono">실제 필름 스캔</span></h3>
+          <div class="looks">
+            <figure><img src="photos/portra.jpg" alt="Kodak Portra 400으로 찍은 콜로라도 강가의 풍경" loading="lazy"><figcaption>Kodak Portra 400 <span class="mono">C-41 · 120</span></figcaption></figure>
+            <figure><img src="photos/gold.jpg" alt="Kodak Gold 200으로 찍은 암스테르담 항구의 보트들" loading="lazy"><figcaption>Kodak Gold 200 <span class="mono">C-41 · 135</span></figcaption></figure>
+            <figure><img src="photos/velvia.jpg" alt="Fuji Velvia로 찍은 가을 숲과 작은 집" loading="lazy"><figcaption>Fuji Velvia <span class="mono">E-6</span></figcaption></figure>
+            <figure><img src="photos/hp5.jpg" alt="Ilford HP5 Plus로 찍은 함부르크 거리" loading="lazy"><figcaption>Ilford HP5 Plus <span class="mono">B&amp;W · 135</span></figcaption></figure>
+            <figure><img src="photos/trix.jpg" alt="Kodak Tri-X 400으로 찍은 낮은 지붕의 건물" loading="lazy"><figcaption>Kodak Tri-X 400 <span class="mono">B&amp;W · 135</span></figcaption></figure>
+          </div>
+          <p class="note" style="margin-top:14px">같은 필름도 노출, 현상, 스캔에 따라 결과가 달라집니다. 각 필름의 대략적인 성향을 보는 참고용으로 봐주세요.</p>
+        </div>
+
+        <div>
+          <div class="toolbar">
+            <div class="chips" id="filmChips">
+              <button class="chip" type="button" data-k="all" aria-pressed="true">전체</button>
+              <button class="chip" type="button" data-k="c41" aria-pressed="false">컬러 네거</button>
+              <button class="chip" type="button" data-k="bw" aria-pressed="false">흑백</button>
+              <button class="chip" type="button" data-k="e6" aria-pressed="false">슬라이드</button>
+              <button class="chip" type="button" data-k="ecn" aria-pressed="false">영화용</button>
+            </div>
+            <input class="search" id="filmQ" type="search" placeholder="필름 이름 검색 (예: Portra, HP5)" aria-label="필름 검색">
+          </div>
+          <div class="scroll">
+            <table>
+              <thead><tr><th>필름</th><th>ISO</th><th>공정</th><th>판형</th><th>성격</th></tr></thead>
+              <tbody id="filmRows"></tbody>
+            </table>
+          </div>
+          <p class="note" style="margin-top:12px">생산·수입 상황에 따라 단종되거나 품귀인 필름이 자주 생깁니다. 판형 표기는 대표적으로 나오는 규격 기준입니다.</p>
+        </div>
+
+        <div class="prose">
+          <h3 class="sub">ISO는 무엇을 뜻하나</h3>
+          <p>ISO(감도)는 필름이 빛에 반응하는 정도입니다. 숫자가 두 배가 되면 필요한 빛은 절반, 즉 <b>한 스톱</b> 차이입니다. 100은 맑은 날 야외, 400은 흐린 날과 그늘까지 두루, 800 이상은 실내와 저녁을 위한 감도입니다. 감도가 높을수록 입자(그레인)가 굵어집니다.</p>
+          <p>디지털과 가장 다른 점은 <b>한 롤을 다 찍을 때까지 ISO를 바꿀 수 없다</b>는 것입니다. 오늘 어디서 찍을지 생각하고 필름을 고르세요.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 SHOOT -->
+  <section id="shoot">
+    <header class="sec-head">
+      <p class="edge mono">▸ 3 &nbsp; 3A<br>Exposure</p>
+      <div><h2>촬영 <small>빛을 재는 법</small></h2>
+      <p class="lede">노출은 조리개, 셔터 속도, 감도 세 가지로 정해집니다. 필름에선 감도가 고정이니 실제로 조절하는 건 조리개와 셔터 두 개뿐입니다. 하나를 한 스톱 열면 다른 하나를 한 스톱 닫아 같은 노출을 유지합니다.</p></div>
+    </header>
+    <div class="body">
+      <aside class="side mono">f/1.4 · 2 · 2.8<br>4 · 5.6 · 8<br>11 · 16 · 22<br><br>1/1000 · 500<br>250 · 125 · 60<br>30 · 15 · 8</aside>
+      <div class="main">
+        <div class="duo">
+          <div><h4>조리개 f값</h4><ul><li>숫자가 작을수록 많이 열림, 빛이 많이 들어옴</li><li>한 칸(f/2.8→f/4)마다 빛은 절반</li><li>열수록 배경이 흐려지고(얕은 심도), 닫을수록 앞뒤가 다 선명</li></ul></div>
+          <div><h4>셔터 속도</h4><ul><li>1/125은 125분의 1초</li><li>한 칸(1/125→1/250)마다 빛은 절반</li><li>손으로 들고 찍을 땐 1/60 이상, 또는 1/(렌즈 초점거리) 이상</li><li>빠를수록 움직임이 멈춰 보임</li></ul></div>
+        </div>
+
+        <div class="tool" id="sunny">
+          <div class="tool-head"><h4>써니 16 계산기</h4><span class="mono" style="color:var(--ink-2)">노출계 없이 찍는 법</span></div>
+          <p style="margin:0;font-size:13.5px;max-width:66ch">맑은 날엔 <b>f/16에 셔터 1/ISO</b>. 노출계가 없거나 고장 났을 때 쓰는 오래된 규칙입니다. 필름 감도와 빛 상황을 고르면 같은 노출이 되는 조합을 모두 보여줍니다.</p>
+          <div style="display:flex;gap:20px;flex-wrap:wrap">
+            <div><label class="mono" for="isoSel">필름 감도</label>
+              <select id="isoSel"><option>50</option><option>100</option><option>125</option><option>160</option><option>200</option><option selected>400</option><option>800</option><option>1600</option><option>3200</option></select></div>
+            <div style="flex:1;min-width:240px"><label class="mono" for="lightSel">빛 상황</label>
+              <select id="lightSel"></select></div>
+          </div>
+          <div class="ev" id="evOut"></div>
+          <div class="pairs" id="pairs"></div>
+          <p class="mono" style="margin:0;color:var(--ink-2);text-transform:none;letter-spacing:.02em">테두리 강조 = 이 상황의 기준 조리개 · 빨간 글씨 = 손떨림 주의 · 흐린 칸 = 셔터 범위 밖</p>
+        </div>
+
+        <div class="prose">
+          <h3 class="sub">네거티브는 그림자에, 슬라이드는 하이라이트에</h3>
+          <p>컬러 네거티브와 흑백은 <b>노출 부족에 약하고 과다에 강합니다</b>. 어두운 부분에 정보가 없으면 스캔해도 살아나지 않지만, 한두 스톱 넘친 건 대부분 복구됩니다. 그래서 애매할 땐 한 스톱 더 주라는 말이 있습니다.</p>
+          <p>슬라이드는 반대입니다. 하이라이트가 날아가면 끝이라 밝은 부분 기준으로 맞추고, 브라켓팅(±1/2스톱씩 여러 장)으로 보험을 듭니다.</p>
+        </div>
+
+        <div>
+          <h3 class="sub">35mm 필름 넣기 <span class="mono">수동 SLR 기준</span></h3>
+          <ol class="steps">
+            <li><div><b>그늘에서 뒷판 열기.</b> 직사광선 아래에서는 필름이 빛을 먹을 수 있습니다. 대부분 되감기 노브를 위로 끝까지 당기면 뒷판이 열립니다.</div></li>
+            <li><div><b>필름을 왼쪽 칸에 넣고</b> 되감기 노브를 눌러 내려 고정합니다.</div></li>
+            <li><div><b>리더(앞쪽 좁은 부분)를 오른쪽 감김 축의 홈에 끼웁니다.</b> 필름 아래위 구멍이 톱니(스프로킷)에 걸리는지 봅니다.</div></li>
+            <li><div><b>한 번 감고 셔터.</b> 뒷판을 연 채로 필름이 팽팽하게 감기는지 확인합니다.</div></li>
+            <li><div><b>뒷판을 닫고 카운터가 1이 될 때까지 공셔터 2~3번.</b> 앞부분은 빛을 먹은 구간입니다.</div></li>
+            <li><div><b>감을 때 되감기 노브가 같이 도는지 확인.</b> 돌지 않으면 필름이 안 감기고 있는 것입니다. 36장을 찍었는데 아무것도 없는 사고 대부분이 여기서 생깁니다.</div></li>
+            <li><div><b>다 찍으면 되감기.</b> 바닥의 되감기 버튼을 누르고 노브를 화살표 방향으로 돌립니다. 손이 갑자기 가벼워지면 다 감긴 것. 그 전에는 절대 뒷판을 열지 않습니다.</div></li>
+          </ol>
+        </div>
+
+        <div>
+          <h3 class="sub">결과물로 보는 흔한 실수</h3>
+          <div class="scroll"><table>
+            <thead><tr><th>네거티브 상태</th><th>원인</th><th>다음엔</th></tr></thead>
+            <tbody>
+              <tr><td class="nm">롤 전체가 투명</td><td>필름이 감기지 않았거나 셔터가 열리지 않음</td><td>장전 후 되감기 노브가 도는지 확인</td></tr>
+              <tr><td class="nm">롤 전체가 새까맣게 덮임</td><td>뒷판을 열어 빛에 노출됨</td><td>되감기 전엔 뒷판 금지</td></tr>
+              <tr><td class="nm">붉은·주황 빛줄기</td><td>빛샘. 라이트 씰 열화나 뒷판 틈</td><td>라이트 씰 교체, 장전은 그늘에서</td></tr>
+              <tr><td class="nm">얇고 그림자가 탁함</td><td>노출 부족</td><td>한 스톱 더 주기, 감도 높은 필름</td></tr>
+              <tr><td class="nm">전체가 흐릿하게 번짐</td><td>손떨림, 느린 셔터</td><td>1/60 이상, 몸을 벽에 기대기</td></tr>
+              <tr><td class="nm">사진 일부가 검게 잘림</td><td>플래시 동조 속도 초과 (포컬플레인 셔터)</td><td>플래시 쓸 땐 X 표시 속도 이하</td></tr>
+              <tr><td class="nm">레인지파인더에서 위쪽이 잘림</td><td>시차(패럴랙스), 가까이서 찍음</td><td>근접 시 프레임 보정선 사용</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 DEVELOP -->
+  <section id="develop">
+    <header class="sec-head">
+      <p class="edge mono">▸ 4 &nbsp; 4A<br>Development</p>
+      <div><h2>현상 <small>잠상을 꺼내는 일</small></h2>
+      <p class="lede">찍은 필름에는 아직 눈에 보이지 않는 잠상(潛像)만 있습니다. 현상액이 빛 받은 은 결정을 금속 은으로 바꾸고, 정착액이 남은 은염을 씻어내야 비로소 빛 아래 꺼낼 수 있는 네거티브가 됩니다.</p></div>
+    </header>
+    <div class="body">
+      <aside class="side mono">흑백 20°C<br>±1°C 허용<br><br>컬러 38°C<br>±0.3°C</aside>
+      <div class="main">
+        <div class="duo">
+          <div><h4>현상소에 맡기기</h4><ul><li>컬러(C-41)는 대부분 이쪽이 정답. 38°C 유지가 까다롭습니다</li><li>현상 + 스캔을 함께 받는 게 일반적</li><li>슬라이드(E-6), 영화용(ECN-2)은 취급하는 곳이 적어 기간이 더 걸림</li></ul></div>
+          <div><h4>집에서 현상하기</h4><ul><li>흑백은 상온에서 가능하고 도구도 단순</li><li>롤당 비용이 크게 줄고, 현상 시간으로 대비를 조절</li><li>컬러도 C-41 키트로 가능하지만 온도 관리가 핵심</li><li>폐액 처리를 꼭 지켜야 함</li></ul></div>
+        </div>
+
+        <div>
+          <h3 class="sub">공정 비교</h3>
+          <div class="scroll"><table>
+            <thead><tr><th>공정</th><th>대상</th><th>온도</th><th>단계</th><th>난이도</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill p-bw">B&amp;W</span></td><td>흑백 필름</td><td class="n">20°C</td><td>현상 → 정지 → 정착 → 수세 → 웨팅</td><td>입문</td></tr>
+              <tr><td><span class="pill p-c41">C-41</span></td><td>컬러 네거, XP2 같은 C-41 흑백</td><td class="n">37.8°C</td><td>발색현상 → 표백·정착(블릭스) → 수세 → 안정</td><td>중간</td></tr>
+              <tr><td><span class="pill p-e6">E-6</span></td><td>슬라이드</td><td class="n">38°C</td><td>1차 현상 → 반전 → 발색 → 표백 → 정착 등 6단계 내외</td><td>높음</td></tr>
+              <tr><td><span class="pill p-ecn">ECN-2</span></td><td>영화용 네거</td><td class="n">41°C</td><td>렘젯 제거 → 발색현상 → 정지 → 표백 → 정착</td><td>높음</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+
+        <div class="duo">
+          <div><h4>흑백 자가현상 준비물</h4><ul>
+            <li>현상 탱크와 릴 (스테인리스 또는 플라스틱)</li>
+            <li>체인징 백 — 필름을 릴에 감을 휴대용 암실</li>
+            <li>온도계, 계량컵 (500ml 이상), 깔때기</li>
+            <li>현상액 (D-76, ID-11, HC-110, 로디널 등)</li>
+            <li>정지액 (또는 물), 정착액, 웨팅제</li>
+            <li>필름 오프너 또는 병따개, 가위, 필름 클립 2개</li></ul></div>
+          <div><h4>교반, 결과를 좌우하는 리듬</h4><ul>
+            <li>처음 30초는 계속 천천히 뒤집기</li>
+            <li>이후 매 분 처음 10초간 4번 뒤집기</li>
+            <li>탱크를 바닥에 톡톡 쳐 기포 제거</li>
+            <li>너무 세게 흔들면 가장자리가 진해짐, 너무 안 하면 얼룩</li></ul></div>
+        </div>
+
+        <div class="tool" id="devTool">
+          <div class="tool-head"><h4>흑백 현상 타이머</h4><span class="mono" style="color:var(--ink-2)">20°C · 소형 탱크 · 수동 교반</span></div>
+          <div><label class="mono" for="combo">필름 + 현상액</label><select id="combo"></select></div>
+          <div class="timer">
+            <div style="display:grid;gap:12px">
+              <div class="now" id="tNow">현상</div>
+              <div class="clock" id="tClock" aria-live="off">0:00</div>
+              <div><span class="agit" id="tAgit">대기 중</span></div>
+              <div class="btns">
+                <button class="btn" id="tGo" type="button">시작</button>
+                <button class="btn ghost" id="tNext" type="button">다음 단계</button>
+                <button class="btn ghost" id="tReset" type="button">처음부터</button>
+              </div>
+            </div>
+            <ul class="plan" id="tPlan"></ul>
+          </div>
+          <p class="note" style="margin:0">현상 시간은 제조사 자료와 널리 쓰이는 차트를 참고한 출발점입니다. 현상액의 신선도, 수온, 교반 습관에 따라 달라지니 내 결과를 보며 ±10% 안에서 조정하세요. 온도가 1°C 높으면 대략 10% 줄입니다.</p>
+        </div>
+
+        <div class="prose">
+          <h3 class="sub">푸시와 풀</h3>
+          <p>ISO 400 필름을 1600으로 놓고 찍는 걸 <b>2스톱 푸시</b>라고 합니다. 부족한 노출을 현상 시간을 늘려 보상하는 방식이라, 현상소에 맡길 때 반드시 “+2 푸시”라고 적어야 합니다. 대비와 입자는 강해지고 그림자 디테일은 줄어듭니다. 반대로 감도를 낮춰 찍고 현상을 줄이는 게 풀입니다. 한 롤은 처음부터 끝까지 같은 감도로 찍어야 합니다.</p>
+          <p>HP5 Plus나 Tri-X는 1600~3200까지 푸시해도 버티는 필름으로 유명합니다.</p>
+        </div>
+
+        <p class="note"><b>폐액 처리.</b> 사용한 정착액에는 은이 녹아 있습니다. 하수구에 버리지 말고 모아서 지자체 지정 폐기물 처리 방법을 따르거나, 폐액을 받는 현상소에 문의하세요.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 PRINT -->
+  <section id="print">
+    <header class="sec-head">
+      <p class="edge mono">▸ 5 &nbsp; 5A<br>Printing</p>
+      <div><h2>인화 <small>종이 위로</small></h2>
+      <p class="lede">네거티브를 종이 사진으로 만드는 길은 두 가지입니다. 스캔한 파일을 기계로 뽑는 디지털 인화, 그리고 확대기로 빛을 인화지에 직접 비추는 암실 인화. 둘 다 은염 인화지를 쓸 수 있지만 손맛은 전혀 다릅니다.</p></div>
+    </header>
+    <div class="body">
+      <aside class="side mono">RC 인화지<br>빠름, 평평<br><br>FB 인화지<br>깊은 흑, 보존성</aside>
+      <div class="main">
+        <div class="duo">
+          <div><h4>디지털 인화</h4><ul><li>스캔 파일을 미니랩 장비가 레이저로 은염 인화지에 노광</li><li>원하는 컷만 골라 여러 장, 크기 조절 자유</li><li>파일 보정이 그대로 반영됨</li><li>잉크젯 아트지 프린트도 선택지</li></ul></div>
+          <div><h4>암실 인화</h4><ul><li>확대기로 네거티브를 인화지에 투사</li><li>흑백은 개인 암실이나 공유 암실에서 가능</li><li>닷징·버닝으로 부분 밝기 조절</li><li>같은 컷도 매번 조금씩 다른 한 장</li></ul></div>
+        </div>
+
+        <div>
+          <h3 class="sub">흑백 암실 인화 순서</h3>
+          <ol class="steps">
+            <li><div><b>밀착 인화(컨택트 시트).</b> 네거티브를 인화지에 그대로 올리고 유리로 눌러 노광합니다. 한 롤 전체를 한 장에서 보고 인화할 컷을 고릅니다.</div></li>
+            <li><div><b>확대기 세팅.</b> 네거티브를 캐리어에 넣고 이젤 위 상의 크기와 초점을 맞춥니다. 렌즈는 2스톱 정도 조여 선명도를 확보합니다.</div></li>
+            <li><div><b>테스트 스트립.</b> 인화지 조각을 3초 간격으로 가려가며 단계별 노광해 적정 시간을 찾습니다.</div></li>
+            <li><div><b>대비 결정.</b> 다계조 인화지는 필터 번호(00~5)로 대비를 바꿉니다. 숫자가 클수록 강한 대비.</div></li>
+            <li><div><b>본 인화와 현상.</b> 현상 1~2분 → 정지 30초 → 정착 → 수세. RC는 수세 몇 분, FB는 30분 이상이 필요합니다.</div></li>
+            <li><div><b>닷징과 버닝.</b> 노광 중 손이나 종이로 일부를 가리면(닷징) 밝아지고, 더 비추면(버닝) 어두워집니다.</div></li>
+          </ol>
+          <p class="note" style="margin-top:12px">암실 조명은 흑백 인화지에 반응하지 않는 적색·앰버 안전등을 씁니다. 필름 자체는 안전등에도 감광되니, 필름을 다룰 땐 완전한 어둠이어야 합니다.</p>
+        </div>
+
+        <div>
+          <h3 class="sub">사진 인화 크기 <span class="mono">mm · 비율</span></h3>
+          <div class="scroll"><table>
+            <thead><tr><th>이름</th><th>인치</th><th>mm</th><th>잘 맞는 판형</th></tr></thead>
+            <tbody>
+              <tr><td class="nm">3R</td><td class="n">3.5 × 5</td><td class="n">89 × 127</td><td>앨범용 소형</td></tr>
+              <tr><td class="nm">4R</td><td class="n">4 × 6</td><td class="n">102 × 152</td><td>35mm (3:2) 꽉 차게 — 가장 흔한 사이즈</td></tr>
+              <tr><td class="nm">5R</td><td class="n">5 × 7</td><td class="n">127 × 178</td><td>6×4.5, 6×7에 가까운 비율</td></tr>
+              <tr><td class="nm">6R</td><td class="n">6 × 8</td><td class="n">152 × 203</td><td>액자용</td></tr>
+              <tr><td class="nm">8R</td><td class="n">8 × 10</td><td class="n">203 × 254</td><td>4×5, 6×7. 35mm는 잘리거나 여백</td></tr>
+              <tr><td class="nm">11R</td><td class="n">11 × 14</td><td class="n">279 × 356</td><td>전시용</td></tr>
+            </tbody>
+          </table></div>
+          <p class="note" style="margin-top:12px">6×6 정사각 사진을 직사각 인화지에 뽑을 땐 여백을 두는(보더) 인화를 요청하면 잘리지 않습니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 SCAN -->
+  <section id="scan">
+    <header class="sec-head">
+      <p class="edge mono">▸ 6 &nbsp; 6A<br>Scanning</p>
+      <div><h2>스캔 <small>파일로 옮기기</small></h2>
+      <p class="lede">요즘 필름 사진은 대부분 스캔 파일로 처음 만납니다. 같은 네거티브도 어떤 장비로, 누가 색을 잡느냐에 따라 결과 톤이 꽤 달라집니다. 단골 현상소를 찾게 되는 이유입니다.</p></div>
+    </header>
+    <div class="body">
+      <aside class="side mono">JPG<br>바로 쓰기<br><br>TIFF<br>보정 여유</aside>
+      <div class="main">
+        <div class="cams" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">
+          <div class="cam"><h4>현상소 스캔 <span class="mono">LAB</span></h4><p>후지 프론티어, 노리츠 같은 미니랩 스캐너로 현상과 함께 처리. 해상도는 보통·고해상 중 선택하는 곳이 많습니다.</p><p class="ex">가장 간편. 기사님의 색 보정이 곧 그 현상소의 톤.</p></div>
+          <div class="cam"><h4>평판 스캐너 <span class="mono">FLATBED</span></h4><p>필름 홀더가 있는 평판 스캐너. 중형·대형 필름에 특히 유리합니다.</p><p class="ex">35mm는 해상도 한계가 보일 수 있음.</p></div>
+          <div class="cam"><h4>필름 전용 스캐너 <span class="mono">DEDICATED</span></h4><p>35mm 전용 스캐너. 한 장씩 넣어 고해상도로 읽습니다.</p><p class="ex">느리지만 디테일이 좋음.</p></div>
+          <div class="cam"><h4>카메라 스캔 <span class="mono">DSLR SCAN</span></h4><p>디지털 카메라 + 매크로 렌즈 + 라이트패드 + 필름 홀더로 네거티브를 촬영한 뒤 소프트웨어로 반전합니다.</p><p class="ex">빠르고 고해상도. 반전과 색 보정은 직접 익혀야 함.</p></div>
+        </div>
+        <div class="prose">
+          <h3 class="sub">컬러 네거티브 반전이 어려운 이유</h3>
+          <p>컬러 네거티브에는 주황빛 오렌지 마스크가 깔려 있어 단순히 색을 뒤집으면 파랗게 질린 사진이 나옵니다. 마스크를 빼고 채널마다 따로 레벨을 맞춰야 합니다. 직접 스캔한다면 전용 반전 플러그인이나 소프트웨어를 쓰는 게 시간을 아낍니다.</p>
+          <p>스캔 전 블로워로 먼지를 날리고, 필름 표면은 손가락 대신 가장자리만 잡으세요. 지문은 영구히 남습니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 KEEP -->
+  <section id="keep">
+    <header class="sec-head">
+      <p class="edge mono">▸ 7 &nbsp; 7A<br>Storage</p>
+      <div><h2>보관 <small>열, 습기, 엑스레이</small></h2>
+      <p class="lede">필름은 살아 있는 재료처럼 다뤄야 합니다. 찍기 전에도, 찍은 뒤에도, 현상한 뒤에도 열과 습기가 가장 큰 적입니다.</p></div>
+    </header>
+    <div class="body">
+      <aside class="side mono">찍기 전<br>찍은 뒤<br>현상 후</aside>
+      <div class="main">
+        <div class="duo">
+          <div><h4>찍기 전</h4><ul><li>미개봉 필름은 냉장고 보관, 오래 둘 거면 냉동</li><li>꺼낸 뒤 2~3시간(냉동은 더 길게) 실온에 두고 개봉. 결로 방지</li><li>유통기한 지난 필름은 대략 10년마다 1스톱씩 더 노출</li><li>고감도·컬러 필름일수록 노화가 빠름</li></ul></div>
+          <div><h4>찍은 뒤</h4><ul><li>잠상은 서서히 약해지니 가능하면 빨리 현상</li><li>여름철 자동차 실내, 직사광선 금지</li><li>필름 통에 롤마다 날짜·장소·푸시 여부 메모</li></ul></div>
+          <div><h4>현상 후</h4><ul><li>네거티브는 아카이벌 슬리브(PP, 글라신)에 6컷씩</li><li>서늘하고 건조하고 어두운 곳, 바인더에 세로로</li><li>만질 땐 가장자리만, 또는 면장갑·니트릴 장갑</li></ul></div>
+        </div>
+        <div class="note"><b>공항 검색대.</b> 필름은 위탁 수하물에 넣지 말고 기내에 가지고 타세요. 위탁 수하물용 CT 스캐너는 필름을 흐리게 만들 수 있습니다. 기내 검색대에서는 필름만 지퍼백에 담아 핸드 체크(수동 검사)를 요청하는 게 가장 안전하며, ISO 800 이상이나 여러 번 통과할 필름이라면 특히 그렇습니다. 요청을 받아줄지는 공항마다 다릅니다.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 LAB -->
+  <section id="lab">
+    <header class="sec-head">
+      <p class="edge mono">▸ 8 &nbsp; 8A<br>Photo lab</p>
+      <div><h2>현상소 <small>맡기는 법</small></h2>
+      <p class="lede">현상소는 필름 사진의 절반을 만드는 곳입니다. 방문 접수와 택배 접수를 함께 받는 곳이 많고, 파일은 메일이나 다운로드 링크로 보내줍니다.</p></div>
+    </header>
+    <div class="body">
+      <aside class="side mono">현상만<br>현상 + 스캔<br>현상 + 스캔 + 인화</aside>
+      <div class="main">
+        <div>
+          <h3 class="sub">맡기는 순서</h3>
+          <ol class="steps">
+            <li><div><b>필름이 완전히 되감겼는지 확인.</b> 리더가 밖에 나와 있으면 찍은 롤인지 헷갈릴 수 있어, 끝을 접어두거나 마스킹테이프로 표시합니다.</div></li>
+            <li><div><b>서비스 고르기.</b> 처음이라면 현상 + 스캔이 기본. 인화는 파일을 받아 본 뒤 원하는 컷만 주문해도 됩니다.</div></li>
+            <li><div><b>특수 요청 적기.</b> 푸시·풀(+1, +2), 영화용 필름(ECN-2), 슬라이드(E-6), 크로스 프로세스는 반드시 롤마다 표기합니다.</div></li>
+            <li><div><b>스캔 옵션 정하기.</b> 해상도(보통/고해상), 파일 형식(JPG/TIFF), 하프프레임이면 한 컷씩인지 두 컷 붙여서인지.</div></li>
+            <li><div><b>택배라면 롤마다 이름표.</b> 연락처와 요청 사항을 적은 쪽지를 함께 넣고, 필름은 지퍼백에 담아 충격에 대비합니다.</div></li>
+            <li><div><b>네거티브 회수.</b> 현상된 네거티브를 돌려받을지, 현상소에 보관을 맡길지와 보관 기간을 확인합니다.</div></li>
+          </ol>
+        </div>
+        <div class="note"><b>작업 기간</b>은 현상소마다 다르지만, 컬러 네거티브가 가장 빠르고 흑백·슬라이드·영화용은 모아서 처리하는 곳이 많아 더 걸립니다. 접수 전에 공지사항을 확인하세요.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 WORDS -->
+  <section id="words">
+    <header class="sec-head">
+      <p class="edge mono">▸ 9 &nbsp; 9A<br>Glossary</p>
+      <div><h2>용어 <small>찾아보기</small></h2>
+      <p class="lede">현상소 공지나 카메라 설명서에서 마주치는 말들입니다.</p></div>
+    </header>
+    <div class="body">
+      <aside class="side mono">가나다 순</aside>
+      <div class="main">
+        <div>
+          <input class="search" id="gq" type="search" placeholder="용어 검색 (예: 푸시, 렘젯)" aria-label="용어 검색" style="margin-bottom:8px">
+          <dl class="gloss" id="gloss" style="margin:0"></dl>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>36 EXP.는 필름 사진을 처음 시작하는 사람을 위한 개인 아카이브입니다. 연남필름과 망우삼림의 홈페이지가 가진 조용하고 다정한 분위기에서 영감을 받았으며, 두 현상소와는 관련이 없습니다.</p>
+    <p class="mono">▸ 36 &nbsp; 36A &nbsp; END OF ROLL</p>
+  </div>
+  <div class="wrap" style="margin-top:28px">
+    <p class="mono" style="color:var(--ink)">사진 출처 · Wikimedia Commons</p>
+    <ul class="credits">
+      <li><b>카메라</b> <a href="https://commons.wikimedia.org/wiki/File:Nikon_FM2_camera.jpg">Nikon FM2 camera</a> · Gaurav Dhwaj Khadka · CC BY-SA 4.0</li>
+      <li><b>필름</b> <a href="https://commons.wikimedia.org/wiki/File:Cinestill_800Tungsten_Xpro_C-41_135_film_cartridge_(01).jpg">Cinestill 800T cartridge</a> · El Grafo · CC BY-SA 4.0</li>
+      <li><b>촬영</b> <a href="https://commons.wikimedia.org/wiki/File:Nikon_FM2_-_arri%C3%A8re_ouvert.jpg">Nikon FM2 - arrière ouvert</a> · BastienM · CC BY-SA 3.0</li>
+      <li><b>현상</b> <a href="https://commons.wikimedia.org/wiki/File:LPL_35mm_Stainless_Steel_Developing_Tank_and_Reels_(2X)_%26_Handy_Loader_(51878855221).jpg">LPL Developing Tank and Reels</a> · Joost J. Bakker · CC BY 2.0</li>
+      <li><b>인화</b> <a href="https://commons.wikimedia.org/wiki/File:Durst_F60_Enlarger-a-RJP.jpg">Durst F60 Enlarger</a> · Rickjpelleg · CC BY-SA 3.0</li>
+      <li><b>스캔</b> <a href="https://commons.wikimedia.org/wiki/File:Photographer%27s_Mate_1ST_Class_M._Cline_uses_a_loupe_to_examine_negatives_on_a_light_table_aboard_the_nuclear-powered_aircraft_carrier_USS_DWIGHT_D._EISENHOWER_(CVN_69)_-_DPLA_-_b38fd360a5e1857093605e479fab4de1.jpeg">Examining negatives on a light table</a> · U.S. Department of Defense · Public domain</li>
+      <li><b>보관</b> <a href="https://commons.wikimedia.org/wiki/File:Kodak_Tri-X_400_Film_(6639715393).jpg">Kodak Tri-X 400 Film</a> · Håkan Dahlström · CC BY 2.0</li>
+      <li><b>현상소</b> <a href="https://commons.wikimedia.org/wiki/File:Fujifilm_Frontier_DL650_Pro_dry_minilab_at_a_Walmart_in_Gillette,_Wyoming.jpg">Fujifilm Frontier DL650 minilab</a> · Mr. Satterly · WTFPL</li>
+      <li><b>용어</b> <a href="https://commons.wikimedia.org/wiki/File:Ford_A0036_NLGRF_photo_contact_sheet_(1974-08-10)(Gerald_Ford_Library).jpg">Ford A0036 contact sheet</a> · White House Photographic Office · Public domain</li>
+      <li><b>Portra 400</b> <a href="https://commons.wikimedia.org/wiki/File:Colorado_River_near_Holzwarth_Historic_District_(2024)-000445020003.jpg">Colorado River near Holzwarth</a> · Frank Schulenburg · CC BY-SA 4.0</li>
+      <li><b>Gold 200</b> <a href="https://commons.wikimedia.org/wiki/File:IJ_NDSM.jpg">IJ NDSM</a> · Frank Markesteijn · CC BY-SA 4.0</li>
+      <li><b>Velvia</b> <a href="https://commons.wikimedia.org/wiki/File:Autumn_house_Velvia.jpg">Autumn house Velvia</a> · Peter.shaman · CC BY-SA 4.0</li>
+      <li><b>HP5 Plus</b> <a href="https://commons.wikimedia.org/wiki/File:1_Landungsbruecken_190217.jpg">Landungsbrücken</a> · NAC · CC BY-SA 4.0</li>
+      <li><b>Tri-X 400</b> <a href="https://commons.wikimedia.org/wiki/File:Unitarian_Meeting_House_Madison_Wisconsin_2023_Tri-X_400-000024480021.jpg">Unitarian Meeting House, Madison</a> · Paul R. Burley · CC BY-SA 4.0</li>
+    </ul>
+    <p style="margin-top:10px;font-size:11.5px">모든 사진은 크기를 줄였고, 목차의 사진은 페이지에서 청색 톤으로 바꿔 보여줍니다.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  /* 안전등 (테마) */
+  const root=document.documentElement, safe=$('#safe');
+  const isDark=()=>root.dataset.theme==='dark'||(!root.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);
+  try{const t=localStorage.getItem('36exp-theme');if(t)root.dataset.theme=t;}catch(e){}
+  const syncSafe=()=>safe.setAttribute('aria-pressed',String(isDark()));
+  syncSafe();
+  safe.addEventListener('click',()=>{const t=isDark()?'light':'dark';root.dataset.theme=t;syncSafe();try{localStorage.setItem('36exp-theme',t)}catch(e){}});
+
+  function chipGroup(el,onChange){
+    el.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;
+      el.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));onChange(b.dataset.k);});
+  }
+
+  /* 카메라 */
+  const CAMS=[
+    {n:'자동 똑딱이',en:'Point & Shoot',f:'135',k:['135','new'],d:'초점, 노출, 필름 감기까지 자동. 들고 다니며 일상을 찍기 좋습니다.',ex:'Olympus μ[mju:]-II · Konica Big Mini · Contax T2 · Ricoh GR1',p:'가볍고 실패가 적음',c:'인기 기종은 가격 거품, 고장 시 수리 어려움',new:true},
+    {n:'수동 SLR',en:'Manual SLR',f:'135',k:['135','new'],d:'렌즈로 들어온 상을 거울로 그대로 봅니다. 조리개와 셔터를 직접 정하며 노출을 배우기에 가장 좋습니다.',ex:'Nikon FM2 · Pentax K1000 · Canon AE-1 · Olympus OM-1',p:'렌즈 교환, 기계식은 튼튼',c:'무겁고 셔터 소리가 큼',new:true},
+    {n:'자동초점 SLR',en:'AF SLR',f:'135',k:['135'],d:'90~2000년대 자동초점 필름 SLR. 조작이 요즘 디지털 카메라와 비슷합니다.',ex:'Nikon F100 · Canon EOS 5 · Minolta α-7',p:'중고가가 비교적 저렴, 빠른 AF',c:'플라스틱 바디, 전자 고장',new:false},
+    {n:'레인지파인더',en:'Rangefinder',f:'135',k:['135'],d:'뷰파인더 속 두 개의 상을 겹쳐 초점을 맞춥니다. 거울이 없어 작고 조용합니다.',ex:'Leica M6 · Voigtländer Bessa R · Canonet QL17 GIII · Yashica Electro 35',p:'조용한 셔터, 거리 사진에 강함',c:'근접 촬영과 망원이 약함, 시차',new:false},
+    {n:'하프프레임',en:'Half frame',f:'135',k:['135','new'],d:'35mm 한 컷을 반으로 나눠 씁니다. 36장 롤로 72장. 두 장을 나란히 붙인 사진이 매력입니다.',ex:'Olympus Pen EE-3 · Pen F · Kodak Ektar H35',p:'필름값 절약, 세로 사진이 기본',c:'화질은 35mm의 절반 면적',new:true},
+    {n:'이안반사',en:'TLR',f:'120',k:['120'],d:'렌즈 두 개가 위아래로. 위는 보는 용, 아래는 찍는 용. 허리 높이에서 내려다보며 찍습니다.',ex:'Rolleiflex 2.8F · Yashica Mat-124G · Mamiya C330',p:'6×6 정사각, 중형치고 저렴한 입문',c:'좌우 반전된 상, 근접 시 시차',new:false},
+    {n:'중형 SLR · RF',en:'Medium format',f:'120',k:['120'],d:'120 필름을 쓰는 본격 중형. 35mm보다 3~4배 큰 면적이 주는 부드러운 계조가 특징입니다.',ex:'Pentax 67 · Mamiya RB67 · Hasselblad 500C/M · Mamiya 7 · Fuji GW690',p:'압도적인 디테일',c:'무겁고 비쌈, 롤당 8~16장',new:false},
+    {n:'대형 뷰카메라',en:'Large format',f:'4×5',k:['etc'],d:'시트 필름을 한 장씩 넣어 찍습니다. 렌즈와 필름면을 기울이는 무브먼트로 원근과 초점면을 조절합니다.',ex:'Chamonix · Linhof Technika · Sinar · Intrepid',p:'최고 화질, 건축·풍경',c:'삼각대 필수, 한 장 한 장 느림',new:false},
+    {n:'토이 · 일회용',en:'Toy & single-use',f:'135 / 120',k:['135','120','new'],d:'플라스틱 렌즈의 비네팅과 빛샘이 매력. 일회용 카메라는 필름이 미리 들어 있어 통째로 현상소에 맡깁니다.',ex:'Holga 120N · Diana F+ · Lomo LC-A · 일회용 카메라',p:'싸고 우연한 결과',c:'노출 조절이 거의 없음',new:true},
+    {n:'인스턴트',en:'Instant',f:'인스턴트',k:['etc','new'],d:'찍으면 바로 사진이 나옵니다. 현상소가 필요 없습니다.',ex:'Polaroid SX-70 · 600 · i-Type · Instax mini · wide · square',p:'세상에 단 한 장',c:'장당 비용이 높고 온도에 민감',new:true},
+  ];
+  function renderCams(k){
+    $('#cams').innerHTML=CAMS.filter(c=>k==='all'||c.k.includes(k)).map(c=>`
+      <article class="cam"><h4>${esc(c.n)} <span class="mono">${esc(c.f)}</span></h4>
+      <p>${esc(c.d)}</p><p class="ex">${esc(c.ex)}</p>
+      <dl class="pc"><dt>좋은 점</dt><dd>${esc(c.p)}</dd><dt>아쉬운 점</dt><dd>${esc(c.c)}</dd></dl>
+      ${c.new?'<span class="tag">입문 추천</span>':''}</article>`).join('');
+  }
+  renderCams('all'); chipGroup($('#camChips'),renderCams);
+
+  /* 필름 */
+  const P={c41:['C-41','p-c41'],bw:['B&W','p-bw'],e6:['E-6','p-e6'],ecn:['ECN-2','p-ecn']};
+  const FILMS=[
+    ['Kodak Portra 160',160,'c41','135 · 120 · 시트','부드러운 피부 톤, 낮은 채도. 인물·웨딩'],
+    ['Kodak Portra 400',400,'c41','135 · 120 · 시트','관용도가 매우 넓고 오버에 강함. 가장 무난한 고급 필름'],
+    ['Kodak Portra 800',800,'c41','135 · 120','저녁과 실내, 따뜻한 톤 유지'],
+    ['Kodak Ektar 100',100,'c41','135 · 120 · 시트','고채도, 아주 고운 입자. 풍경'],
+    ['Kodak Gold 200',200,'c41','135 · 120','노랗고 따뜻한 색감. 가성비 입문'],
+    ['Kodak UltraMax 400',400,'c41','135','진한 색, 일상용 범용'],
+    ['Lomography Color 400',400,'c41','135 · 120','채도와 대비가 진한 편'],
+    ['CineStill 800T',800,'c41','135 · 120','텅스텐 조명 기준. 렘젯이 없어 광원 주위 붉은 헐레이션'],
+    ['CineStill 400D',400,'c41','135 · 120','주광용 시네 계열 컬러 네거'],
+    ['Harman Phoenix 200',200,'c41','135 · 120','높은 대비와 헐레이션, 실험적인 색'],
+    ['Ilford HP5 Plus',400,'bw','135 · 120 · 시트','푸시에 강함(3200까지). 다목적 흑백'],
+    ['Ilford FP4 Plus',125,'bw','135 · 120 · 시트','고운 입자, 넓은 계조'],
+    ['Ilford Delta 3200',3200,'bw','135 · 120','공칭 감도는 약 1000. 어두운 곳 전용'],
+    ['Ilford XP2 Super',400,'c41','135 · 120','C-41로 현상하는 흑백. 컬러 현상소에 그대로 맡김'],
+    ['Kodak Tri-X 400',400,'bw','135 · 120','굵고 힘 있는 입자, 다큐멘터리의 상징'],
+    ['Kodak T-Max 100',100,'bw','135 · 120 · 시트','T-그레인, 매우 매끄러움'],
+    ['Kodak T-Max 400',400,'bw','135 · 120 · 시트','400인데 입자가 고움'],
+    ['Fomapan 100 Classic',100,'bw','135 · 120 · 시트','저렴한 체코산, 클래식한 톤'],
+    ['Kentmere Pan 400',400,'bw','135','연습용으로 좋은 저가 흑백'],
+    ['Fujifilm Velvia 50',50,'e6','135 · 120 · 시트','극채도 풍경 슬라이드, 관용도 좁음'],
+    ['Fujifilm Provia 100F',100,'e6','135 · 120 · 시트','중립적이고 정확한 색'],
+    ['Kodak Ektachrome E100',100,'e6','135 · 120 · 시트','깨끗하고 살짝 차가운 색'],
+    ['Kodak Vision3 250D',250,'ecn','재포장 135','영화용 주광 네거. ECN-2 받는 현상소 필요'],
+    ['Kodak Vision3 500T',500,'ecn','재포장 135','영화용 텅스텐 네거. 야간 도시'],
+  ];
+  let fk='all',fq='';
+  function renderFilms(){
+    const q=fq.trim().toLowerCase();
+    const rows=FILMS.filter(f=>(fk==='all'||f[2]===fk)&&(!q||f[0].toLowerCase().includes(q)||f[4].toLowerCase().includes(q)));
+    $('#filmRows').innerHTML=rows.length?rows.map(f=>`<tr><td class="nm">${esc(f[0])}</td><td class="n">${f[1]}</td><td><span class="pill ${P[f[2]][1]}">${esc(P[f[2]][0])}</span></td><td style="white-space:nowrap">${esc(f[3])}</td><td>${esc(f[4])}</td></tr>`).join('')
+      :'<tr><td colspan="5" class="empty">찾는 필름이 없습니다. 다른 이름으로 검색해 보세요.</td></tr>';
+  }
+  renderFilms();
+  chipGroup($('#filmChips'),k=>{fk=k;renderFilms()});
+  $('#filmQ').addEventListener('input',e=>{fq=e.target.value;renderFilms()});
+
+  /* 써니 16 */
+  const LIGHT=[
+    ['눈밭·백사장의 맑은 날',16,22],['맑은 날, 또렷한 그림자',15,16],['옅은 구름, 그림자 흐릿',14,11],
+    ['흐린 날, 그림자 없음',13,8],['짙게 흐림 · 맑은 날 그늘',12,5.6],['해 지기 직전',11,4],
+    ['밝은 실내 · 창가',8,2.8],['보통 실내',7,2],['밤 거리 · 네온',5,1.4]];
+  const AP=[1.4,2,2.8,4,5.6,8,11,16,22];
+  const SH=[[1/4000,'1/4000'],[1/2000,'1/2000'],[1/1000,'1/1000'],[1/500,'1/500'],[1/250,'1/250'],[1/125,'1/125'],[1/60,'1/60'],[1/30,'1/30'],[1/15,'1/15'],[1/8,'1/8'],[1/4,'1/4'],[1/2,'1/2'],[1,'1초'],[2,'2초'],[4,'4초'],[8,'8초'],[15,'15초'],[30,'30초']];
+  const ls=$('#lightSel');
+  ls.innerHTML=LIGHT.map((l,i)=>`<option value="${i}"${i===1?' selected':''}>${esc(l[0])} — f/${l[2]} 기준</option>`).join('');
+  function sunny(){
+    const iso=+$('#isoSel').value, L=LIGHT[+ls.value], ev=L[1]+Math.log2(iso/100);
+    $('#evOut').innerHTML=`ISO ${iso} · ${esc(L[0])} → <b>EV ${ev.toFixed(1)}</b>`;
+    $('#pairs').innerHTML=AP.map(N=>{
+      const t=N*N/Math.pow(2,ev);
+      let best=SH[0],d=1e9;for(const s of SH){const dd=Math.abs(Math.log2(s[0]/t));if(dd<d){d=dd;best=s}}
+      const out=t<1/5000||t>40;
+      const slow=!out&&best[0]>=1/30, shaky=!out&&!slow&&best[0]>=1/60;
+      const w=out?(t<1/5000?'너무 밝음':'너무 어두움'):slow?'삼각대':shaky?'손떨림 주의':'';
+      return `<div class="pair${N===L[2]?' key':''}${slow||shaky?' slow':''}${out?' out':''}"><span class="f">f/${N}</span><span class="t">${out?'—':best[1]}</span><span class="w">${w}</span></div>`;
+    }).join('');
+  }
+  $('#isoSel').addEventListener('change',sunny); ls.addEventListener('change',sunny); sunny();
+
+  /* 현상 타이머 */
+  const COMBOS=[
+    ['Kodak Tri-X 400 · D-76 원액',405],['Kodak Tri-X 400 · D-76 1+1',585],
+    ['Ilford HP5 Plus · ID-11/D-76 원액',450],['Ilford HP5 Plus · ID-11/D-76 1+1',780],
+    ['Ilford FP4 Plus · ID-11/D-76 원액',510],['Ilford FP4 Plus · ID-11/D-76 1+1',660],
+    ['Kodak T-Max 400 · D-76 원액',480],['Ilford HP5 Plus · 로디널 1+50',660],
+  ];
+  const cs=$('#combo');
+  cs.innerHTML=COMBOS.map((c,i)=>`<option value="${i}">${esc(c[0])} — ${fmt(c[1])}</option>`).join('');
+  function fmt(s){s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+  let steps=[],idx=0,left=0,running=false,last=0,timer=null;
+  function build(){
+    const dev=COMBOS[+cs.value][1];
+    steps=[['현상',dev,'dev'],['정지',60,'stop'],['정착',300,'fix'],['수세',600,'wash'],['웨팅',60,'wet']];
+    idx=0;left=steps[0][1];running=false;stopTick();draw();
+  }
+  function draw(){
+    const s=steps[idx];
+    $('#tNow').textContent=s?s[0]:'완료 — 필름을 꺼내 걸어 말리세요';
+    $('#tClock').textContent=s?fmt(left):'0:00';
+    $('#tGo').textContent=running?'일시정지':'시작';
+    $('#tPlan').innerHTML=steps.map((x,i)=>`<li class="${i===idx?'cur':i<idx?'done':''}"><span>${x[0]}</span><span>${fmt(x[1])}</span></li>`).join('');
+    const a=$('#tAgit');
+    if(!s){a.className='agit';a.textContent='끝';return}
+    const el=s[1]-left;
+    let on=false,txt='대기 중';
+    if(s[2]==='dev'||s[2]==='fix'){on=running&&(el<30||el%60<10);txt=running?(on?'지금 교반':'가만히 두기'):'대기 중'}
+    else if(s[2]==='stop'){on=running;txt=running?'계속 교반':'대기 중'}
+    else if(s[2]==='wash'){txt=running?'흐르는 물 또는 물갈이 반복':'대기 중'}
+    else {txt=running?'가볍게 1~2번 뒤집기':'대기 중'}
+    a.className='agit'+(on?' on':'');a.textContent=txt;
+  }
+  function stopTick(){if(timer){clearInterval(timer);timer=null}}
+  function tick(){
+    const now=Date.now();left-=(now-last)/1000;last=now;
+    if(left<=0){idx++;if(idx>=steps.length){running=false;stopTick();left=0}else{left=steps[idx][1];running=false;stopTick()}}
+    draw();
+  }
+  $('#tGo').addEventListener('click',()=>{
+    if(idx>=steps.length)return;
+    running=!running;
+    if(running){last=Date.now();timer=setInterval(tick,250)}else{stopTick()}
+    draw();
+  });
+  $('#tNext').addEventListener('click',()=>{if(idx<steps.length){idx++;running=false;stopTick();left=idx<steps.length?steps[idx][1]:0;draw()}});
+  $('#tReset').addEventListener('click',build);
+  cs.addEventListener('change',build);
+  build();
+
+  /* 용어 */
+  const G=[
+    ['감도','ISO','필름이 빛에 반응하는 정도. 두 배가 되면 한 스톱 차이.'],
+    ['관용도','Latitude','노출이 빗나가도 쓸 만한 사진이 나오는 범위. 컬러 네거가 넓고 슬라이드가 좁다.'],
+    ['교반','Agitation','현상 중 탱크를 뒤집어 약품을 고르게 섞는 일.'],
+    ['그레인','Grain','사진에 보이는 은 입자의 질감. 고감도·푸시일수록 굵어진다.'],
+    ['네거티브','Negative','명암(컬러는 색까지)이 반대로 기록된 필름. 인화나 스캔으로 반전한다.'],
+    ['다계조 인화지','Multigrade','필터 번호로 대비를 바꿀 수 있는 흑백 인화지.'],
+    ['닷징 · 버닝','Dodge & Burn','암실 인화 중 일부를 가려 밝게(닷징), 더 비춰 어둡게(버닝) 하는 기법.'],
+    ['라이트 씰','Light seal','뒷판 틈을 막는 스펀지. 삭으면 빛샘이 생긴다.'],
+    ['렘젯','Rem-jet','영화용 필름 뒷면의 검은 탄소 층. 현상 전에 제거해야 한다.'],
+    ['리더','Leader','필름 통 밖으로 나온 앞부분. 감김 축에 끼우는 부분.'],
+    ['밀착 인화','Contact sheet','네거티브를 인화지에 그대로 올려 한 롤을 한 장에 뽑은 것.'],
+    ['브라켓팅','Bracketing','같은 장면을 노출을 바꿔 여러 장 찍어 두는 것.'],
+    ['빛샘','Light leak','의도치 않은 빛이 필름에 닿아 생긴 붉거나 하얀 자국.'],
+    ['셔터 우선 · 조리개 우선','S / A mode','하나를 내가 정하면 나머지를 카메라가 맞추는 반자동 노출.'],
+    ['스톱','Stop','빛의 양이 두 배 또는 절반이 되는 단위.'],
+    ['슬라이드','Slide · Positive','현상하면 실제 색 그대로 보이는 양화 필름. E-6 공정.'],
+    ['시아노타입','Cyanotype','철염 감광액을 바른 종이를 햇빛에 노광해 프러시안 블루로 인화하는 1842년의 기법. 청사진의 기원.'],
+    ['시차','Parallax','파인더와 렌즈 위치가 달라 생기는 구도 차이. 레인지파인더·이안반사에서 근접 시 나타난다.'],
+    ['오렌지 마스크','Orange mask','컬러 네거티브 바탕의 주황색 층. 색 재현을 돕지만 스캔 반전을 어렵게 한다.'],
+    ['잠상','Latent image','찍었지만 아직 현상하지 않아 눈에 보이지 않는 상.'],
+    ['정착','Fixing','빛 받지 않은 은염을 씻어내 필름이 더는 빛에 반응하지 않게 하는 단계.'],
+    ['존 포커스','Zone focus','거리 눈금을 미리 맞춰두고 그 범위 안에서 찍는 방법. 스냅에 유리.'],
+    ['카운터','Frame counter','지금 몇 번째 컷인지 보여주는 숫자 창.'],
+    ['캐니스터','Canister · 파트로네','35mm 필름이 감겨 있는 금속 통.'],
+    ['크로스 프로세스','Cross process','슬라이드 필름을 C-41로 현상하는 등 공정을 일부러 바꾸는 것. 색이 크게 틀어진다.'],
+    ['테스트 스트립','Test strip','적정 노광 시간을 찾기 위해 단계별로 노광한 인화지 조각.'],
+    ['푸시 · 풀','Push / Pull','감도를 올려(푸시) 혹은 내려(풀) 찍고 현상 시간으로 보정하는 것.'],
+    ['피사계 심도','Depth of field','초점이 맞아 보이는 앞뒤 범위. 조리개를 조일수록 깊어진다.'],
+    ['헐레이션','Halation','강한 빛 주위로 번지는 붉은 테두리. 렘젯이 없는 필름에서 두드러진다.'],
+    ['DX 코드','DX code','필름 통 겉면의 은색·검은 칸. 카메라가 감도를 자동으로 읽는다.'],
+    ['RC · FB','Resin coated / Fiber based','인화지의 두 종류. RC는 빠르고 평평, FB는 깊은 계조와 보존성.'],
+    ['X 동조','Flash sync','포컬플레인 셔터에서 플래시와 함께 쓸 수 있는 가장 빠른 셔터 속도.'],
+  ].sort((a,b)=>a[0].localeCompare(b[0],'ko'));
+  function renderG(q){
+    q=(q||'').trim().toLowerCase();
+    const r=G.filter(g=>!q||g.join(' ').toLowerCase().includes(q));
+    $('#gloss').innerHTML=r.length?r.map(g=>`<div><dt>${esc(g[0])} <span class="mono">${esc(g[1])}</span></dt><dd>${esc(g[2])}</dd></div>`).join('')
+      :'<p class="empty">찾는 용어가 없습니다. 다른 말로 검색해 보세요.</p>';
+  }
+  renderG(''); $('#gq').addEventListener('input',e=>renderG(e.target.value));
+})();
+</script>
+
+</body>
+</html>
