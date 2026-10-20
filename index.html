@@ -58,6 +58,8 @@ a{color:inherit}
 .nav::-webkit-scrollbar{display:none}
 .nav a{text-decoration:none;font-size:13px;padding:4px 8px;white-space:nowrap;border-radius:2px}
 .nav a:hover{background:var(--ink);color:var(--paper)}
+.hits{flex-shrink:0;display:block;height:20px;width:auto}
+@media (max-width:600px){.logo span{display:none}.bar .wrap{gap:10px}}
 .safe{flex-shrink:0;font:500 11px/1 var(--f-mono);letter-spacing:.08em;background:none;color:var(--ink);border:1px solid var(--ink);padding:7px 10px;cursor:pointer;display:flex;gap:7px;align-items:center}
 .safe i{width:8px;height:8px;border-radius:50%;background:var(--ink-2);display:block}
 :root[data-theme="dark"] .safe i{background:var(--accent);box-shadow:0 0 8px var(--accent)}
@@ -348,6 +350,7 @@ footer p{margin:0;max-width:60ch}
     <nav class="nav" aria-label="섹션">
       <a href="#quiz">필름 테스트</a><a href="#sim">시뮬레이터</a><a href="#camera">카메라</a><a href="#film">필름</a><a href="#shoot">촬영</a><a href="#develop">현상</a><a href="#print">인화</a><a href="#scan">스캔</a><a href="#keep">보관</a><a href="#lab">현상소</a><a href="#words">용어</a>
     </nav>
+    <img class="hits" src="https://hits.sh/hoochi1213.github.io/36exp.svg?view=today-total&amp;style=flat-square&amp;label=TODAY%20%2F%20TOTAL&amp;color=56719a&amp;labelColor=2a2e35" alt="오늘 방문 수 / 누적 방문 수" height="20" referrerpolicy="no-referrer">
     <button class="safe" id="safe" type="button" aria-pressed="false"><i></i>청사진</button>
   </div>
 </header>
