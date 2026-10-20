@@ -196,6 +196,9 @@ section::before{content:"▸ 36EXP  ·  SAFETY FILM  ·  135  ·  ▸ 36EXP  · 
 .sim-films button[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--panel)}
 .sim-films button:hover{border-color:var(--accent)}
 .sim-desc{margin:0;font-size:13.5px;min-height:3em}
+.sim-dl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.sim-dl .btn[disabled]{opacity:.45;cursor:not-allowed}
+.sim-dl-msg{font-size:12.5px;color:var(--ink-2)}
 
 /* 필름 예시 갤러리 */
 .looks{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px 14px}
@@ -378,7 +381,6 @@ footer p{margin:0;max-width:60ch}
   <div class="sheet-label mono"><span>▸ 한 롤의 하루 — 옆으로 넘겨보세요</span><span>SCANNED FROM FILM</span></div>
   <div class="roll" tabindex="0" aria-label="필름으로 찍은 하루의 사진들">
     <figure><img src="photos/x-ektar.jpg" alt="아침 햇살이 비치는 모스크바 거리와 트롤리버스"><figcaption><span>▸ 3 &nbsp;EKTAR 100</span><span>08:10 출근길</span></figcaption></figure>
-    <figure><img src="photos/x-portra160.jpg" alt="식물 사이에 앉아 웃는 사람"><figcaption><span>▸ 9 &nbsp;PORTRA 160</span><span>12:30 점심 약속</span></figcaption></figure>
     <figure><img src="photos/x-portra160b.jpg" alt="맑은 하늘 아래 교회 건물"><figcaption><span>▸ 14 &nbsp;PORTRA 160</span><span>14:00 산책</span></figcaption></figure>
     <figure><img src="photos/x-fp4.jpg" alt="흑백으로 찍은 숲속 철길 위의 작은 기차"><figcaption><span>▸ 18 &nbsp;FP4 PLUS</span><span>15:40 기차 소리</span></figcaption></figure>
     <figure><img src="photos/x-ektachrome.jpg" alt="늦은 오후 빛을 받은 붉은 벽돌 건물"><figcaption><span>▸ 22 &nbsp;EKTACHROME</span><span>17:10 늦은 빛</span></figcaption></figure>
@@ -428,7 +430,7 @@ footer p{margin:0;max-width:60ch}
     <header class="sec-head">
       <p class="edge mono">▸ 0 &nbsp; 0A<br>Simulator</p>
       <div><h2>필름 시뮬레이터 <small>내 사진을 필름으로</small></h2>
-      <p class="lede">휴대폰 사진 한 장을 올리고 필름을 골라보세요. 색과 대비, 입자, 빛 번짐을 필름처럼 바꿔 보여줍니다. 가운데 선을 좌우로 밀면 원본과 비교할 수 있어요.</p></div>
+      <p class="lede">휴대폰 사진 한 장을 올리고 필름을 골라보세요. 색과 대비, 입자, 빛 번짐을 필름처럼 바꿔 보여줍니다. 가운데 선을 좌우로 밀면 원본과 비교할 수 있고, 마음에 들면 고해상도 JPG로 저장할 수 있어요.</p></div>
     </header>
     <div class="sim">
       <div class="sim-view">
@@ -440,6 +442,10 @@ footer p{margin:0;max-width:60ch}
           <input type="range" id="simSlider" min="0" max="100" value="50" aria-label="원본과 필름 비교 위치">
         </div>
         <p class="mono sim-src" id="simSrc">예시 사진 · 직접 올리면 바뀝니다</p>
+        <div class="sim-dl">
+          <button class="btn" type="button" id="simDl" disabled>필름 사진 저장하기 (JPG)</button>
+          <span class="sim-dl-msg" id="simDlMsg" aria-live="polite">저장 기능을 준비하는 중…</span>
+        </div>
       </div>
       <div class="sim-side">
         <label class="drop" id="simDrop" for="simFile">
@@ -543,7 +549,7 @@ footer p{margin:0;max-width:60ch}
             <figure><img src="photos/hp5.jpg" alt="Ilford HP5 Plus로 찍은 함부르크 거리" loading="lazy"><figcaption>Ilford HP5 Plus <span class="mono">B&amp;W · 135</span></figcaption></figure>
             <figure><img src="photos/trix.jpg" alt="Kodak Tri-X 400으로 찍은 낮은 지붕의 건물" loading="lazy"><figcaption>Kodak Tri-X 400 <span class="mono">B&amp;W · 135</span></figcaption></figure>
             <figure><img src="photos/x-ektar.jpg" alt="Kodak Ektar 100으로 찍은 아침 거리" loading="lazy"><figcaption>Kodak Ektar 100 <span class="mono">C-41 · 135</span></figcaption></figure>
-            <figure><img src="photos/x-portra160.jpg" alt="Kodak Portra 160으로 찍은 인물" loading="lazy"><figcaption>Kodak Portra 160 <span class="mono">C-41 · 120</span></figcaption></figure>
+            <figure><img src="photos/x-portra160b.jpg" alt="Kodak Portra 160으로 찍은 맑은 하늘 아래 교회 건물" loading="lazy"><figcaption>Kodak Portra 160 <span class="mono">C-41 · 120</span></figcaption></figure>
             <figure><img src="photos/x-cine-road.jpg" alt="CineStill 800T로 찍은 밤 도로" loading="lazy"><figcaption>CineStill 800T <span class="mono">C-41 · 135</span></figcaption></figure>
             <figure><img src="photos/x-ektachrome.jpg" alt="Ektachrome으로 찍은 붉은 벽돌 건물" loading="lazy"><figcaption>Kodak Ektachrome <span class="mono">E-6 · 135</span></figcaption></figure>
             <figure><img src="photos/x-fp4.jpg" alt="Ilford FP4 Plus로 찍은 숲속 기차" loading="lazy"><figcaption>Ilford FP4 Plus <span class="mono">B&amp;W · 135</span></figcaption></figure>
@@ -907,7 +913,6 @@ footer p{margin:0;max-width:60ch}
       <li><b>토이</b> <a href="https://commons.wikimedia.org/wiki/File:Holga_120N_Medium_Format_Camera_(52937534209).jpg">Holga 120N</a> · Tony Webster · CC BY 2.0</li>
       <li><b>인스턴트</b> <a href="https://commons.wikimedia.org/wiki/File:Polaroid_SX-70_Land_Camera_-_MIT_Museum_-_DSC03773.JPG">Polaroid SX-70, MIT Museum</a> · Daderot · CC0</li>
       <li><b>Ektar 100</b> <a href="https://commons.wikimedia.org/wiki/File:Moscow_trolleybus_2020-03_Izmailovo_kodak_ektar_100.jpg">Moscow trolleybus 2020-03 Izmailovo kodak ektar </a> · Svetlov Artem · CC0</li>
-      <li><b>Portra 160</b> <a href="https://commons.wikimedia.org/wiki/File:Kodak_Portra_160_-_Mamiya_7ii_-_Flickr_-_minka6.jpg">Kodak Portra 160 - Mamiya 7ii - Flickr - minka6</a> · minka6 · CC BY 2.0</li>
       <li><b>CineStill 800T</b> <a href="https://commons.wikimedia.org/wiki/File:Long_Exposure_at_Night_of_a_Road_on_Cinestill_800T.jpg">Long Exposure at Night of a Road on Cinestill 80</a> · Arandomphotographer · CC BY 4.0</li>
       <li><b>CineStill 800T</b> <a href="https://commons.wikimedia.org/wiki/File:U-Bahn_Haltestelle_%E2%80%93_Subway_stop_%E2%80%93_Wettersteinplatz_M%C3%BCnchen_-_Flickr_-_markus_spiske.jpg">U-Bahn Haltestelle – Subway stop – Wettersteinpl</a> · Markus Spiske · CC BY 2.0</li>
       <li><b>Ektachrome</b> <a href="https://commons.wikimedia.org/wiki/File:%D0%91%D0%B0%D1%80%D0%B0%D0%BD%D0%BE%D0%B2%D1%81%D0%BA%D0%BE%D0%B5_2021-10_2.jpg">Барановское 2021-10 2</a> · Svetlov Artem · CC BY-SA 4.0</li>
@@ -1124,7 +1129,7 @@ footer p{margin:0;max-width:60ch}
       why:'어디서 찍어도 크게 실패하지 않는, 가장 너그러운 필름. 피부는 부드럽고 하늘은 차분하게 남습니다.',
       when:'여행, 친구, 흐린 날과 그늘까지 한 롤로',cam:'자동 똑딱이, 수동 SLR, 중형 어디에나',
       tip:'애매하면 한 스톱 더 밝게. 오버 노출에 아주 강해요.'},
-    portra160:{n:'Kodak Portra 160',iso:160,p:'c41',img:'x-portra160.jpg',fr:'▸ 9  PORTRA 160',
+    portra160:{n:'Kodak Portra 160',iso:160,p:'c41',img:'x-portra160b.jpg',fr:'▸ 14  PORTRA 160',
       why:'사람의 얼굴을 가장 곱게 담는 필름. 채도가 낮고 톤이 부드러워 담백한 사진이 됩니다.',
       when:'맑은 날 인물, 창가의 오후',cam:'수동 SLR, 중형 카메라',
       tip:'감도가 낮아 맑은 날 낮에 쓰세요. 실내라면 Portra 400이 낫습니다.'},
@@ -1246,7 +1251,7 @@ footer p{margin:0;max-width:60ch}
       bw:[.3,.59,.11],con:1.08,fade:.06,grain:13},
   ];
   const simOut=$('#simOut'),simOrig=$('#simOrig'),cmp=$('#simCmp');
-  let srcData=null,cur=SIM[0],W=0,H=0;
+  let srcData=null,cur=SIM[0],W=0,H=0,srcImg=null,srcName='36exp';
   $('#simFilms').innerHTML=SIM.map((f,i)=>`<button type="button" data-i="${i}" aria-pressed="${i===0}">${esc(f.n)}<small>${esc(f.s)}</small></button>`).join('');
   function rng(seed){let x=seed|0||1;return()=>{x^=x<<13;x^=x>>>17;x^=x<<5;return (x>>>0)/4294967296}}
   function curve(con,fade){
@@ -1305,7 +1310,7 @@ footer p{margin:0;max-width:60ch}
       W=Math.round(im.naturalWidth*s);H=Math.round(im.naturalHeight*s);
       [simOut,simOrig].forEach(c=>{c.width=W;c.height=H});
       const oc=simOrig.getContext('2d');oc.drawImage(im,0,0,W,H);
-      srcData=oc.getImageData(0,0,W,H);
+      srcData=oc.getImageData(0,0,W,H);srcImg=im;
       $('#simSrc').textContent=label;renderSim();
       if(src.startsWith('blob:'))URL.revokeObjectURL(src);
     };
@@ -1316,12 +1321,51 @@ footer p{margin:0;max-width:60ch}
     cur=SIM[+b.dataset.i];$('#simFilms').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderSim()});
   $('#simSlider').addEventListener('input',e=>cmp.style.setProperty('--x',e.target.value+'%'));
   function useFile(f){if(!f||!/^image\//.test(f.type)){$('#simSrc').textContent='사진 파일(JPG, PNG 등)만 올릴 수 있어요.';return}
-    loadImg(URL.createObjectURL(f),'내 사진 · '+f.name)}
+    srcName=(f.name.replace(/\.[^.]+$/,'')||'photo').slice(0,80);loadImg(URL.createObjectURL(f),'내 사진 · '+f.name)}
   $('#simFile').addEventListener('change',e=>useFile(e.target.files[0]));
   const drop=$('#simDrop');
   ['dragenter','dragover'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add('over')}));
   ['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove('over')}));
   drop.addEventListener('drop',e=>useFile(e.dataTransfer.files[0]));
+  /* 저장: 원본 해상도(긴 변 최대 3600px)로 다시 처리해 JPG로 */
+  const dlBtn=$('#simDl'),dlMsg=$('#simDlMsg');
+  let dl=null;
+  function renderFull(){
+    const im=srcImg,s=Math.min(1,3600/Math.max(im.naturalWidth,im.naturalHeight));
+    const w=Math.round(im.naturalWidth*s),h=Math.round(im.naturalHeight*s);
+    const keep=[srcData,W,H];
+    const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');
+    ctx.drawImage(im,0,0,w,h);
+    try{srcData=ctx.getImageData(0,0,w,h);W=w;H=h;ctx.putImageData(film(cur),0,0);if(cur.hal)halation(ctx,cur.hal)}
+    finally{[srcData,W,H]=keep}
+    return new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(new Error('blob')),'image/jpeg',.92));
+  }
+  dlBtn.addEventListener('click',async()=>{
+    if(!dl||!srcImg)return;
+    dlBtn.disabled=true;dlMsg.textContent='고해상도로 만드는 중…';
+    await new Promise(r=>setTimeout(r,30));
+    try{
+      const blob=await renderFull();
+      await dl.save({filename:`${srcName}_${cur.k}.jpg`,data:blob});
+      dlMsg.textContent='저장했어요.';
+    }catch(e){
+      const c=e&&e.code;
+      if(c==='declined')dlMsg.textContent='저장을 취소했어요.';
+      else if(c==='rate_limited')dlMsg.textContent='잠시 뒤 다시 눌러주세요.';
+      else if(c==='too_large')dlMsg.textContent='파일이 너무 커요. 더 작은 사진으로 해주세요.';
+      else if(c==='unavailable'||c==='not_granted'||c==='capability_disabled'||c==='capability_removed'){dlMsg.textContent='이 화면에서는 저장할 수 없어요.';dl=null}
+      else dlMsg.textContent='저장하지 못했어요. 다시 시도해 주세요.';
+    }finally{dlBtn.disabled=!dl}
+  });
+  (async()=>{
+    try{dl=window.claude&&await window.claude.use('downloads')}catch(e){dl=null}
+    if(!dl)dl={save:async({filename,data})=>{
+      const u=URL.createObjectURL(data),link=document.createElement('a');
+      link.href=u;link.download=filename;document.body.appendChild(link);link.click();link.remove();
+      setTimeout(()=>URL.revokeObjectURL(u),60000);
+    }};
+    dlBtn.disabled=false;dlMsg.textContent='필름을 고른 뒤 누르면 지금 보이는 느낌 그대로 저장돼요.';
+  })();
   loadImg('photos/x-portra160b.jpg','예시 사진 · 직접 올리면 바뀝니다');
 })();
 </script>
