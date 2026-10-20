@@ -63,13 +63,6 @@ a{color:inherit}
 :root[data-theme="dark"] .safe i{background:var(--accent);box-shadow:0 0 8px var(--accent)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .safe i{background:var(--accent);box-shadow:0 0 8px var(--accent)}}
 
-/* ── ticker ── */
-.ticker{border-bottom:1px solid var(--rule);overflow:hidden;white-space:nowrap;padding:6px 0;color:var(--ink-2)}
-.ticker div{display:inline-block;animation:tick 60s linear infinite;padding-left:100%}
-.ticker span{margin-right:48px}
-.ticker b{color:var(--accent);font-weight:500}
-@keyframes tick{to{transform:translateX(-100%)}}
-@media (prefers-reduced-motion: reduce){.ticker div{animation:none;padding-left:20px}}
 
 /* ── hero ── */
 .hero{padding-block:56px 28px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:40px;align-items:end}
@@ -359,14 +352,6 @@ footer p{margin:0;max-width:60ch}
   </div>
 </header>
 
-<div class="ticker mono" aria-hidden="true"><div>
-  <span><b>●</b> 현상 맡기기 전, 필름을 끝까지 되감았는지 한 번 더</span>
-  <span><b>●</b> 여름 차 안에 필름을 두지 마세요</span>
-  <span><b>●</b> 네거티브는 노출 과다에 관대합니다 — 애매하면 한 스톱 더</span>
-  <span><b>●</b> 공항 검색대에선 핸드 체크를 요청하세요</span>
-  <span><b>●</b> 냉장고에서 꺼낸 필름은 2~3시간 뒤에 뜯기</span>
-  <span><b>●</b> 정착액은 하수구에 버리지 않습니다</span>
-</div></div>
 
 <main class="wrap" id="top">
   <div class="hero">
