@@ -126,6 +126,7 @@ const foot = photos => `
   <p>36 EXP.는 필름 사진을 처음 시작하는 사람을 위한 개인 아카이브입니다. 가격은 ${UPDATED_KO} 기준의 대략적인 참고치입니다.</p>
   ${creditList(photos)}
 </footer>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "caf3a7a3608e4a4e802395a9ab54a818"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
 `;
