@@ -403,6 +403,7 @@ footer p{margin:0;max-width:60ch}
 .faq-list details{border-bottom:1px solid var(--rule);padding:14px 0}
 .faq-list summary{cursor:pointer;font-family:var(--f-display);font-size:18px;font-weight:500}
 .faq-list details p{margin:10px 0 0}
+.page h2[id]{scroll-margin-top:64px}
 .labtbl{font-size:13.5px}
 .labtbl td,.labtbl th{padding:9px 12px 9px 0;border-bottom:1px solid var(--rule);vertical-align:top}
 .labtbl td.n{white-space:nowrap;font-variant-numeric:tabular-nums}

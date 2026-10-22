@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LABS_SRC, MAIL_LABS, GUIDES} from './pages-data.mjs';
+import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LAB_REGIONS, LABS_SRC, MAIL_LABS, GUIDES} from './pages-data.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'https://hoochi1213.github.io/36exp/';
@@ -69,6 +69,7 @@ fs.writeFileSync(path.join(ROOT, 'assets/site.css'), css.trim() + `
 .faq-list details{border-bottom:1px solid var(--rule);padding:14px 0}
 .faq-list summary{cursor:pointer;font-family:var(--f-display);font-size:18px;font-weight:500}
 .faq-list details p{margin:10px 0 0}
+.page h2[id]{scroll-margin-top:64px}
 .labtbl{font-size:13.5px}
 .labtbl td,.labtbl th{padding:9px 12px 9px 0;border-bottom:1px solid var(--rule);vertical-align:top}
 .labtbl td.n{white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -259,8 +260,8 @@ listPage('guide', '필름 사진 가이드', '첫 롤 완주부터 필름 넣기
   const base = LABS.map(l => l.c[0]).filter(v => v != null).sort((a, b) => a - b);
   const hi = LABS.map(l => l.c[1]).filter(v => v != null).sort((a, b) => a - b);
   const med = a => a.length % 2 ? a[(a.length - 1) / 2] : Math.round((a[a.length / 2 - 1] + a[a.length / 2]) / 2);
-  const regions = [...new Set(LABS.map(l => l.r))];
-  write('lab', head({title: `필름 현상소 목록과 가격 비교 (${UPDATED_KO}) — 36 EXP.`, desc: `서울·경기·부산·대구 필름 현상소 ${LABS.length}곳의 35mm 컬러·흑백·슬라이드·120 현상+스캔 가격 비교와 택배 접수 현상소, 맡기는 법.`, url, img: 'lab.jpg',
+  const regions = LAB_REGIONS.filter(r => LABS.some(l => l.r === r));
+  write('lab', head({title: `필름 현상소 목록과 가격 비교 (${UPDATED_KO}) — 36 EXP.`, desc: `전국 ${regions.length}개 지역 필름 현상소 ${LABS.length}곳의 35mm 컬러·흑백·슬라이드·120 현상+스캔 가격 비교와 택배 접수 현상소, 맡기는 법.`, url, img: 'lab.jpg',
     ld: {'@context':'https://schema.org','@graph':[crumbLd([['36 EXP.',BASE],['현상소',url]])]}}).replaceAll('../../', '../') + `
 <p class="crumb"><a href="../">36 EXP.</a> / 현상소</p>
 <h1>필름 현상소 목록과 가격</h1>
@@ -271,9 +272,10 @@ listPage('guide', '필름 사진 가이드', '첫 롤 완주부터 필름 넣기
   <div><b>${won(med(base))}원</b><span>기본 스캔 중간값 (${base.length}곳)</span></div>
   <div><b>${won(med(hi))}원</b><span>고해상도 스캔 중간값 (${hi.length}곳)</span></div>
 </div>
-${regions.map(r => `<h2>${r}</h2>
+<nav class="links" aria-label="지역" style="margin-top:14px">${regions.map((r, i) => `<a class="chip" href="#r${i}">${r} ${LABS.filter(l => l.r === r).length}</a>`).join('')}</nav>
+${regions.map((r, i) => `<h2 id="r${i}">${r}</h2>
 <div class="scroll"><table class="labtbl"><thead><tr><th>현상소</th><th>35mm 컬러<br>기본 / 고해상</th><th>35mm 흑백</th><th>35mm 슬라이드</th><th>120 컬러</th></tr></thead><tbody>
-${LABS.filter(l => l.r === r).map(l => `<tr><td>${l.u ? `<a href="${l.u}" rel="nofollow noopener">${esc(l.n)}</a>` : esc(l.n)}${l.mail ? ' <span class="tag" style="margin:0">택배</span>' : ''}<span class="addr">${esc(l.a)}</span></td><td class="n">${won(l.c[0])} / ${won(l.c[1])}</td><td class="n">${won(l.bw)}</td><td class="n">${won(l.sl)}</td><td class="n">${won(l.m)}</td></tr>`).join('')}
+${LABS.filter(l => l.r === r).map(l => `<tr><td>${l.u ? `<a href="${l.u}" rel="nofollow noopener">${esc(l.n)}</a>` : esc(l.n)}${l.mail ? ' <span class="tag" style="margin:0">택배</span>' : ''}<span class="addr">${esc(l.a)}${l.note ? ` · ${esc(l.note)}` : ''}</span></td><td class="n">${won(l.c[0])} / ${won(l.c[1])}</td><td class="n">${won(l.bw)}</td><td class="n">${won(l.sl)}</td><td class="n">${won(l.m)}</td></tr>`).join('')}
 </tbody></table></div>`).join('')}
 <p class="meta">단위: 원. "–"는 해당 서비스가 없거나 가격이 확인되지 않은 경우입니다. 더 많은 현상소는 <a href="${LABS_SRC.url}">${LABS_SRC.name}</a>에서 볼 수 있습니다.</p>
 <h2>택배로 맡길 수 있는 곳</h2>
