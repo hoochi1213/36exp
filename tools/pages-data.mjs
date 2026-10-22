@@ -1,0 +1,110 @@
+// 개별 페이지 전용 데이터. 카메라·필름의 기본 데이터는 index.html(CAMS, CAM_MORE, DEFECTS, RES, FILMS)에서 읽어 온다.
+export const UPDATED = '2026-10-22';
+export const UPDATED_KO = '2026년 10월';
+
+// 카메라 img 키 → 주소
+export const CAM_SLUG = {
+  ps: 'point-and-shoot', slr: 'manual-slr', af: 'af-slr', rf: 'rangefinder', half: 'half-frame',
+  tlr: 'tlr', mf: 'medium-format', lf: 'large-format', toy: 'toy-camera', inst: 'instant',
+};
+
+// 필름 페이지. res: index.html의 RES 키(있으면 why/when/cam/tip을 가져옴)
+export const FILM_PAGES = [
+  {slug:'portra-400',res:'portra400',n:'Kodak Portra 400',
+    char:['피부 톤이 자연스럽고 채도는 차분한 편','ISO 400치고 입자가 고움','과다 노출에 매우 강함: +2~3스톱까지 무난'],
+    price:'약 2.8만 ~ 3.5만 원',cams:['ps','slr','mf'],alt:['portra-160','gold-200'],
+    more:'"실패 없는 첫 컬러 필름"을 묻는다면 가장 먼저 나오는 이름입니다. 맑은 날부터 흐린 날, 그늘, 해 질 녘까지 한 롤로 다 찍을 수 있을 만큼 관용도가 넓고, 현상소 스캔으로도 색이 크게 흔들리지 않습니다. 가격이 오른 것이 유일한 단점입니다.'},
+  {slug:'portra-160',res:'portra160',n:'Kodak Portra 160',
+    char:['채도가 낮고 톤이 아주 부드러움','입자가 매우 고와 중형·대형에서 진가','감도가 낮아 빛이 충분한 곳 전용'],
+    price:'약 2.5만 ~ 3.2만 원',cams:['slr','mf','tlr'],alt:['portra-400','ektar-100'],
+    more:'인물 사진가와 웨딩 사진가가 오래 써 온 필름입니다. 같은 Portra라도 400보다 색이 한층 담백하고 매끈해서, 맑은 날 창가나 그늘 아래 인물에서 가장 곱게 나옵니다. 120 중형으로 찍으면 입자를 거의 느낄 수 없습니다.'},
+  {slug:'gold-200',res:'gold',n:'Kodak Gold 200',
+    char:['노랗고 따뜻한 색, 향수 어린 느낌','입자는 적당히 보이는 편','가격이 저렴해 연습용으로 좋음'],
+    price:'약 1.3만 ~ 1.8만 원',cams:['ps','half','toy'],alt:['portra-400','ektar-100'],
+    more:'"필름 느낌"이라고 할 때 떠올리는 그 따뜻한 색을 가장 저렴하게 내는 필름입니다. 빛이 좋은 낮에 강하고, 그늘이나 실내에서는 다소 탁해질 수 있습니다. 첫 롤이나 여행 스냅용으로 부담 없이 쓰기 좋습니다.'},
+  {slug:'ektar-100',res:'ektar',n:'Kodak Ektar 100',
+    char:['컬러 네거티브 중 가장 선명하고 채도가 높음','입자가 매우 고움','노출이 부족하면 색이 쉽게 틀어짐'],
+    price:'약 2.3만 ~ 2.9만 원',cams:['slr','mf','lf'],alt:['fujifilm-velvia-50','portra-160'],
+    more:'슬라이드 필름처럼 쨍한 색을 컬러 네거티브의 편안함으로 얻고 싶을 때 고르는 필름입니다. 파란 하늘, 단풍, 도시의 간판 색이 진하게 살아납니다. 다만 피부는 붉게 나오기 쉬워 인물보다 풍경에 어울립니다.'},
+  {slug:'fujifilm-velvia-50',res:'velvia',n:'Fujifilm Velvia 50',
+    char:['극채도: 초록과 빨강이 특히 강함','관용도가 좁아 ±½스톱 안에서 맞춰야 함','라이트박스에서 보는 슬라이드 그 자체가 결과물'],
+    price:'약 3.5만 ~ 4.5만 원',cams:['slr','mf','lf'],alt:['kodak-ektachrome-e100','ektar-100'],
+    more:'풍경 사진가들의 전설적인 슬라이드 필름입니다. 정확히 노출된 Velvia 한 장은 디지털로 흉내 내기 어려운 깊은 색을 냅니다. 대신 노출계가 정확한 카메라와 삼각대, E-6를 받는 현상소가 필요합니다. 많은 사용자가 ISO 40으로 놓고 찍습니다.'},
+  {slug:'cinestill-800t',res:'cinestill',n:'CineStill 800T',
+    char:['영화용 필름을 C-41로 현상할 수 있게 개조','렘젯층이 없어 강한 광원 주위로 붉은 헐레이션','텅스텐(실내 조명) 기준 색온도'],
+    price:'약 2.8만 ~ 3.5만 원',cams:['rf','slr'],alt:['portra-400','ilford-hp5-plus'],
+    more:'밤 사진을 위한 필름입니다. 가로등, 네온, 자동차 불빛 주위로 번지는 붉은 빛이 이 필름의 상징입니다. 낮에 그냥 찍으면 전체가 파랗게 나오므로, 낮에는 85번 필터를 쓰거나 ISO 500 정도로 놓고 찍습니다.'},
+  {slug:'ilford-hp5-plus',res:'hp5',n:'Ilford HP5 Plus',
+    char:['부드러운 계조, 적당한 입자','푸시에 강함: 800~3200까지 올려 현상 가능','집에서 흑백 현상 연습하기에 좋음'],
+    price:'약 1.4만 ~ 1.8만 원',cams:['slr','rf','tlr'],alt:['kodak-tri-x-400','ilford-fp4-plus'],
+    more:'흑백을 처음 시작할 때 가장 무난한 필름입니다. 어두운 실내나 흐린 날에는 1600으로 놓고 찍은 뒤 현상소에 "+2 푸시"를 요청하면 됩니다. 가격도 흑백 필름 중 합리적인 편이라 연습용으로도 좋습니다.'},
+  {slug:'kodak-tri-x-400',res:'trix',n:'Kodak Tri-X 400',
+    char:['굵고 힘 있는 입자, 깊은 대비','거리·다큐멘터리 사진의 고전','푸시 현상에도 계조가 잘 버팀'],
+    price:'약 2.0만 ~ 2.6만 원',cams:['rf','slr'],alt:['ilford-hp5-plus','ilford-fp4-plus'],
+    more:'수십 년 동안 보도 사진가와 거리 사진가가 써 온 흑백 필름입니다. HP5보다 대비가 조금 더 강하고 입자가 또렷해, 강한 햇빛 아래 그림자가 진 거리에서 특히 멋이 납니다.'},
+  {slug:'ilford-fp4-plus',n:'Ilford FP4 Plus',iso:125,p:'bw',img:'x-fp4.jpg',
+    why:'입자가 곱고 계조가 넓은 저감도 흑백. 밝은 날 섬세한 흑백을 남기고 싶을 때 고릅니다.',
+    when:'맑은 날 풍경·건축, 인물',cam:'레인지파인더, 중형, 대형',
+    tip:'빛이 부족하면 삼각대를 쓰거나 HP5로 바꾸세요. 하이라이트가 잘 버팁니다.',
+    char:['ISO 125, 고운 입자','하이라이트부터 그림자까지 넓은 계조','중형·대형에서 특히 섬세함'],
+    price:'약 1.5만 ~ 1.9만 원',cams:['rf','mf','lf'],alt:['ilford-hp5-plus','kodak-tri-x-400'],
+    more:'HP5가 "어디서나 쓰는 흑백"이라면 FP4는 "빛이 좋을 때 꺼내는 흑백"입니다. 입자가 거의 드러나지 않아 큰 인화에도 매끈하고, 회색 단계가 풍부하게 남습니다. 사진 예시는 Leica M3로 찍은 FP4입니다.'},
+  {slug:'kodak-ektachrome-e100',n:'Kodak Ektachrome E100',iso:100,p:'e6',img:'x-ektachrome.jpg',
+    why:'깨끗하고 살짝 차가운 색의 슬라이드 필름. Velvia보다 자연스러운 채도를 원할 때 고릅니다.',
+    when:'맑은 날 풍경, 여행, 라이트박스 감상',cam:'노출계가 정확한 수동 SLR, 중형',
+    tip:'관용도가 좁아요. 밝은 부분에 노출을 맞추고, 애매하면 반 스톱 어둡게.',
+    char:['중립에서 약간 차가운 색','입자가 매우 고움','관용도 ±½~1스톱으로 좁음'],
+    price:'약 3.5만 ~ 4.5만 원',cams:['slr','mf'],alt:['fujifilm-velvia-50','ektar-100'],
+    more:'2018년에 다시 생산되기 시작한 Kodak의 슬라이드 필름입니다. Velvia처럼 과장된 색이 아니라 실제에 가까운 깨끗한 색을 내고, 피부 톤도 비교적 자연스럽습니다. E-6 현상을 받는 현상소를 먼저 확인하세요.'},
+];
+
+export const PROCESS = {
+  c41:['C-41','컬러 네거티브 현상. 국내 대부분의 현상소에서 바로 맡길 수 있고, 35mm 한 롤 현상+스캔은 대략 1만~2만 원입니다.'],
+  bw:['흑백','흑백 현상. 받는 현상소가 C-41보다 적고 1~2주 걸리기도 합니다. 집에서 직접 현상하기에 가장 쉬운 필름입니다.'],
+  e6:['E-6','슬라이드 현상. 받는 현상소가 적고 비용이 C-41보다 높습니다. 맡기기 전에 E-6 가능 여부를 꼭 문의하세요.'],
+  ecn:['ECN-2','영화용 현상. ECN-2를 받는 현상소에 맡겨야 합니다.'],
+};
+
+export const FAQ = [
+  {q:'필름 카메라를 처음 사려면 무엇부터 고르나요?',
+    a:'찍는 재미부터 느끼고 싶다면 <a href="../camera/point-and-shoot/">자동 똑딱이</a>, 노출을 배우고 싶다면 <a href="../camera/manual-slr/">수동 SLR</a>을 권합니다. 필름은 ISO 400 컬러 네거티브(예: <a href="../film/portra-400/">Portra 400</a>, <a href="../film/gold-200/">Gold 200</a>) 한 롤이면 대부분의 상황에서 실패가 적습니다.'},
+  {q:'공항 엑스레이 검색대를 통과해도 괜찮나요?',
+    a:'기내에 들고 타는 짐의 검색대 엑스레이는 ISO 800 이하 필름이라면 몇 번 통과해도 보통 문제가 없습니다. 위험한 것은 <b>위탁 수하물(부치는 짐)</b>의 CT 스캐너입니다. 필름은 반드시 기내에 들고 타고, ISO 800 이상이거나 여러 번 통과해야 한다면 검색 요원에게 손 검사(핸드 체크)를 요청하세요.'},
+  {q:'유통기한이 지난 필름을 써도 되나요?',
+    a:'냉장 보관된 필름이라면 대체로 괜찮습니다. 흔히 쓰는 기준은 <b>유통기한에서 10년 지날 때마다 1스톱 더 밝게</b> 찍는 것입니다. 실온에 오래 둔 필름은 색이 틀어지고 뿌옇게 나올 수 있는데, 이것도 하나의 맛으로 즐기는 사람이 많습니다.'},
+  {q:'필름은 어떻게 보관하나요?',
+    a:'찍기 전 필름은 지퍼백에 넣어 <b>냉장실</b>에 두고, 쓰기 1~2시간 전에 꺼내 실온에 맞춥니다(바로 열면 이슬이 맺힙니다). 찍은 필름은 되도록 빨리 현상하세요. 현상한 네거티브는 슬리브에 넣어 습기 없는 곳에 둡니다. 자세한 내용은 <a href="../#keep">보관</a> 섹션에 있습니다.'},
+  {q:'현상 비용과 기간은 어느 정도인가요?',
+    a:'국내 현상소 기준 35mm 컬러 네거티브(C-41) 한 롤 <b>현상+스캔은 대략 1만~2만 원</b>, 기간은 당일~1주입니다. 흑백과 슬라이드(E-6)는 비용이 더 들고 기간도 길어지는 편입니다. 금액은 현상소와 스캔 해상도에 따라 차이가 큽니다.'},
+  {q:'한 롤에 몇 장을 찍을 수 있나요?',
+    a:'35mm(135)는 24장 또는 36장, <a href="../camera/half-frame/">하프프레임</a>은 그 두 배(36장 롤로 72장)입니다. 120 중형 필름은 화면 크기에 따라 6×4.5는 15~16장, 6×6은 12장, 6×7은 10장, 6×9는 8장입니다.'},
+  {q:'ISO(감도)는 무엇을 골라야 하나요?',
+    a:'맑은 날 야외는 100~200, 흐린 날과 그늘·실내를 오가면 <b>400</b>, 밤이나 어두운 실내는 800 이상이 기준입니다. 한 롤로 여러 상황을 찍는다면 400이 가장 무난합니다.'},
+  {q:'컬러 네거티브, 흑백, 슬라이드는 무엇이 다른가요?',
+    a:'컬러 네거티브(C-41)는 색이 반전된 음화로 찍혀 관용도가 넓고 어디서나 현상됩니다. 흑백은 현상소가 적지만 집에서 직접 현상하기 쉽습니다. 슬라이드(E-6)는 색이 그대로 찍힌 양화라 라이트박스에서 바로 보이지만 노출이 까다롭습니다. 필름별 특징은 <a href="../#film">필름</a> 섹션에서 비교할 수 있습니다.'},
+  {q:'다 감기 전에 뒷판을 열어 버렸어요.',
+    a:'필름 통 밖으로 나와 있던 부분이 빛을 맞습니다. 보통 <b>가장 최근에 찍은 몇 컷</b>과 다음 몇 컷이 날아가고, 통 안에 이미 감겨 들어간 앞쪽 컷은 살아남는 경우가 많습니다. 바로 닫고, 남은 필름을 끝까지 찍은 뒤 현상해 보세요.'},
+  {q:'사진이 너무 하얗거나 까맣게 나왔어요.',
+    a:'네거티브가 투명하게(사진이 어둡고 탁하게) 나왔다면 노출 부족, 아주 진하게 나왔다면 노출 과다입니다. 롤 전체가 그렇다면 배터리나 노출계, 셔터 고장을 의심하세요. 특정 컷에 붉은 줄이 있다면 <a href="../camera/manual-slr/">차광재 손상</a>으로 빛이 샌 것입니다.'},
+  {q:'푸시 현상이 무엇인가요?',
+    a:'필름을 원래 감도보다 높게 놓고 찍은 뒤, 현상을 길게 해서 밝기를 보충하는 방법입니다. 예를 들어 ISO 400 필름을 1600으로 찍고 현상소에 <b>"+2 푸시"</b>를 요청합니다. 대비와 입자가 강해지며, 한 롤 전체를 같은 감도로 찍어야 합니다.'},
+  {q:'스캔 해상도는 어느 정도로 맡기면 되나요?',
+    a:'SNS에 올리거나 휴대폰으로 볼 용도라면 현상소의 기본(저·중해상도) 스캔으로 충분합니다. 크게 인화하거나 잘라 쓸 계획이 있다면 고해상도를 고르세요. 원본 네거티브만 잘 보관하면 나중에 다시 스캔할 수 있습니다.'},
+];
+
+// 사진 파일 → 하단 출처 목록(index.html)에서 찾을 위키미디어 파일명 일부
+export const PHOTO_CREDIT = {
+  'cam-ps.jpg':'Olympus_%CE%BC_mju_II','cam-slr.jpg':'Pentax_K1000','cam-af.jpg':'Nikon_F100.jpg','cam-rf.jpg':'Leica_M6',
+  'cam-half.jpg':'Olympus_Pen_EE-2','cam-tlr.jpg':'Retro_Rolleiflex','cam-mf.jpg':'Hasselblad_500c','cam-lf.jpg':'Sinar_F',
+  'cam-toy.jpg':'Holga_120N','cam-inst.jpg':'Polaroid_SX-70','camera.jpg':'Nikon_FM2_camera','shoot.jpg':'Nikon_FM2_-_arri',
+  'm-bigmini.jpg':'Konica_Big_Mini','m-t2.jpg':'Contax_T2','m-ae1.jpg':'Canon_AE-1','m-om1.jpg':'Olympus_OM-1',
+  'm-eos5.jpg':'Canon_EOS_5','m-dynax7.jpg':'Minolta_Dynax_7','m-canonet.jpg':'Canonet-QL17','m-bessar.jpg':'Bessa_R',
+  'm-penf.jpg':'Olympus_Pen_F.jpg','m-penee3.jpg':'Olympus_Pen_EE3','m-yashicamat.jpg':'Yashica_Mat-124G','m-c330.jpg':'Mamiya_C_330',
+  'm-rb67.jpg':'Mamiya_RB67','m-technika.jpg':'Linhof_Technika','m-dianaf.jpg':'Diana_F','m-lca.jpg':'Lomo_LC-A',
+  'm-instax.jpg':'Instax_mini_25','m-onestep.jpg':'Polaroid_600','d-fungus.jpg':'Lens_fungus','d-corrosion.jpg':'Battery_Terminal',
+  'd-rangefinder.jpg':'Rangefinder_window','d-bellows.jpg':'Camera_Bellows','d-selenium.jpg':'Olympus_Trip_35',
+  'x-leak.jpg':'Blossom_with_Light_Leak','x-fp4.jpg':'Gyermekvasut','x-halfframe.jpg':'Half-Frame_4442',
+  'portra.jpg':'Colorado_River','gold.jpg':'IJ_NDSM','velvia.jpg':'Autumn_house_Velvia','hp5.jpg':'Landungsbruecken',
+  'trix.jpg':'Unitarian_Meeting_House','x-ektar.jpg':'Moscow_trolleybus','x-cine-road.jpg':'Long_Exposure_at_Night',
+  'x-ektachrome.jpg':'%D0%91%D0%B0%D1%80','x-portra160b.jpg':'First_United_Methodist',
+};

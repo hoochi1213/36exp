@@ -294,6 +294,9 @@ section{padding-block:72px 8px;scroll-margin-top:56px}
 .camdlg .price small{display:block;font-family:var(--f-body);font-size:11.5px;color:var(--ink-2)}
 .camdlg .films{display:flex;flex-wrap:wrap;gap:6px}
 .camdlg .films .chip{font-size:12px}
+.pagelinks{font-size:13px;margin:16px 0 0;line-height:2}
+.pagelinks .mono{color:var(--ink-2);margin-right:8px}
+.camdlg .golink{display:inline-block;margin-top:22px;font-size:13.5px}
 .tag{display:inline-block;font:500 10px/1 var(--f-mono);letter-spacing:.08em;padding:4px 6px;border:1px solid var(--accent);color:var(--accent);align-self:flex-start;margin-top:4px}
 
 /* format diagram */
@@ -398,7 +401,7 @@ footer p{margin:0;max-width:60ch}
   <div class="wrap">
     <a class="logo" href="#top"><b>36 EXP.</b><span class="mono">Film Archive</span></a>
     <nav class="nav" aria-label="섹션">
-      <a href="#quiz">필름 테스트</a><a href="#sim">시뮬레이터</a><a href="#camera">카메라</a><a href="#film">필름</a><a href="#shoot">촬영</a><a href="#develop">현상</a><a href="#print">인화</a><a href="#scan">스캔</a><a href="#keep">보관</a><a href="#lab">현상소</a><a href="#words">용어</a>
+      <a href="#quiz">필름 테스트</a><a href="#sim">시뮬레이터</a><a href="#camera">카메라</a><a href="#film">필름</a><a href="#shoot">촬영</a><a href="#develop">현상</a><a href="#print">인화</a><a href="#scan">스캔</a><a href="#keep">보관</a><a href="#lab">현상소</a><a href="#words">용어</a><a href="faq/">FAQ</a>
     </nav>
     <img class="hits" src="https://hits.sh/hoochi1213.github.io/36exp.svg?view=today-total&amp;style=flat-square&amp;label=TODAY%20%2F%20TOTAL&amp;color=56719a&amp;labelColor=2a2e35" alt="오늘 방문 수 / 누적 방문 수" height="20" referrerpolicy="no-referrer">
     <button class="safe" id="safe" type="button" aria-pressed="false"><i></i>청사진</button>
@@ -545,6 +548,7 @@ footer p{margin:0;max-width:60ch}
             <button class="chip" type="button" data-k="new" aria-pressed="false">입문 추천</button>
           </div>
           <div class="cams" id="cams"></div>
+          <!-- pages:cams --><p class="pagelinks"><span class="mono">카메라별 가이드</span> <a href="camera/point-and-shoot/">자동 똑딱이</a> · <a href="camera/manual-slr/">수동 SLR</a> · <a href="camera/af-slr/">자동초점 SLR</a> · <a href="camera/rangefinder/">레인지파인더</a> · <a href="camera/half-frame/">하프프레임</a> · <a href="camera/tlr/">이안반사</a> · <a href="camera/medium-format/">중형 SLR · RF</a> · <a href="camera/large-format/">대형 뷰카메라</a> · <a href="camera/toy-camera/">토이 · 일회용</a> · <a href="camera/instant/">인스턴트</a></p><!-- /pages:cams -->
         </div>
 
         <div>
@@ -613,6 +617,7 @@ footer p{margin:0;max-width:60ch}
               <tbody id="filmRows"></tbody>
             </table>
           </div>
+          <!-- pages:films --><p class="pagelinks"><span class="mono">필름별 가이드</span> <a href="film/portra-400/">Kodak Portra 400</a> · <a href="film/portra-160/">Kodak Portra 160</a> · <a href="film/gold-200/">Kodak Gold 200</a> · <a href="film/ektar-100/">Kodak Ektar 100</a> · <a href="film/fujifilm-velvia-50/">Fujifilm Velvia 50</a> · <a href="film/cinestill-800t/">CineStill 800T</a> · <a href="film/ilford-hp5-plus/">Ilford HP5 Plus</a> · <a href="film/kodak-tri-x-400/">Kodak Tri-X 400</a> · <a href="film/ilford-fp4-plus/">Ilford FP4 Plus</a> · <a href="film/kodak-ektachrome-e100/">Kodak Ektachrome E100</a></p><!-- /pages:films -->
           <p class="note" style="margin-top:12px">생산·수입 상황에 따라 단종되거나 품귀인 필름이 자주 생깁니다. 판형 표기는 대표적으로 나오는 규격 기준입니다.</p>
         </div>
 
@@ -1108,6 +1113,7 @@ footer p{margin:0;max-width:60ch}
     ['셀렌','d-selenium.jpg','렌즈 둘레의 벌집 모양 창이 셀렌 노출계(사진은 Olympus Trip 35). 배터리 없이 빛으로 작동하지만, 오래되면 약해져 노출이 부정확해집니다.'],
     ['뒷판을 열고','shoot.jpg','뒷판을 연 모습(Nikon FM2). 셔터 속도를 바꿔 가며 눌러 보고, 빠른 속도일수록 짧게 열리는지 소리와 눈으로 확인합니다.'],
   ];
+  const CAM_SLUG={ps:'point-and-shoot',slr:'manual-slr',af:'af-slr',rf:'rangefinder',half:'half-frame',tlr:'tlr',mf:'medium-format',lf:'large-format',toy:'toy-camera',inst:'instant'};
   const defectOf=t=>DEFECTS.find(d=>t.includes(d[0]));
   const dlg=$('#camDlg');
   function openCam(i){
@@ -1128,6 +1134,7 @@ footer p{margin:0;max-width:60ch}
         <h5>중고로 살 때 확인할 것</h5><ul class="buy">${m.buy.map((w,j)=>{const d=defectOf(w);
           return d?`<li><button class="defbtn" type="button" aria-expanded="false" aria-controls="def${j}">${esc(w)}<span class="see">사진 보기</span></button><figure class="def" id="def${j}" hidden><img src="photos/${d[1]}" alt="" loading="lazy"><figcaption>${esc(d[2])}</figcaption></figure></li>`:`<li>${esc(w)}</li>`;}).join('')}</ul>
         <h5>대략적인 가격</h5><p class="price">${esc(m.price)}<small>${esc(m.pn)} 상태와 시기에 따라 차이가 큰 참고용 금액입니다.</small></p>
+        <a class="golink" href="camera/${CAM_SLUG[c.img]}/">이 카메라 전용 페이지로 보기 ▸</a>
         ${m.films.length?`<h5>어울리는 필름 — 누르면 필름 표로 이동</h5><div class="films">${m.films.map(f=>`<button class="chip" type="button" data-film="${esc(f)}">${esc(f)}</button>`).join('')}</div>`:''}
       </div>`;
     const tb=$('#camDlgB .thumbs');
