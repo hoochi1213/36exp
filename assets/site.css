@@ -411,5 +411,8 @@ footer p{margin:0;max-width:60ch}
 .stats div{border:1px solid var(--rule);padding:12px 14px;background:var(--panel)}
 .stats b{display:block;font-family:var(--f-display);font-size:22px;font-weight:500}
 .stats span{font-size:12px;color:var(--ink-2)}
+.guide-body{max-width:760px}
+.guide-body .gallery img{max-height:420px;object-fit:cover}
+.guide-body ol.steps{margin:10px 0 16px}
 .pagefoot{margin-top:48px;padding:28px 0 40px;border-top:1px solid var(--ink);font-size:12.5px;color:var(--ink-2)}
 .pagefoot ul{list-style:none;padding:0;margin:8px 0 0}

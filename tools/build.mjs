@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LABS_SRC, MAIL_LABS} from './pages-data.mjs';
+import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LABS_SRC, MAIL_LABS, GUIDES} from './pages-data.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'https://hoochi1213.github.io/36exp/';
@@ -77,6 +77,9 @@ fs.writeFileSync(path.join(ROOT, 'assets/site.css'), css.trim() + `
 .stats div{border:1px solid var(--rule);padding:12px 14px;background:var(--panel)}
 .stats b{display:block;font-family:var(--f-display);font-size:22px;font-weight:500}
 .stats span{font-size:12px;color:var(--ink-2)}
+.guide-body{max-width:760px}
+.guide-body .gallery img{max-height:420px;object-fit:cover}
+.guide-body ol.steps{margin:10px 0 16px}
 .pagefoot{margin-top:48px;padding:28px 0 40px;border-top:1px solid var(--ink);font-size:12.5px;color:var(--ink-2)}
 .pagefoot ul{list-style:none;padding:0;margin:8px 0 0}
 `);
@@ -110,7 +113,7 @@ const head = ({title, desc, url, img, ld}) => `<!doctype html>
   <div class="wrap">
     <a class="logo" href="../../"><b>36 EXP.</b><span class="mono">Film Archive</span></a>
     <nav class="nav" aria-label="메뉴">
-      <a href="../../#quiz">필름 테스트</a><a href="../../camera/">카메라</a><a href="../../film/">필름</a><a href="../../#develop">현상</a><a href="../../lab/">현상소</a><a href="../../faq/">자주 묻는 질문</a>
+      <a href="../../#quiz">필름 테스트</a><a href="../../guide/">가이드</a><a href="../../camera/">카메라</a><a href="../../film/">필름</a><a href="../../#develop">현상</a><a href="../../lab/">현상소</a><a href="../../faq/">자주 묻는 질문</a>
     </nav>
   </div>
 </header>
@@ -228,6 +231,28 @@ listPage('film', '필름별 가이드', '처음 고르기 좋은 필름 10종의
 ` + foot([]).replaceAll('../../', '../'));
 }
 
+// 6-1) 가이드
+GUIDES.forEach((g, i) => {
+  const url = `${BASE}guide/${g.slug}/`; urls.push(url);
+  const prev = GUIDES[(i + GUIDES.length - 1) % GUIDES.length], next = GUIDES[(i + 1) % GUIDES.length];
+  write(`guide/${g.slug}`, head({title: `${g.t} — 36 EXP.`, desc: g.d, url, img: g.img, ld: {'@context':'https://schema.org','@graph':[
+    {'@type':'Article',headline:g.t,description:g.d,image:`${BASE}photos/${g.img}`,dateModified:UPDATED,inLanguage:'ko',mainEntityOfPage:url},
+    crumbLd([['36 EXP.',BASE],['가이드',BASE+'guide/'],[g.t,url]])]}}) + `
+<p class="crumb"><a href="../../">36 EXP.</a> / <a href="../">가이드</a> / ${esc(g.t)}</p>
+<h1>${esc(g.t)}</h1>
+<p class="lede">${esc(g.s)}</p>
+<p class="meta">${UPDATED_KO} 업데이트</p>
+<div class="guide-body">
+<figure class="gallery" style="margin:24px 0 8px"><img src="../../photos/${g.img}" alt="" loading="lazy"></figure>
+${g.body}
+</div>
+<h2>다른 가이드</h2><div class="links">${GUIDES.filter(x => x !== g).map(x => `<a class="chip" href="../${x.slug}/">${esc(x.t)}</a>`).join('')}</div>
+<nav class="nextprev" aria-label="다른 가이드"><a href="../${prev.slug}/">◂ ${esc(prev.t)}</a><a href="../${next.slug}/">${esc(next.t)} ▸</a></nav>
+` + foot([g.img]));
+});
+listPage('guide', '필름 사진 가이드', '첫 롤 완주부터 필름 넣기, 노출, 자가 현상, 스캔, 보관까지. 필름 사진을 시작할 때 필요한 방법을 단계별로 정리했습니다.',
+  GUIDES.map(g => ({href: `${g.slug}/`, img: g.img, n: g.t, tag: '', d: g.s})), 'film.jpg');
+
 // 6-2) 현상소
 { const url = `${BASE}lab/`; urls.push(url);
   const won = v => v == null ? '–' : v.toLocaleString('ko-KR');
@@ -268,6 +293,7 @@ ${LABS.filter(l => l.r === r).map(l => `<tr><td>${l.u ? `<a href="${l.u}" rel="n
 // 7) index.html에 정적 링크 채우기 (검색 로봇이 따라갈 수 있도록)
 const fill = (key, html) => { const re = new RegExp(`(<!-- pages:${key} -->)[\\s\\S]*?(<!-- /pages:${key} -->)`);
   if (!re.test(index)) throw new Error('marker missing: ' + key); index = index.replace(re, `$1${html}$2`); };
+fill('guides', `<p class="pagelinks"><span class="mono">가이드</span> ${GUIDES.map(g => `<a href="guide/${g.slug}/">${esc(g.t)}</a>`).join(' · ')}</p>`);
 fill('cams', `<p class="pagelinks"><span class="mono">카메라별 가이드</span> ${CAMS.map(c => `<a href="camera/${CAM_SLUG[c.img]}/">${esc(c.n)}</a>`).join(' · ')}</p>`);
 fill('films', `<p class="pagelinks"><span class="mono">필름별 가이드</span> ${FILM_PAGES.map(f => `<a href="film/${f.slug}/">${esc(f.n)}</a>`).join(' · ')}</p>`);
 fs.writeFileSync(indexPath, index);
