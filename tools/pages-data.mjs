@@ -59,11 +59,39 @@ export const FILM_PAGES = [
 ];
 
 export const PROCESS = {
-  c41:['C-41','컬러 네거티브 현상. 국내 대부분의 현상소에서 바로 맡길 수 있고, 35mm 한 롤 현상+스캔은 대략 1만~2만 원입니다.'],
-  bw:['흑백','흑백 현상. 받는 현상소가 C-41보다 적고 1~2주 걸리기도 합니다. 집에서 직접 현상하기에 가장 쉬운 필름입니다.'],
-  e6:['E-6','슬라이드 현상. 받는 현상소가 적고 비용이 C-41보다 높습니다. 맡기기 전에 E-6 가능 여부를 꼭 문의하세요.'],
+  c41:['C-41','컬러 네거티브 현상. 국내 대부분의 현상소에서 바로 맡길 수 있고, 35mm 한 롤 현상+기본 스캔은 대략 5천~8천 원, 고해상도 스캔은 1만 원 안팎입니다. <a href="../../lab/">현상소 목록과 가격</a>'],
+  bw:['흑백','흑백 현상. 35mm 한 롤 현상+스캔은 대략 8천~1만 4천 원이고, 받는 현상소가 C-41보다 적어 며칠~1주 이상 걸리기도 합니다. 집에서 직접 현상하기에 가장 쉬운 필름입니다.'],
+  e6:['E-6','슬라이드 현상. 35mm 한 롤 현상+스캔은 대략 1만~1만 7천 원으로 C-41보다 비쌉니다. 맡기기 전에 E-6 가능 여부를 꼭 문의하세요.'],
   ecn:['ECN-2','영화용 현상. ECN-2를 받는 현상소에 맡겨야 합니다.'],
 };
+
+// 현상소: 출처 5ft magazine 현상소 목록(https://5ftmag.com/labs/, 2026.10.06 반영) 및 각 업체 공지.
+// c: 135 컬러 현상+스캔 [기본, 고해상], bw: 135 흑백, sl: 135 슬라이드, m: 120 컬러 (원)
+export const LABS_SRC = {name:'5ft magazine 현상소 목록', url:'https://5ftmag.com/labs/', date:'2026년 10월 6일 반영'};
+export const LABS = [
+  {r:'서울',n:'망우삼림',a:'중구 을지로 108 3·4층',c:[5000,10000],bw:9000,sl:14000,m:8000,u:'https://www.instagram.com/mangwoosamlim/'},
+  {r:'서울',n:'연남 필름',a:'마포구 성미산로29안길 11',c:[null,8000],m:8000,u:'https://ynfilm.co.kr/'},
+  {r:'서울',n:'고래사진관',a:'중구 마른내로2길 31 3층',c:[6000,9000],bw:8000,sl:10000,m:7000,u:'https://www.slowlens.net/'},
+  {r:'서울',n:'옥상필름',a:'중구 동호로 349 4층',c:[5000,9000],bw:8000,sl:13000,u:'http://instagram.com/ox.film'},
+  {r:'서울',n:'일삼오삼육',a:'중구 수표로6길 41 302호',c:[5500,10000],bw:10000,sl:10000,m:9000,u:'http://www.instagram.com/film_135_36'},
+  {r:'서울',n:'중앙칼라',a:'중구 을지로44길 12 지하1층',c:[5000,12000],bw:8000,sl:14000,m:8000,u:'https://www.instagram.com/joongangcolor/'},
+  {r:'서울',n:'헤르츠삼오 홍대점',a:'마포구 동교로 223 1층',c:[5500,9000],bw:10000,sl:15000,m:5500,u:'https://www.instagram.com/hertz.film.lab'},
+  {r:'서울',n:'포토마루',a:'중구 수표로6길 2-1',c:[7000,11000],bw:10000,sl:14000,m:9000,u:'https://www.fotomaru.com/'},
+  {r:'서울',n:'인스튜디오',a:'중구 서소문로 111 201호',c:[5000,15000],bw:10000,sl:10000,m:7000,u:'https://www.instagram.com/filmscanstudioin'},
+  {r:'서울',n:'갤러리사진관',a:'강남구 삼성로 642 1층',c:[5000,11000],bw:11000,sl:11000,m:9000,u:'https://www.instagram.com/gallery_studio_official/'},
+  {r:'경기',n:'야탑포토',a:'성남시 분당구 야탑로69번길 24-8',c:[3000,null],bw:9000,sl:5000,m:5000,mail:true,u:'http://yatapphoto.co.kr/'},
+  {r:'경기',n:'리틀베어 스튜디오',a:'고양시 일산동구 무궁화로 32-34',c:[6000,null],bw:10000,m:11500,u:'https://blog.naver.com/lbstudio'},
+  {r:'부산',n:'토픽칼라',a:'중구 중앙대로 44 1층',c:[4500,null],bw:6500,sl:10000,m:5500,u:'https://blog.naver.com/mhg1109'},
+  {r:'부산',n:'화목포토',a:'해운대구 세실로 64 121호',c:[5000,6000],m:7000,u:'https://blog.naver.com/7047717'},
+  {r:'대구',n:'포토매직',a:'중구 중앙대로 284',c:[5000,null],bw:10000,sl:10000,m:6000,u:'http://www.photomagic.co.kr/'},
+  {r:'대구',n:'세하포토랩',a:'북구 팔달로35길 4 3층',c:[6000,7000],bw:8000},
+];
+// 택배 접수를 공식 안내하는 곳
+export const MAIL_LABS = [
+  {n:'엘리카메라',d:'35mm 컬러 현상+스캔 5,000원, 120은 6,000원. 이름·연락처·롤 수를 적은 쪽지를 동봉해 보내고, 택배비는 고객 부담.',u:'https://www.allycamera.com/filmlab_online'},
+  {n:'파란포토',d:'현상만 3,000원, 현상+스캔 5,000원. 선불 택배로 보내면 작업 후 연락, 비용은 계좌이체.',u:'https://paranphoto.com/bbs/board.php?bo_table=notice&wr_id=19'},
+  {n:'야탑포토',d:'경기 성남. 우편 접수를 받는다고 안내.',u:'http://yatapphoto.co.kr/'},
+];
 
 export const FAQ = [
   {q:'필름 카메라를 처음 사려면 무엇부터 고르나요?',
@@ -75,7 +103,7 @@ export const FAQ = [
   {q:'필름은 어떻게 보관하나요?',
     a:'찍기 전 필름은 지퍼백에 넣어 <b>냉장실</b>에 두고, 쓰기 1~2시간 전에 꺼내 실온에 맞춥니다(바로 열면 이슬이 맺힙니다). 찍은 필름은 되도록 빨리 현상하세요. 현상한 네거티브는 슬리브에 넣어 습기 없는 곳에 둡니다. 자세한 내용은 <a href="../#keep">보관</a> 섹션에 있습니다.'},
   {q:'현상 비용과 기간은 어느 정도인가요?',
-    a:'국내 현상소 기준 35mm 컬러 네거티브(C-41) 한 롤 <b>현상+스캔은 대략 1만~2만 원</b>, 기간은 당일~1주입니다. 흑백과 슬라이드(E-6)는 비용이 더 들고 기간도 길어지는 편입니다. 금액은 현상소와 스캔 해상도에 따라 차이가 큽니다.'},
+    a:'국내 현상소 기준 35mm 컬러 네거티브(C-41) 한 롤 <b>현상+기본 스캔은 대략 5천~8천 원</b>, 고해상도 스캔은 1만 원 안팎입니다. 흑백은 8천~1만 4천 원, 슬라이드는 1만~1만 7천 원 선이고, 컬러는 빠르면 당일에 받습니다. 지역별 현상소와 가격은 <a href="../lab/">현상소 목록</a>에 정리했습니다.'},
   {q:'한 롤에 몇 장을 찍을 수 있나요?',
     a:'35mm(135)는 24장 또는 36장, <a href="../camera/half-frame/">하프프레임</a>은 그 두 배(36장 롤로 72장)입니다. 120 중형 필름은 화면 크기에 따라 6×4.5는 15~16장, 6×6은 12장, 6×7은 10장, 6×9는 8장입니다.'},
   {q:'ISO(감도)는 무엇을 골라야 하나요?',
@@ -106,5 +134,6 @@ export const PHOTO_CREDIT = {
   'x-leak.jpg':'Blossom_with_Light_Leak','x-fp4.jpg':'Gyermekvasut','x-halfframe.jpg':'Half-Frame_4442',
   'portra.jpg':'Colorado_River','gold.jpg':'IJ_NDSM','velvia.jpg':'Autumn_house_Velvia','hp5.jpg':'Landungsbruecken',
   'trix.jpg':'Unitarian_Meeting_House','x-ektar.jpg':'Moscow_trolleybus','x-cine-road.jpg':'Long_Exposure_at_Night',
+  'lab.jpg':'Fujifilm_Frontier','film.jpg':'Cinestill_800Tungsten',
   'x-ektachrome.jpg':'%D0%91%D0%B0%D1%80','x-portra160b.jpg':'First_United_Methodist',
 };

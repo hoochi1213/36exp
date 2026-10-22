@@ -403,5 +403,13 @@ footer p{margin:0;max-width:60ch}
 .faq-list details{border-bottom:1px solid var(--rule);padding:14px 0}
 .faq-list summary{cursor:pointer;font-family:var(--f-display);font-size:18px;font-weight:500}
 .faq-list details p{margin:10px 0 0}
+.labtbl{font-size:13.5px}
+.labtbl td,.labtbl th{padding:9px 12px 9px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+.labtbl td.n{white-space:nowrap;font-variant-numeric:tabular-nums}
+.labtbl .addr{display:block;font-size:12px;color:var(--ink-2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:18px 0 8px}
+.stats div{border:1px solid var(--rule);padding:12px 14px;background:var(--panel)}
+.stats b{display:block;font-family:var(--f-display);font-size:22px;font-weight:500}
+.stats span{font-size:12px;color:var(--ink-2)}
 .pagefoot{margin-top:48px;padding:28px 0 40px;border-top:1px solid var(--ink);font-size:12.5px;color:var(--ink-2)}
 .pagefoot ul{list-style:none;padding:0;margin:8px 0 0}

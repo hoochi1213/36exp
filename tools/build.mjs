@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT} from './pages-data.mjs';
+import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LABS_SRC, MAIL_LABS} from './pages-data.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'https://hoochi1213.github.io/36exp/';
@@ -69,6 +69,14 @@ fs.writeFileSync(path.join(ROOT, 'assets/site.css'), css.trim() + `
 .faq-list details{border-bottom:1px solid var(--rule);padding:14px 0}
 .faq-list summary{cursor:pointer;font-family:var(--f-display);font-size:18px;font-weight:500}
 .faq-list details p{margin:10px 0 0}
+.labtbl{font-size:13.5px}
+.labtbl td,.labtbl th{padding:9px 12px 9px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+.labtbl td.n{white-space:nowrap;font-variant-numeric:tabular-nums}
+.labtbl .addr{display:block;font-size:12px;color:var(--ink-2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:18px 0 8px}
+.stats div{border:1px solid var(--rule);padding:12px 14px;background:var(--panel)}
+.stats b{display:block;font-family:var(--f-display);font-size:22px;font-weight:500}
+.stats span{font-size:12px;color:var(--ink-2)}
 .pagefoot{margin-top:48px;padding:28px 0 40px;border-top:1px solid var(--ink);font-size:12.5px;color:var(--ink-2)}
 .pagefoot ul{list-style:none;padding:0;margin:8px 0 0}
 `);
@@ -102,7 +110,7 @@ const head = ({title, desc, url, img, ld}) => `<!doctype html>
   <div class="wrap">
     <a class="logo" href="../../"><b>36 EXP.</b><span class="mono">Film Archive</span></a>
     <nav class="nav" aria-label="메뉴">
-      <a href="../../#quiz">필름 테스트</a><a href="../../camera/">카메라</a><a href="../../film/">필름</a><a href="../../#develop">현상</a><a href="../../#lab">현상소</a><a href="../../faq/">자주 묻는 질문</a>
+      <a href="../../#quiz">필름 테스트</a><a href="../../camera/">카메라</a><a href="../../film/">필름</a><a href="../../#develop">현상</a><a href="../../lab/">현상소</a><a href="../../faq/">자주 묻는 질문</a>
     </nav>
   </div>
 </header>
@@ -188,7 +196,7 @@ FILM_PAGES.forEach((f0, i) => {
   </div>
 </div>
 <h2>이 필름에 대해</h2><p>${esc(f.more)}</p>
-<h2>현상</h2><p>${esc(pr[1])}</p>
+<h2>현상</h2><p>${pr[1]}</p>
 <h2>어울리는 카메라</h2><div class="links">${f.cams.map(k => `<a class="chip" href="../../camera/${CAM_SLUG[k]}/">${esc(camByKey[k].n)}</a>`).join('')}</div>
 <h2>비슷한 필름</h2><div class="links">${f.alt.map(s => `<a class="chip" href="../${s}/">${esc(filmBySlug[s].n)}</a>`).join('')}</div>
 <nav class="nextprev" aria-label="다른 필름"><a href="../${prev.slug}/">◂ ${esc(prev.n)}</a><a href="../${next.slug}/">${esc(next.n)} ▸</a></nav>
@@ -217,6 +225,43 @@ listPage('film', '필름별 가이드', '처음 고르기 좋은 필름 10종의
 <h1>자주 묻는 질문</h1><p class="lede">필름 사진을 시작할 때 가장 많이 묻는 질문들입니다. 질문을 누르면 답이 펼쳐집니다.</p>
 <div class="faq-list" style="margin-top:20px">${FAQ.map((x, i) => `<details${i < 3 ? ' open' : ''}><summary>${esc(x.q)}</summary><p>${x.a}</p></details>`).join('')}</div>
 ` + foot([]).replaceAll('../../', '../'));
+}
+
+// 6-2) 현상소
+{ const url = `${BASE}lab/`; urls.push(url);
+  const won = v => v == null ? '–' : v.toLocaleString('ko-KR');
+  const base = LABS.map(l => l.c[0]).filter(v => v != null).sort((a, b) => a - b);
+  const hi = LABS.map(l => l.c[1]).filter(v => v != null).sort((a, b) => a - b);
+  const med = a => a.length % 2 ? a[(a.length - 1) / 2] : Math.round((a[a.length / 2 - 1] + a[a.length / 2]) / 2);
+  const regions = [...new Set(LABS.map(l => l.r))];
+  write('lab', head({title: `필름 현상소 목록과 가격 비교 (${UPDATED_KO}) — 36 EXP.`, desc: `서울·경기·부산·대구 필름 현상소 ${LABS.length}곳의 35mm 컬러·흑백·슬라이드·120 현상+스캔 가격 비교와 택배 접수 현상소, 맡기는 법.`, url, img: 'lab.jpg',
+    ld: {'@context':'https://schema.org','@graph':[crumbLd([['36 EXP.',BASE],['현상소',url]])]}}).replaceAll('../../', '../') + `
+<p class="crumb"><a href="../">36 EXP.</a> / 현상소</p>
+<h1>필름 현상소 목록과 가격</h1>
+<p class="lede">35mm 컬러 필름 한 롤을 현상하고 스캔까지 받는 데 드는 비용은 생각보다 저렴합니다. 지역별 현상소 ${LABS.length}곳의 가격을 한 표로 비교했습니다.</p>
+<p class="meta">가격 기준: <a href="${LABS_SRC.url}">${LABS_SRC.name}</a> (${LABS_SRC.date}) 및 각 현상소 공지. 가격과 운영 여부는 수시로 바뀌니 맡기기 전에 꼭 확인하세요.</p>
+<div class="stats">
+  <div><b>${won(base[0])}~${won(base[base.length - 1])}원</b><span>35mm 컬러 현상+기본 스캔</span></div>
+  <div><b>${won(med(base))}원</b><span>기본 스캔 중간값 (${base.length}곳)</span></div>
+  <div><b>${won(med(hi))}원</b><span>고해상도 스캔 중간값 (${hi.length}곳)</span></div>
+</div>
+${regions.map(r => `<h2>${r}</h2>
+<div class="scroll"><table class="labtbl"><thead><tr><th>현상소</th><th>35mm 컬러<br>기본 / 고해상</th><th>35mm 흑백</th><th>35mm 슬라이드</th><th>120 컬러</th></tr></thead><tbody>
+${LABS.filter(l => l.r === r).map(l => `<tr><td>${l.u ? `<a href="${l.u}" rel="nofollow noopener">${esc(l.n)}</a>` : esc(l.n)}${l.mail ? ' <span class="tag" style="margin:0">택배</span>' : ''}<span class="addr">${esc(l.a)}</span></td><td class="n">${won(l.c[0])} / ${won(l.c[1])}</td><td class="n">${won(l.bw)}</td><td class="n">${won(l.sl)}</td><td class="n">${won(l.m)}</td></tr>`).join('')}
+</tbody></table></div>`).join('')}
+<p class="meta">단위: 원. "–"는 해당 서비스가 없거나 가격이 확인되지 않은 경우입니다. 더 많은 현상소는 <a href="${LABS_SRC.url}">${LABS_SRC.name}</a>에서 볼 수 있습니다.</p>
+<h2>택배로 맡길 수 있는 곳</h2>
+<p>근처에 현상소가 없다면 택배 접수를 받는 곳에 보내면 됩니다. 파일은 메일이나 다운로드 링크로 받습니다.</p>
+<ul>${MAIL_LABS.map(l => `<li><a href="${l.u}" rel="nofollow noopener">${esc(l.n)}</a> — ${esc(l.d)}</li>`).join('')}</ul>
+<h2>처음 맡길 때 알아 둘 것</h2>
+<ul>
+<li><b>기본은 "현상 + 스캔"</b>입니다. 인화는 파일을 받아 본 뒤 마음에 드는 컷만 주문해도 됩니다.</li>
+<li><b>기본 스캔과 고해상도 스캔</b>: 휴대폰·SNS용이면 기본으로 충분하고, 크게 인화할 계획이면 고해상도를 고르세요.</li>
+<li><b>흑백과 슬라이드</b>는 받는 곳이 적고 며칠 더 걸립니다. 표에서 가격이 있는 곳을 고르세요.</li>
+<li><b>푸시 현상(+1, +2)</b>이나 하프프레임 스캔 방식은 접수할 때 롤마다 적어 주세요.</li>
+<li>맡기는 순서와 요청 사항 쓰는 법은 <a href="../#lab">현상소 맡기는 법</a>에 정리했습니다.</li>
+</ul>
+` + foot(['lab.jpg']).replaceAll('../../', '../'));
 }
 
 // 7) index.html에 정적 링크 채우기 (검색 로봇이 따라갈 수 있도록)
