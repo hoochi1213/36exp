@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LAB_REGIONS, LABS_SRC, MAIL_LABS, GUIDES} from './pages-data.mjs';
+import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LAB_REGIONS, LABS_SRC, MAIL_LABS, GUIDES, MODELS} from './pages-data.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'https://hoochi1213.github.io/36exp/';
@@ -163,7 +163,7 @@ for (const c of CAMS) {
     <h2>어떻게 찍히나요</h2><p>${esc(m.how)}</p>
     <h2>이런 분께 추천</h2><ul>${m.who.map(w => `<li>${esc(w)}</li>`).join('')}</ul>
     <h2>좋은 점과 아쉬운 점</h2><dl class="facts"><dt>좋은 점</dt><dd>${esc(c.p)}</dd><dt>아쉬운 점</dt><dd>${esc(c.c)}</dd></dl>
-    <h2>대표 기종</h2><p>${esc(c.ex)}</p>
+    <h2>대표 기종</h2><p>${esc(c.ex)}</p>${MODELS.some(md => md.type === c.img) ? `<div class="links">${MODELS.filter(md => md.type === c.img).map(md => `<a class="chip" href="../${md.slug}/">${esc(md.n)} 가이드</a>`).join('')}</div>` : ''}
     <h2>대략적인 가격</h2><p class="bigprice">${esc(m.price)}</p><p class="meta">${esc(m.pn)} ${UPDATED_KO} 기준, 상태와 시기에 따라 차이가 큰 참고용 금액입니다.</p>
     ${m.films.length ? `<h2>어울리는 필름</h2><div class="links">${m.films.map(f => `<a class="chip" href="${filmLink(f)}">${esc(f)}</a>`).join('')}</div>` : ''}
   </div>
@@ -172,6 +172,37 @@ for (const c of CAMS) {
 <ul class="checks">${checks}</ul>
 <nav class="nextprev" aria-label="다른 카메라"><a href="../${CAM_SLUG[prev.img]}/">◂ ${esc(prev.n)}</a><a href="../${CAM_SLUG[next.img]}/">${esc(next.n)} ▸</a></nav>
 ` + foot([...pics.map(p => p[0]), ...defectPics]));
+}
+
+// 3-1) 인기 기종 페이지
+for (const md of MODELS) {
+  const url = `${BASE}camera/${md.slug}/`, t = camByKey[md.type]; urls.push(url);
+  const title = `${md.n}(${md.ko}) 중고 구매 가이드 — 사양·체크 포인트·시세 | 36 EXP.`;
+  const desc = `${md.ko}(${md.n}) 필름 카메라 가이드. ${md.lede} 사양, 장단점, 중고로 살 때 확인할 것, 2026년 해외 판매가 참고.`;
+  write(`camera/${md.slug}`, head({title, desc, url, img: md.pics[0][0], ld: {'@context':'https://schema.org','@graph':[
+    {'@type':'Article',headline:`${md.n} 중고 구매 가이드`,description:desc,image:`${BASE}photos/${md.pics[0][0]}`,dateModified:UPDATED,inLanguage:'ko',mainEntityOfPage:url},
+    crumbLd([['36 EXP.',BASE],['카메라',BASE+'camera/'],[t.n,`${BASE}camera/${CAM_SLUG[md.type]}/`],[md.n,url]])]}}) + `
+<p class="crumb"><a href="../../">36 EXP.</a> / <a href="../">카메라</a> / <a href="../${CAM_SLUG[md.type]}/">${esc(t.n)}</a> / ${esc(md.n)}</p>
+<h1>${esc(md.n)} <span class="mono" style="font-size:13px;color:var(--ink-2)">${esc(md.ko)}</span></h1>
+<p class="lede">${esc(md.lede)}</p>
+<p class="meta">${esc(t.n)} · ${UPDATED_KO} 업데이트</p>
+<div class="page-grid">
+  <div><div class="gallery">${md.pics.map(p => `<figure><img src="../../photos/${p[0]}" alt="${esc(p[1])}" loading="lazy"><figcaption>${esc(p[1])}</figcaption></figure>`).join('')}</div></div>
+  <div>
+    <h2>주요 사양</h2><dl class="facts">${md.specs.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+    <p class="meta">사양 출처: <a href="${md.src}" rel="nofollow noopener">${md.src.includes('wikipedia') ? '위키백과' : 'camera-wiki'}</a></p>
+    <h2>좋은 점</h2><ul>${md.good.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+    <h2>아쉬운 점</h2><ul>${md.bad.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+  </div>
+</div>
+<h2>중고로 살 때 확인할 것</h2><ul class="checks">${md.check.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+<p>${esc(t.n)} 전반의 점검 방법과 결함 사진은 <a href="../${CAM_SLUG[md.type]}/">${esc(t.n)} 가이드</a>에 있습니다.</p>
+<h2>시세 참고 (해외 판매가, ${UPDATED_KO} 확인)</h2>
+<div class="scroll"><table class="labtbl"><thead><tr><th>판매처</th><th>가격</th><th>비고</th></tr></thead><tbody>${md.price.map(([w, pr, note, u]) => `<tr><td><a href="${u}" rel="nofollow noopener">${esc(w)}</a></td><td class="n">${esc(pr)}</td><td>${esc(note)}</td></tr>`).join('')}</tbody></table></div>
+<p class="meta">국내 거래가는 공개 자료로 확인하기 어려워 해외 판매처 가격을 실었습니다. 정비(CLA)를 마친 판매점 가격이라 개인 거래보다 높을 수 있습니다. 국내 시세는 중고 거래 앱의 거래 완료 매물로 확인하세요.</p>
+<h2>어울리는 필름</h2><div class="links">${md.films.map(f => `<a class="chip" href="${filmLink(f)}">${esc(f)}</a>`).join('')}</div>
+<h2>다른 기종</h2><div class="links">${MODELS.filter(x => x !== md).map(x => `<a class="chip" href="../${x.slug}/">${esc(x.n)}</a>`).join('')}</div>
+` + foot(md.pics.map(p => p[0])));
 }
 
 // 4) 필름 페이지
@@ -217,7 +248,8 @@ const listPage = (rel, name, desc, items, img) => { const url = `${BASE}${rel}/`
 ` + foot(items.map(it => it.img))).replaceAll('../../', '../'));
 };
 listPage('camera', '필름 카메라 종류별 가이드', '판형과 형식에 따라 나눈 10가지 필름 카메라. 원리, 추천 기종, 중고로 살 때 확인할 것, 대략적인 시세를 정리했습니다.',
-  CAMS.map(c => ({href: `${CAM_SLUG[c.img]}/`, img: `cam-${c.img}.jpg`, n: c.n, tag: c.f, d: c.d})), 'camera.jpg');
+  [...CAMS.map(c => ({href: `${CAM_SLUG[c.img]}/`, img: `cam-${c.img}.jpg`, n: c.n, tag: c.f, d: c.d})),
+   ...MODELS.map(md => ({href: `${md.slug}/`, img: md.pics[0][0], n: md.n, tag: '기종', d: md.lede}))], 'camera.jpg');
 listPage('film', '필름별 가이드', '처음 고르기 좋은 필름 10종의 특징, 노출 팁, 현상 방법, 가격을 정리했습니다.',
   FILM_PAGES.map(f0 => { const f = filmFull(f0); return {href: `${f.slug}/`, img: f.img, n: f.n, tag: `ISO ${f.iso}`, d: f.why}; }), 'film.jpg');
 
@@ -296,7 +328,7 @@ ${LABS.filter(l => l.r === r).map(l => `<tr><td>${l.u ? `<a href="${l.u}" rel="n
 const fill = (key, html) => { const re = new RegExp(`(<!-- pages:${key} -->)[\\s\\S]*?(<!-- /pages:${key} -->)`);
   if (!re.test(index)) throw new Error('marker missing: ' + key); index = index.replace(re, `$1${html}$2`); };
 fill('guides', `<p class="pagelinks"><span class="mono">가이드</span> ${GUIDES.map(g => `<a href="guide/${g.slug}/">${esc(g.t)}</a>`).join(' · ')}</p>`);
-fill('cams', `<p class="pagelinks"><span class="mono">카메라별 가이드</span> ${CAMS.map(c => `<a href="camera/${CAM_SLUG[c.img]}/">${esc(c.n)}</a>`).join(' · ')}</p>`);
+fill('cams', `<p class="pagelinks"><span class="mono">카메라별 가이드</span> ${CAMS.map(c => `<a href="camera/${CAM_SLUG[c.img]}/">${esc(c.n)}</a>`).join(' · ')}</p><p class="pagelinks"><span class="mono">인기 기종</span> ${MODELS.map(md => `<a href="camera/${md.slug}/">${esc(md.n)}</a>`).join(' · ')}</p>`);
 fill('films', `<p class="pagelinks"><span class="mono">필름별 가이드</span> ${FILM_PAGES.map(f => `<a href="film/${f.slug}/">${esc(f.n)}</a>`).join(' · ')}</p>`);
 fs.writeFileSync(indexPath, index);
 
