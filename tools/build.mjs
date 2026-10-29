@@ -223,10 +223,10 @@ FILM_PAGES.forEach((f0, i) => {
 <p class="lede">${esc(f.why)}</p>
 <p class="meta">ISO ${f.iso} · ${esc(pr[0])} · ${UPDATED_KO} 업데이트</p>
 <div class="page-grid">
-  <div><div class="gallery"><figure><img src="../../photos/${f.img}" alt="${esc(f.n)}로 찍은 사진" loading="lazy"><figcaption>${esc(f.n)}로 찍은 사진</figcaption></figure></div></div>
+  <div><div class="gallery"><figure><img src="../../photos/${f.img}" alt="${esc(f.cap || f.n + '로 찍은 사진')}" loading="lazy"><figcaption>${esc(f.cap || f.n + '로 찍은 사진')}</figcaption></figure></div></div>
   <div>
     <h2>한눈에 보기</h2>
-    <dl class="facts"><dt>감도</dt><dd>ISO ${f.iso}</dd><dt>종류</dt><dd>${KIND[f.p]} · ${esc(pr[0])} 현상</dd>${f.formats ? `<dt>판형</dt><dd>${esc(f.formats)}</dd>` : ''}<dt>이럴 때</dt><dd>${esc(f.when)}</dd><dt>가격</dt><dd>${esc(f.price)} <span class="meta">(35mm 36컷, ${UPDATED_KO} 국내 대략)</span></dd></dl>
+    <dl class="facts"><dt>감도</dt><dd>ISO ${f.iso}</dd><dt>종류</dt><dd>${KIND[f.p]} · ${esc(pr[0])} 현상</dd>${f.formats ? `<dt>판형</dt><dd>${esc(f.formats)}</dd>` : ''}<dt>이럴 때</dt><dd>${esc(f.when)}</dd><dt>가격</dt><dd>${f.usd ? `${esc(f.usd[0])} <span class="meta">(35mm 36컷, <a href="${f.usd[2]}" rel="nofollow noopener">${esc(f.usd[1])}</a> 판매가, ${UPDATED_KO} 확인)</span>` : f.price ? `${esc(f.price)} <span class="meta">(35mm 36컷, ${UPDATED_KO} 국내 대략)</span>` : '<span class="meta">확인된 판매가 없음 — 판매처에서 확인하세요</span>'}</dd></dl>
     <h2>특징</h2><ul>${f.char.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
     <h2>찍을 때 팁</h2><p>${esc(f.tip)}</p>
   </div>
@@ -250,7 +250,7 @@ const listPage = (rel, name, desc, items, img) => { const url = `${BASE}${rel}/`
 listPage('camera', '필름 카메라 종류별 가이드', '판형과 형식에 따라 나눈 10가지 필름 카메라. 원리, 추천 기종, 중고로 살 때 확인할 것, 대략적인 시세를 정리했습니다.',
   [...CAMS.map(c => ({href: `${CAM_SLUG[c.img]}/`, img: `cam-${c.img}.jpg`, n: c.n, tag: c.f, d: c.d})),
    ...MODELS.map(md => ({href: `${md.slug}/`, img: md.pics[0][0], n: md.n, tag: '기종', d: md.lede}))], 'camera.jpg');
-listPage('film', '필름별 가이드', '처음 고르기 좋은 필름 10종의 특징, 노출 팁, 현상 방법, 가격을 정리했습니다.',
+listPage('film', '필름별 가이드', `처음 고르기 좋은 필름 ${FILM_PAGES.length}종의 특징, 노출 팁, 현상 방법, 가격을 정리했습니다.`,
   FILM_PAGES.map(f0 => { const f = filmFull(f0); return {href: `${f.slug}/`, img: f.img, n: f.n, tag: `ISO ${f.iso}`, d: f.why}; }), 'film.jpg');
 
 // 6) FAQ
