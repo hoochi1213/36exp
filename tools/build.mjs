@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LAB_REGIONS, LABS_SRC, MAIL_LABS, GUIDES, MODELS} from './pages-data.mjs';
+import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LAB_REGIONS, LABS_SRC, MAIL_LABS, GUIDES, MODELS, STATUS_SRC, FUJI_LIVE, FUJI_GONE} from './pages-data.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'https://hoochi1213.github.io/36exp/';
@@ -114,7 +114,7 @@ const head = ({title, desc, url, img, ld}) => `<!doctype html>
   <div class="wrap">
     <a class="logo" href="../../"><b>36 EXP.</b><span class="mono">Film Archive</span></a>
     <nav class="nav" aria-label="메뉴">
-      <a href="../../#quiz">필름 테스트</a><a href="../../guide/">가이드</a><a href="../../camera/">카메라</a><a href="../../film/">필름</a><a href="../../#develop">현상</a><a href="../../lab/">현상소</a><a href="../../faq/">자주 묻는 질문</a>
+      <a href="../../#quiz">필름 테스트</a><a href="../../guide/">가이드</a><a href="../../camera/">카메라</a><a href="../../film/">필름</a><a href="../../prices/">가격·단종</a><a href="../../#develop">현상</a><a href="../../lab/">현상소</a><a href="../../faq/">자주 묻는 질문</a>
     </nav>
   </div>
 </header>
@@ -213,7 +213,7 @@ FILM_PAGES.forEach((f0, i) => {
   const f = filmFull(f0), url = `${BASE}film/${f.slug}/`, pr = PROCESS[f.p];
   const prev = FILM_PAGES[(i + FILM_PAGES.length - 1) % FILM_PAGES.length], next = FILM_PAGES[(i + 1) % FILM_PAGES.length];
   const title = `${f.n} 특징·노출 팁·가격 — 필름 가이드 | 36 EXP.`;
-  const desc = `${f.n}(ISO ${f.iso}, ${pr[0]}) 필름 리뷰. ${f.why} ${UPDATED_KO} 기준 35mm 가격 ${f.price}.`;
+  const desc = `${f.n}(ISO ${f.iso}, ${pr[0]}) 필름 리뷰. ${f.why} ${f.usd ? `${UPDATED_KO} 해외 판매가 ${f.usd[0]}.` : ''}`;
   urls.push(url);
   write(`film/${f.slug}`, head({title, desc, url, img: f.img, ld: {'@context':'https://schema.org','@graph':[
     {'@type':'Article',headline:`${f.n} 필름 가이드`,description:desc,image:`${BASE}photos/${f.img}`,dateModified:UPDATED,inLanguage:'ko',mainEntityOfPage:url},
@@ -226,7 +226,7 @@ FILM_PAGES.forEach((f0, i) => {
   <div><div class="gallery"><figure><img src="../../photos/${f.img}" alt="${esc(f.cap || f.n + '로 찍은 사진')}" loading="lazy"><figcaption>${esc(f.cap || f.n + '로 찍은 사진')}</figcaption></figure></div></div>
   <div>
     <h2>한눈에 보기</h2>
-    <dl class="facts"><dt>감도</dt><dd>ISO ${f.iso}</dd><dt>종류</dt><dd>${KIND[f.p]} · ${esc(pr[0])} 현상</dd>${f.formats ? `<dt>판형</dt><dd>${esc(f.formats)}</dd>` : ''}<dt>이럴 때</dt><dd>${esc(f.when)}</dd><dt>가격</dt><dd>${f.usd ? `${esc(f.usd[0])} <span class="meta">(35mm 36컷, <a href="${f.usd[2]}" rel="nofollow noopener">${esc(f.usd[1])}</a> 판매가, ${UPDATED_KO} 확인)</span>` : f.price ? `${esc(f.price)} <span class="meta">(35mm 36컷, ${UPDATED_KO} 국내 대략)</span>` : '<span class="meta">확인된 판매가 없음 — 판매처에서 확인하세요</span>'}</dd></dl>
+    <dl class="facts"><dt>감도</dt><dd>ISO ${f.iso}</dd><dt>종류</dt><dd>${f.kind || KIND[f.p]} · ${esc(pr[0])} 현상</dd>${f.formats ? `<dt>판형</dt><dd>${esc(f.formats)}</dd>` : ''}<dt>이럴 때</dt><dd>${esc(f.when)}</dd><dt>가격</dt><dd>${f.usd ? `${esc(f.usd[0])} <span class="meta">(35mm 36컷, <a href="${f.usd[2]}" rel="nofollow noopener">${esc(f.usd[1])}</a> 판매가, ${UPDATED_KO} 확인)</span>` : f.price ? `${esc(f.price)} <span class="meta">(35mm 36컷, ${UPDATED_KO} 국내 대략)</span>` : '<span class="meta">확인된 판매가 없음 — 판매처에서 확인하세요</span>'}</dd></dl>
     <h2>특징</h2><ul>${f.char.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
     <h2>찍을 때 팁</h2><p>${esc(f.tip)}</p>
   </div>
@@ -285,6 +285,51 @@ ${g.body}
 });
 listPage('guide', '필름 사진 가이드', '첫 롤 완주부터 필름 넣기, 노출, 자가 현상, 스캔, 보관까지. 필름 사진을 시작할 때 필요한 방법을 단계별로 정리했습니다.',
   GUIDES.map(g => ({href: `${g.slug}/`, img: g.img, n: g.t, tag: '', d: g.s})), 'film.jpg');
+
+// 6-1b) 필름 가격·단종 현황
+{ const url = `${BASE}prices/`; urls.push(url);
+  const priced = FILM_PAGES.map(filmFull).filter(f => f.usd).sort((a, b) => parseFloat(a.usd[0].slice(1)) - parseFloat(b.usd[0].slice(1)));
+  const noPrice = FILM_PAGES.map(filmFull).filter(f => !f.usd);
+  write('prices', head({title: `필름 가격·단종 현황 (${UPDATED_KO}) — 36 EXP.`, desc: `필름 ${priced.length}종의 35mm 판매가 비교와 후지필름 단종·생산 현황. ${UPDATED_KO} 기준, 출처 포함.`, url, img: 'film.jpg',
+    ld: {'@context':'https://schema.org','@graph':[{'@type':'Article',headline:`필름 가격·단종 현황 ${UPDATED_KO}`,dateModified:UPDATED,inLanguage:'ko',mainEntityOfPage:url},crumbLd([['36 EXP.',BASE],['가격·단종 현황',url]])]}}).replaceAll('../../', '../') + `
+<p class="crumb"><a href="../">36 EXP.</a> / 가격·단종 현황</p>
+<h1>필름 가격·단종 현황</h1>
+<p class="lede">필름값은 자주 오르고, 어떤 필름은 조용히 사라집니다. 지금 살 수 있는 필름의 가격과 단종 소식을 한곳에 모았습니다. 매월 갱신합니다.</p>
+<p class="meta">${UPDATED_KO} 기준 · 국내 판매가는 공개 자료로 확인하기 어려워 해외 판매가(미국)를 출처와 함께 실었습니다.</p>
+<div class="stats">
+  <div><b>${priced[0].usd[0]}</b><span>가장 저렴: ${esc(priced[0].n)}</span></div>
+  <div><b>${priced[priced.length - 1].usd[0]}</b><span>가장 비쌈: ${esc(priced[priced.length - 1].n)}</span></div>
+  <div><b>${priced.length}종</b><span>가격 확인 (35mm 36컷)</span></div>
+</div>
+<h2>35mm 필름 가격 (싼 순)</h2>
+<div class="scroll"><table class="labtbl"><thead><tr><th>필름</th><th>종류</th><th>가격</th><th>판매처</th></tr></thead><tbody>
+${priced.map(f => `<tr><td><a href="../film/${f.slug}/">${esc(f.n)}</a></td><td>${f.kind || KIND[f.p]} · ISO ${f.iso}</td><td class="n">${esc(f.usd[0])}</td><td><a href="${f.usd[2]}" rel="nofollow noopener">${esc(f.usd[1])}</a></td></tr>`).join('')}
+</tbody></table></div>
+<p class="meta">가격 미확인: ${noPrice.map(f => `<a href="../film/${f.slug}/">${esc(f.n)}</a>`).join(' · ')}. 판매처마다 차이가 크고, 품절이 잦습니다.</p>
+<h2>후지필름: 지금도 생산 중인 필름</h2>
+<div class="scroll"><table class="labtbl"><thead><tr><th>필름</th><th>종류</th><th>판형</th></tr></thead><tbody>
+${FUJI_LIVE.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}
+</tbody></table></div>
+<p class="meta">"생산 중"과 "재고 있음"은 다릅니다. ${UPDATED_KO} 해외 판매처에서는 Velvia 50과 Provia 100F 35mm가 품절 표시였습니다.</p>
+<h2>후지필름: 단종된 필름</h2>
+<div class="scroll"><table class="labtbl"><thead><tr><th>필름</th><th>시기</th><th>내용</th></tr></thead><tbody>
+${FUJI_GONE.map(r => `<tr><td>${esc(r[0])}</td><td class="n">${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}
+</tbody></table></div>
+<h2>요즘 도는 소문, 사실은</h2>
+<ul>
+<li><b>"후지필름이 흑백 필름을 접는다"</b> — 사실이 아닙니다. 2026년 5월 알려진 것은 후지필름 이미징 시스템즈의 <b>흑백 현상·인화 서비스 종료</b>(2026년 7월 21일 접수분까지)이고, 흑백 필름·약품·인화지는 해당하지 않습니다.</li>
+<li><b>Kodak 필름 상자가 바뀌었다</b> — 2026년부터 일부 Kodak 필름 유통이 Eastman Kodak으로 옮겨 새 상자로 나오고, 예전 상자도 함께 팔리고 있습니다.</li>
+</ul>
+<h2>필름이 없거나 비쌀 때</h2>
+<ul>
+<li>Portra 400 대신 → <a href="../film/kodak-ultramax-400/">UltraMax 400</a>(약 절반 가격) 또는 <a href="../film/gold-200/">Gold 200</a></li>
+<li>Velvia·Provia 품절 → <a href="../film/kodak-ektachrome-e100/">Ektachrome E100</a> 또는 선명한 컬러 네거 <a href="../film/ektar-100/">Ektar 100</a></li>
+<li>흑백 연습용 → <a href="../film/kentmere-pan-400/">Kentmere Pan 400</a>, <a href="../film/fomapan-100/">Fomapan 100</a></li>
+</ul>
+<h2>출처</h2>
+<ul>${STATUS_SRC.map(([t, u]) => `<li><a href="${u}" rel="nofollow noopener">${esc(t)}</a></li>`).join('')}<li>개별 가격 출처는 위 표의 판매처 링크</li></ul>
+` + foot(['film.jpg']).replaceAll('../../', '../'));
+}
 
 // 6-2) 현상소
 { const url = `${BASE}lab/`; urls.push(url);
