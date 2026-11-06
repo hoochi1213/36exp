@@ -205,6 +205,8 @@ section::before{content:"▸ 36EXP  ·  SAFETY FILM  ·  135  ·  ▸ 36EXP  · 
 .sim-dl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
 .sim-dl .btn[disabled]{opacity:.45;cursor:not-allowed}
 .sim-dl-msg{font-size:12.5px;color:var(--ink-2)}
+.sim-tag-opt{display:block;margin-top:10px;font-size:12.5px;color:var(--ink-2)}
+.sim-tag-opt input{margin-right:6px;vertical-align:-2px}
 
 /* 필름 예시 갤러리 */
 .looks{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px 14px}
@@ -486,8 +488,10 @@ footer p{margin:0;max-width:60ch}
         <p class="mono sim-src" id="simSrc">예시 사진 · 직접 올리면 바뀝니다</p>
         <div class="sim-dl">
           <button class="btn" type="button" id="simDl" disabled>필름 사진 저장하기 (JPG)</button>
+          <button class="btn" type="button" id="simShare" disabled>공유하기</button>
           <span class="sim-dl-msg" id="simDlMsg" aria-live="polite">저장 기능을 준비하는 중…</span>
         </div>
+        <label class="sim-tag-opt"><input type="checkbox" id="simMark" checked> 공유할 사진 구석에 필름 이름을 작게 넣기</label>
       </div>
       <div class="sim-side">
         <label class="drop" id="simDrop" for="simFile">
@@ -1528,14 +1532,20 @@ footer p{margin:0;max-width:60ch}
   /* 저장: 원본 해상도(긴 변 최대 3600px)로 다시 처리해 JPG로 */
   const dlBtn=$('#simDl'),dlMsg=$('#simDlMsg');
   let dl=null;
-  function renderFull(){
-    const im=srcImg,s=Math.min(1,3600/Math.max(im.naturalWidth,im.naturalHeight));
+  function renderFull(max=3600,mark=false){
+    const im=srcImg,s=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight));
     const w=Math.round(im.naturalWidth*s),h=Math.round(im.naturalHeight*s);
     const keep=[srcData,W,H];
     const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');
     ctx.drawImage(im,0,0,w,h);
     try{srcData=ctx.getImageData(0,0,w,h);W=w;H=h;ctx.putImageData(film(cur),0,0);if(cur.hal)halation(ctx,cur.hal)}
     finally{[srcData,W,H]=keep}
+    if(mark){
+      const fs=Math.max(14,Math.round(Math.max(w,h)/70));
+      ctx.font=`500 ${fs}px "DM Mono",ui-monospace,monospace`;ctx.textBaseline='bottom';ctx.textAlign='right';
+      ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=fs/3;ctx.fillStyle='rgba(255,255,255,.88)';
+      ctx.fillText('36 EXP. · '+cur.n.toUpperCase(),w-fs,h-fs*.8);
+    }
     return new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(new Error('blob')),'image/jpeg',.92));
   }
   dlBtn.addEventListener('click',async()=>{
@@ -1555,6 +1565,26 @@ footer p{margin:0;max-width:60ch}
       else dlMsg.textContent='저장하지 못했어요. 다시 시도해 주세요.';
     }finally{dlBtn.disabled=!dl}
   });
+  /* 공유: 휴대폰 공유 창으로 사진 파일 보내기(인스타·메신저 등). 지원하지 않으면 저장으로 대신 */
+  const shBtn=$('#simShare');
+  shBtn.addEventListener('click',async()=>{
+    if(!srcImg)return;
+    shBtn.disabled=true;dlBtn.disabled=true;dlMsg.textContent='공유할 사진을 만드는 중…';
+    await new Promise(r=>setTimeout(r,30));
+    try{
+      const blob=await renderFull(2048,$('#simMark').checked);
+      const file=new File([blob],`${srcName}_${cur.k}.jpg`,{type:'image/jpeg'});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:'36 EXP. 필름 시뮬레이터',text:cur.n+' 느낌으로 바꿔 봤어요 · https://hoochi1213.github.io/36exp/#sim'});
+        dlMsg.textContent='공유했어요.';
+      }else{
+        await dl.save({filename:file.name,data:blob});
+        dlMsg.textContent='이 기기는 바로 공유가 되지 않아 사진으로 저장했어요. 저장한 사진을 직접 올려 주세요.';
+      }
+    }catch(e){
+      dlMsg.textContent=e&&e.name==='AbortError'?'공유를 취소했어요.':'공유하지 못했어요. 저장하기를 이용해 주세요.';
+    }finally{shBtn.disabled=false;dlBtn.disabled=!dl}
+  });
   (async()=>{
     try{dl=window.claude&&await window.claude.use('downloads')}catch(e){dl=null}
     if(!dl)dl={save:async({filename,data})=>{
@@ -1562,7 +1592,7 @@ footer p{margin:0;max-width:60ch}
       link.href=u;link.download=filename;document.body.appendChild(link);link.click();link.remove();
       setTimeout(()=>URL.revokeObjectURL(u),60000);
     }};
-    dlBtn.disabled=false;dlMsg.textContent='필름을 고른 뒤 누르면 지금 보이는 느낌 그대로 저장돼요.';
+    dlBtn.disabled=false;shBtn.disabled=false;dlMsg.textContent='필름을 고른 뒤 누르면 지금 보이는 느낌 그대로 저장돼요.';
   })();
   loadImg('photos/x-portra160b.jpg','예시 사진 · 직접 올리면 바뀝니다');
 })();
