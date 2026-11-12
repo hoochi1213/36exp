@@ -139,6 +139,24 @@ export const PROCESS = {
 // c: 135 컬러 현상+스캔 [기본, 고해상], bw: 135 흑백, sl: 135 슬라이드, m: 120 컬러 (원)
 export const LABS_SRC = {name:'5ft magazine 현상소 목록', url:'https://5ftmag.com/labs/', date:'2026년 10월 6일 반영'};
 export const LAB_REGIONS = ['서울','경기','인천','강원','대전','충남','충북','대구','경북','부산','울산','경남','광주·전남','전북','제주'];
+// 지역별 현상소 페이지 주소와 가까운 지역(lab/<slug>/)
+export const LAB_REGION_PAGES = {
+  '서울':{slug:'seoul',near:['경기','인천']},
+  '경기':{slug:'gyeonggi',near:['서울','인천','강원','충남','충북']},
+  '인천':{slug:'incheon',near:['서울','경기']},
+  '강원':{slug:'gangwon',near:['경기','충북','경북']},
+  '대전':{slug:'daejeon',near:['충남','충북','전북']},
+  '충남':{slug:'chungnam',near:['대전','경기','충북','전북']},
+  '충북':{slug:'chungbuk',near:['대전','충남','경기','강원','경북']},
+  '대구':{slug:'daegu',near:['경북','경남','부산']},
+  '경북':{slug:'gyeongbuk',near:['대구','강원','충북','울산']},
+  '부산':{slug:'busan',near:['울산','경남','대구']},
+  '울산':{slug:'ulsan',near:['부산','경북','경남']},
+  '경남':{slug:'gyeongnam',near:['부산','울산','대구']},
+  '광주·전남':{slug:'gwangju-jeonnam',near:['전북','경남']},
+  '전북':{slug:'jeonbuk',near:['광주·전남','충남','대전']},
+  '제주':{slug:'jeju',near:['광주·전남','부산']},
+};
 export const LABS = [
   {r:'서울',n:'망우삼림',a:'중구 을지로 108 3·4층',c:[5000,10000],bw:9000,sl:14000,m:8000,u:'https://www.instagram.com/mangwoosamlim/'},
   {r:'서울',n:'연남 필름',a:'마포구 성미산로29안길 11',c:[null,8000],m:8000,u:'https://ynfilm.co.kr/'},

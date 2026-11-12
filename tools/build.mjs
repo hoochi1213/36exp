@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LAB_REGIONS, LABS_SRC, MAIL_LABS, GUIDES, MODELS, STATUS_SRC, FUJI_LIVE, FUJI_GONE} from './pages-data.mjs';
+import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LAB_REGIONS, LAB_REGION_PAGES, LABS_SRC, MAIL_LABS, GUIDES, MODELS, STATUS_SRC, FUJI_LIVE, FUJI_GONE} from './pages-data.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'https://hoochi1213.github.io/36exp/';
@@ -351,6 +351,7 @@ ${FUJI_GONE.map(r => `<tr><td>${esc(r[0])}</td><td class="n">${esc(r[1])}</td><t
 </div>
 <nav class="links" aria-label="지역" style="margin-top:14px">${regions.map((r, i) => `<a class="chip" href="#r${i}">${r} ${LABS.filter(l => l.r === r).length}</a>`).join('')}</nav>
 ${regions.map((r, i) => `<h2 id="r${i}">${r}</h2>
+<p class="meta"><a href="${LAB_REGION_PAGES[r].slug}/">${r} 현상소만 따로 보기 →</a></p>
 <div class="scroll"><table class="labtbl"><thead><tr><th>현상소</th><th>35mm 컬러<br>기본 / 고해상</th><th>35mm 흑백</th><th>35mm 슬라이드</th><th>120 컬러</th></tr></thead><tbody>
 ${LABS.filter(l => l.r === r).map(l => `<tr><td>${l.u ? `<a href="${l.u}" rel="nofollow noopener">${esc(l.n)}</a>` : esc(l.n)}${l.mail ? ' <span class="tag" style="margin:0">택배</span>' : ''}<span class="addr">${esc(l.a)}${l.note ? ` · ${esc(l.note)}` : ''}</span></td><td class="n">${won(l.c[0])} / ${won(l.c[1])}</td><td class="n">${won(l.bw)}</td><td class="n">${won(l.sl)}</td><td class="n">${won(l.m)}</td></tr>`).join('')}
 </tbody></table></div>`).join('')}
@@ -367,6 +368,55 @@ ${LABS.filter(l => l.r === r).map(l => `<tr><td>${l.u ? `<a href="${l.u}" rel="n
 <li>맡기는 순서와 요청 사항 쓰는 법은 <a href="../#lab">현상소 맡기는 법</a>에 정리했습니다.</li>
 </ul>
 ` + foot(['lab.jpg']).replaceAll('../../', '../'));
+}
+
+// 6-3) 지역별 현상소
+{ const won = v => v == null ? '–' : v.toLocaleString('ko-KR');
+  const med = a => a.length % 2 ? a[(a.length - 1) / 2] : Math.round((a[a.length / 2 - 1] + a[a.length / 2]) / 2);
+  const regions = LAB_REGIONS.filter(r => LABS.some(l => l.r === r));
+  const has = (ls, k) => ls.filter(l => k === 'c' ? l.c[0] != null || l.c[1] != null : l[k] != null).length;
+  for (const r of regions) {
+    const {slug, near} = LAB_REGION_PAGES[r];
+    const ls = LABS.filter(l => l.r === r);
+    const url = `${BASE}lab/${slug}/`; urls.push(url);
+    const base = ls.map(l => l.c[0]).filter(v => v != null).sort((a, b) => a - b);
+    const cheap = base.length ? ls.filter(l => l.c[0] === base[0]).map(l => l.n) : [];
+    const kk = [['c', '35mm 컬러'], ['bw', '흑백'], ['sl', '슬라이드'], ['m', '120 컬러']].map(([k, t]) => [t, has(ls, k)]);
+    const yes = kk.filter(x => x[1]).map(([t, n]) => `${t} ${n}곳`).join(', ');
+    const no = kk.filter(x => !x[1]).map(x => x[0]);
+    const kinds = `서비스별로 보면 ${yes}에서 가격이 확인됩니다.${no.length ? ` ${no.join('·')}는 가격이 확인된 곳이 없어, 가까운 지역이나 택배 접수를 함께 보시면 좋습니다.` : ''}`;
+    const nearLinks = near.filter(n => regions.includes(n)).map(n => `<a class="chip" href="../${LAB_REGION_PAGES[n].slug}/">${n} ${LABS.filter(l => l.r === n).length}</a>`).join('');
+    const desc = `${r} 지역 필름 현상소 ${ls.length}곳의 35mm 컬러·흑백·슬라이드·120 현상+스캔 가격과 주소.${base.length ? ` 35mm 컬러 현상+기본 스캔은 ${won(base[0])}원부터.` : ''} 택배로 맡길 수 있는 곳도 함께 정리했습니다.`;
+    write(`lab/${slug}`, head({title: `${r} 필름 현상소 ${ls.length}곳 가격 비교 (${UPDATED_KO}) — 36 EXP.`, desc, url, img: 'lab.jpg',
+      ld: {'@context':'https://schema.org','@graph':[crumbLd([['36 EXP.',BASE],['현상소',`${BASE}lab/`],[r,url]])]}}) + `
+<p class="crumb"><a href="../../">36 EXP.</a> / <a href="../">현상소</a> / ${r}</p>
+<h1>${r} 필름 현상소와 가격</h1>
+<p class="lede">${r}에서 필름을 맡길 수 있는 현상소 ${ls.length}곳의 가격과 주소입니다. ${kinds}</p>
+<p class="meta">가격 기준: <a href="${LABS_SRC.url}">${LABS_SRC.name}</a> (${LABS_SRC.date}) 및 각 현상소 공지. 가격과 운영 여부는 수시로 바뀌니 맡기기 전에 꼭 확인하세요.</p>
+<div class="stats">
+  <div><b>${ls.length}곳</b><span>${r} 현상소</span></div>
+  <div><b>${base.length ? won(base[0]) + '원' : '–'}</b><span>35mm 컬러 현상+기본 스캔 최저${cheap.length ? ` (${esc(cheap.join(', '))})` : ''}</span></div>
+  ${base.length > 1 ? `<div><b>${won(med(base))}원</b><span>기본 스캔 중간값 (${base.length}곳)</span></div>` : `<div><b>${MAIL_LABS.length}곳</b><span>택배로 맡길 수 있는 곳 (아래 목록)</span></div>`}
+</div>
+<div class="scroll" style="margin-top:18px"><table class="labtbl"><thead><tr><th>현상소</th><th>35mm 컬러<br>기본 / 고해상</th><th>35mm 흑백</th><th>35mm 슬라이드</th><th>120 컬러</th></tr></thead><tbody>
+${ls.map(l => `<tr><td>${l.u ? `<a href="${l.u}" rel="nofollow noopener">${esc(l.n)}</a>` : esc(l.n)}${l.mail ? ' <span class="tag" style="margin:0">택배</span>' : ''}<span class="addr">${esc(/^(서울|부산|대구|인천|대전|울산)$/.test(r) ? `${r} ${l.a}` : l.a)}${l.note ? ` · ${esc(l.note)}` : ''}</span></td><td class="n">${won(l.c[0])} / ${won(l.c[1])}</td><td class="n">${won(l.bw)}</td><td class="n">${won(l.sl)}</td><td class="n">${won(l.m)}</td></tr>`).join('')}
+</tbody></table></div>
+<p class="meta">단위: 원. "–"는 해당 서비스가 없거나 가격이 확인되지 않은 경우입니다.</p>
+${nearLinks ? `<h2>가까운 지역 현상소</h2>
+<p>원하는 서비스(흑백, 슬라이드, 120 등)가 없다면 가까운 지역도 함께 보세요.</p>
+<nav class="links" aria-label="가까운 지역">${nearLinks}</nav>` : ''}
+<h2>택배로 맡길 수 있는 곳</h2>
+<p>근처에 맞는 현상소가 없다면 택배 접수를 받는 곳에 보내면 됩니다. 파일은 메일이나 다운로드 링크로 받습니다.</p>
+<ul>${MAIL_LABS.map(l => `<li><a href="${l.u}" rel="nofollow noopener">${esc(l.n)}</a> — ${esc(l.d)}</li>`).join('')}</ul>
+<h2>맡기기 전에</h2>
+<ul>
+<li>기본은 "현상 + 스캔"입니다. 휴대폰·SNS용이면 기본 스캔으로 충분합니다.</li>
+<li>흑백·슬라이드는 받는 곳이 적고 며칠 더 걸립니다. 위 표에서 가격이 있는 곳을 고르세요.</li>
+<li>현상 방식은 필름마다 다릅니다. <a href="../../film/">필름별 가이드</a>에서 현상 방식(C-41·흑백·E-6)을 확인할 수 있습니다.</li>
+<li>전국 ${LABS.length}곳 가격은 <a href="../">현상소 전체 목록</a>에서 한 번에 비교할 수 있습니다.</li>
+</ul>
+` + foot(['lab.jpg']));
+  }
 }
 
 // 7) index.html에 정적 링크 채우기 (검색 로봇이 따라갈 수 있도록)
