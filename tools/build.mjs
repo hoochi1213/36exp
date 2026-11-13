@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LAB_REGIONS, LAB_REGION_PAGES, LABS_SRC, MAIL_LABS, GUIDES, MODELS, STATUS_SRC, FUJI_LIVE, FUJI_GONE} from './pages-data.mjs';
+import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LAB_REGIONS, LAB_REGION_PAGES, LABS_SRC, MAIL_LABS, GUIDES, MODELS, STATUS_SRC, FUJI_LIVE, FUJI_GONE, COMPARES} from './pages-data.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'https://hoochi1213.github.io/36exp/';
@@ -81,6 +81,10 @@ fs.writeFileSync(path.join(ROOT, 'assets/site.css'), css.trim() + `
 .guide-body{max-width:760px}
 .guide-body .gallery img{max-height:420px;object-fit:cover}
 .guide-body ol.steps{margin:10px 0 16px}
+.vs-pics{grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+.vs-pics img{aspect-ratio:3/2;object-fit:cover}
+.vs th[scope=row]{font:500 11px/1.6 var(--f-mono);color:var(--ink-2);white-space:normal;text-align:left;width:6.5em}
+.vs td{width:calc((100% - 6.5em)/2)}
 .pagefoot{margin-top:48px;padding:28px 0 40px;border-top:1px solid var(--ink);font-size:12.5px;color:var(--ink-2)}
 .pagefoot ul{list-style:none;padding:0;margin:8px 0 0}
 `);
@@ -234,7 +238,8 @@ FILM_PAGES.forEach((f0, i) => {
 <h2>이 필름에 대해</h2><p>${esc(f.more)}</p>
 <h2>현상</h2><p>${pr[1]}</p>
 <h2>어울리는 카메라</h2><div class="links">${f.cams.map(k => `<a class="chip" href="../../camera/${CAM_SLUG[k]}/">${esc(camByKey[k].n)}</a>`).join('')}</div>
-<h2>비슷한 필름</h2><div class="links">${f.alt.map(s => `<a class="chip" href="../${s}/">${esc(filmBySlug[s].n)}</a>`).join('')}</div>
+<h2>비슷한 필름</h2><div class="links">${f.alt.map(s => `<a class="chip" href="../${s}/">${esc(filmBySlug[s].n)}</a>`).join('')}</div>${COMPARES.filter(c => c.a === f.slug || c.b === f.slug).map(c => `
+<h2>비교해 보기</h2><div class="links"><a class="chip" href="../../compare/${c.slug}/">${esc(c.t)}</a></div>`).join('')}
 <nav class="nextprev" aria-label="다른 필름"><a href="../${prev.slug}/">◂ ${esc(prev.n)}</a><a href="../${next.slug}/">${esc(next.n)} ▸</a></nav>
 ` + foot([f.img]));
 });
@@ -252,6 +257,41 @@ listPage('camera', '필름 카메라 종류별 가이드', '판형과 형식에 
    ...MODELS.map(md => ({href: `${md.slug}/`, img: md.pics[0][0], n: md.n, tag: '기종', d: md.lede}))], 'camera.jpg');
 listPage('film', '필름별 가이드', `처음 고르기 좋은 필름 ${FILM_PAGES.length}종의 특징, 노출 팁, 현상 방법, 가격을 정리했습니다.`,
   FILM_PAGES.map(f0 => { const f = filmFull(f0); return {href: `${f.slug}/`, img: f.img, n: f.n, tag: `ISO ${f.iso}`, d: f.why}; }), 'film.jpg');
+
+// 5-1) 필름 비교 페이지
+const perShot = u => '$' + (parseFloat(u[0].slice(1)) / 36).toFixed(2);
+COMPARES.forEach(c => {
+  const a = filmFull(filmBySlug[c.a]), b = filmFull(filmBySlug[c.b]), url = `${BASE}compare/${c.slug}/`; urls.push(url);
+  const title = `${c.t} 차이와 고르는 법 — 필름 비교 | 36 EXP.`;
+  const desc = `${a.n}와 ${b.n}의 색감, 입자, 노출 관용도, 가격 차이. ${c.s}`;
+  const price = f => f.usd ? `${esc(f.usd[0])} <span class="meta">(1컷 약 ${perShot(f.usd)}, <a href="${f.usd[2]}" rel="nofollow noopener">${esc(f.usd[1])}</a>)</span>` : '<span class="meta">확인된 판매가 없음</span>';
+  const fig = f => `<figure><img src="../../photos/${f.img}" alt="${esc(f.cap || f.n + '로 찍은 사진')}" loading="lazy"><figcaption>${esc(f.cap || f.n + '로 찍은 사진')}</figcaption></figure>`;
+  const rows = [['감도', `ISO ${a.iso}`, `ISO ${b.iso}`], ['현상', `${a.kind || KIND[a.p]} · ${PROCESS[a.p][0]}`, `${b.kind || KIND[b.p]} · ${PROCESS[b.p][0]}`],
+    ...(a.formats && b.formats ? [['판형', a.formats, b.formats]] : []), ...c.rows];
+  write(`compare/${c.slug}`, head({title, desc, url, img: a.img, ld: {'@context':'https://schema.org','@graph':[
+    {'@type':'Article',headline:`${c.t} 비교`,description:desc,image:`${BASE}photos/${a.img}`,dateModified:UPDATED,inLanguage:'ko',mainEntityOfPage:url,about:[a.n,b.n]},
+    crumbLd([['36 EXP.',BASE],['필름 비교',BASE+'compare/'],[c.t,url]])]}}) + `
+<p class="crumb"><a href="../../">36 EXP.</a> / <a href="../">필름 비교</a> / ${esc(c.t)}</p>
+<h1>${esc(c.t)}</h1>
+<p class="lede">${esc(c.s)}</p>
+<p class="meta">${UPDATED_KO} 업데이트 · 가격은 35mm 36컷 해외 판매가</p>
+<div class="gallery vs-pics">${fig(a)}${fig(b)}</div>
+<h2>한눈에 비교</h2>
+<div class="scroll"><table class="labtbl vs"><thead><tr><th></th><th><a href="../../film/${a.slug}/">${esc(a.n)}</a></th><th><a href="../../film/${b.slug}/">${esc(b.n)}</a></th></tr></thead><tbody>
+${rows.map(r => `<tr><th scope="row">${esc(r[0])}</th><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}
+<tr><th scope="row">가격</th><td>${price(a)}</td><td>${price(b)}</td></tr>
+</tbody></table></div>
+<h2>이럴 때 고르세요</h2>
+<dl class="facts"><dt>${esc(a.n)}</dt><dd>${esc(c.pick[0])}</dd><dt>${esc(b.n)}</dt><dd>${esc(c.pick[1])}</dd></dl>
+<h2>자세한 차이</h2>
+${c.body}
+<h2>각 필름 자세히 보기</h2><div class="links"><a class="chip" href="../../film/${a.slug}/">${esc(a.n)} 가이드</a><a class="chip" href="../../film/${b.slug}/">${esc(b.n)} 가이드</a><a class="chip" href="../../prices/">필름 가격·단종 현황</a><a class="chip" href="../../lab/">현상소 찾기</a></div>
+<h2>다른 비교</h2><div class="links">${COMPARES.filter(x => x !== c).map(x => `<a class="chip" href="../${x.slug}/">${esc(x.t)}</a>`).join('')}</div>
+<h2>출처</h2><ul><li>가격: 위 표의 판매처 링크(${UPDATED_KO} 확인)</li><li>필름 특징: 이 사이트의 각 필름 가이드</li>${c.src.map(([t, u]) => `<li><a href="${u}" rel="nofollow noopener">${esc(t)}</a> (2026년 11월 13일 확인)</li>`).join('')}</ul>
+` + foot([a.img, b.img]));
+});
+listPage('compare', '필름 비교', '헷갈리는 필름 두 가지를 나란히 놓고 색감, 입자, 노출 관용도, 가격을 비교했습니다.',
+  COMPARES.map(c => { const a = filmFull(filmBySlug[c.a]); return {href: `${c.slug}/`, img: a.img, n: c.t, tag: 'VS', d: c.s}; }), 'film.jpg');
 
 // 6) FAQ
 { const url = `${BASE}faq/`; urls.push(url);
@@ -424,7 +464,7 @@ const fill = (key, html) => { const re = new RegExp(`(<!-- pages:${key} -->)[\\s
   if (!re.test(index)) throw new Error('marker missing: ' + key); index = index.replace(re, `$1${html}$2`); };
 fill('guides', `<p class="pagelinks"><span class="mono">가이드</span> ${GUIDES.map(g => `<a href="guide/${g.slug}/">${esc(g.t)}</a>`).join(' · ')}</p>`);
 fill('cams', `<p class="pagelinks"><span class="mono">카메라별 가이드</span> ${CAMS.map(c => `<a href="camera/${CAM_SLUG[c.img]}/">${esc(c.n)}</a>`).join(' · ')}</p><p class="pagelinks"><span class="mono">인기 기종</span> ${MODELS.map(md => `<a href="camera/${md.slug}/">${esc(md.n)}</a>`).join(' · ')}</p>`);
-fill('films', `<p class="pagelinks"><span class="mono">필름별 가이드</span> ${FILM_PAGES.map(f => `<a href="film/${f.slug}/">${esc(f.n)}</a>`).join(' · ')}</p>`);
+fill('films', `<p class="pagelinks"><span class="mono">필름별 가이드</span> ${FILM_PAGES.map(f => `<a href="film/${f.slug}/">${esc(f.n)}</a>`).join(' · ')}</p><p class="pagelinks"><span class="mono">필름 비교</span> ${COMPARES.map(c => `<a href="compare/${c.slug}/">${esc(c.t)}</a>`).join(' · ')}</p>`);
 fs.writeFileSync(indexPath, index);
 
 // 8) 사이트맵
