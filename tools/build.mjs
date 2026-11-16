@@ -81,6 +81,9 @@ fs.writeFileSync(path.join(ROOT, 'assets/site.css'), css.trim() + `
 .guide-body{max-width:760px}
 .guide-body .gallery img{max-height:420px;object-fit:cover}
 .guide-body ol.steps{margin:10px 0 16px}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0 4px}
+.calc label{display:grid;gap:5px;font-size:12.5px;color:var(--ink-2)}
+.calc input,.calc select{font:15px var(--f-body);padding:8px 10px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);width:100%;box-sizing:border-box}
 .vs-pics{grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
 .vs-pics img{aspect-ratio:3/2;object-fit:cover}
 .vs th[scope=row]{font:500 11px/1.6 var(--f-mono);color:var(--ink-2);white-space:normal;text-align:left;width:6.5em}
@@ -174,6 +177,7 @@ for (const c of CAMS) {
 </div>
 <h2>중고로 살 때 확인할 것</h2>
 <ul class="checks">${checks}</ul>
+<p class="meta">사기 전 순서와 판매처 고르기는 <a href="../../guide/buy-camera/">필름 카메라 처음 살 때 확인할 것</a>에 정리했습니다.</p>
 <nav class="nextprev" aria-label="다른 카메라"><a href="../${CAM_SLUG[prev.img]}/">◂ ${esc(prev.n)}</a><a href="../${CAM_SLUG[next.img]}/">${esc(next.n)} ▸</a></nav>
 ` + foot([...pics.map(p => p[0]), ...defectPics]));
 }
@@ -309,12 +313,12 @@ GUIDES.forEach((g, i) => {
   const url = `${BASE}guide/${g.slug}/`; urls.push(url);
   const prev = GUIDES[(i + GUIDES.length - 1) % GUIDES.length], next = GUIDES[(i + 1) % GUIDES.length];
   write(`guide/${g.slug}`, head({title: `${g.t} — 36 EXP.`, desc: g.d, url, img: g.img, ld: {'@context':'https://schema.org','@graph':[
-    {'@type':'Article',headline:g.t,description:g.d,image:`${BASE}photos/${g.img}`,dateModified:UPDATED,inLanguage:'ko',mainEntityOfPage:url},
+    {'@type':'Article',headline:g.t,description:g.d,image:`${BASE}photos/${g.img}`,dateModified:g.upd || UPDATED,inLanguage:'ko',mainEntityOfPage:url},
     crumbLd([['36 EXP.',BASE],['가이드',BASE+'guide/'],[g.t,url]])]}}) + `
 <p class="crumb"><a href="../../">36 EXP.</a> / <a href="../">가이드</a> / ${esc(g.t)}</p>
 <h1>${esc(g.t)}</h1>
 <p class="lede">${esc(g.s)}</p>
-<p class="meta">${UPDATED_KO} 업데이트</p>
+<p class="meta">${g.updKo || UPDATED_KO} 업데이트</p>
 <div class="guide-body">
 <figure class="gallery" style="margin:24px 0 8px"><img src="../../photos/${g.img}" alt="" loading="lazy"></figure>
 ${g.body}

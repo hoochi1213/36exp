@@ -249,18 +249,30 @@ export const PHOTO_CREDIT = {
   'x-ektachrome.jpg':'%D0%91%D0%B0%D1%80','x-portra160b.jpg':'First_United_Methodist',
 };
 
+// 비용 계산 가이드용 환율. 출처: ExchangeRate-API 공개 환율(2026-11-15 00:02 UTC 갱신분, 1달러=1,336.06원). 가격 갱신 때 함께 바꾼다.
+export const FX = {krw:1336, date:'2026년 11월 15일', src:'ExchangeRate-API', url:'https://www.exchangerate-api.com/'};
+const won = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원';
+const r100 = n => Math.round(n / 100) * 100;
+const labStat = f => { const v = LABS.map(f).filter(x => x != null).sort((a, b) => a - b), m = v.length >> 1;
+  return {n: v.length, min: v[0], max: v[v.length - 1], med: v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2}; };
+const LS = {c: labStat(l => l.c[0]), hi: labStat(l => l.c[1]), bw: labStat(l => l.bw), sl: labStat(l => l.sl), m: labStat(l => l.m)};
+const usdKrw = slug => r100(parseFloat(FILM_PAGES.find(f => f.slug === slug).usd[0].replace(/[$,]/g, '')) * FX.krw);
+const costRow = ([slug, kind]) => { const f = FILM_PAGES.find(x => x.slug === slug), film = usdKrw(slug), lab = kind === 'bw' ? LS.bw.med : LS.c.med, roll = film + lab;
+  return `<tr><td><a href="../../film/${slug}/">${f.n}</a><span class="addr">${f.usd[0]} · ${f.usd[1]}</span></td><td class="n">${won(film)}</td><td class="n">${won(lab)}</td><td class="n"><b>${won(roll)}</b></td><td class="n">${won(Math.round(roll / 36 / 10) * 10)}</td></tr>`; };
+const COST_FILMS = [['gold-200','c'],['kodak-ultramax-400','c'],['portra-400','c'],['cinestill-800t','c'],['kentmere-pan-400','bw'],['ilford-hp5-plus','bw']];
+
 // 가이드 페이지. body는 신뢰하는 HTML(직접 작성). 링크는 /guide/<slug>/ 기준 상대 경로.
 export const GUIDES = [
   {slug:'first-roll',t:'필름 카메라 첫 롤 완주 가이드',s:'카메라 고르기부터 현상·스캔까지 8단계',img:'film.jpg',
     d:'필름 카메라를 처음 시작하는 사람이 첫 롤을 끝까지 찍고 사진 파일로 받기까지의 8단계. 카메라·필름 고르기, 필름 넣기, 노출, 되감기, 현상소 맡기기, 스캔, 보관.',
     body:`<p>필름 사진은 "찍고 바로 본다"가 없어서 처음엔 막막합니다. 아래 8단계만 따라가면 첫 롤을 끝까지 찍고 사진 파일로 받아 볼 수 있습니다.</p>
 <ol class="steps">
-<li><div><b>카메라 고르기.</b> 찍는 재미부터 느끼고 싶다면 <a href="../../camera/point-and-shoot/">자동 똑딱이</a>, 노출을 배우고 싶다면 <a href="../../camera/manual-slr/">수동 SLR</a>. 필름값을 아끼고 싶다면 한 롤에 72장인 <a href="../../camera/half-frame/">하프프레임</a>도 좋습니다. 중고라면 <a href="../../camera/manual-slr/">중고 체크 항목</a>을 꼭 확인하세요.</div></li>
+<li><div><b>카메라 고르기.</b> 찍는 재미부터 느끼고 싶다면 <a href="../../camera/point-and-shoot/">자동 똑딱이</a>, 노출을 배우고 싶다면 <a href="../../camera/manual-slr/">수동 SLR</a>. 필름값을 아끼고 싶다면 한 롤에 72장인 <a href="../../camera/half-frame/">하프프레임</a>도 좋습니다. 중고라면 <a href="../buy-camera/">처음 살 때 확인할 것</a>을 먼저 보세요.</div></li>
 <li><div><b>필름 고르기.</b> 첫 롤은 ISO 400 컬러 네거티브가 가장 실패가 적습니다. <a href="../../film/portra-400/">Portra 400</a>이 무난하고, 저렴하게 시작하려면 <a href="../../film/gold-200/">Gold 200</a>. 고민되면 <a href="../../#quiz">필름 테스트</a>로 골라 보세요.</div></li>
 <li><div><b>필름 넣기.</b> 그늘에서 뒷판을 열고, 리더를 감김 축에 끼운 뒤 공셔터 2~3번. 자세한 순서는 <a href="../load-film/">35mm 필름 넣는 법</a>에 있습니다.</div></li>
 <li><div><b>노출 맞추기.</b> 자동 카메라는 신경 쓸 필요가 없고, 수동이라면 노출계를 따르되 애매하면 한 스톱 밝게. 노출계가 없다면 <a href="../sunny-16/">써니 16</a> 규칙을 쓰세요.</div></li>
 <li><div><b>끝까지 찍고 되감기.</b> 감기 레버가 뻑뻑해지면 마지막 컷입니다. 억지로 감지 말고 되감기 버튼을 누른 뒤 끝까지 되감으세요. <b>되감기 전에 뒷판을 열면 안 됩니다.</b></div></li>
-<li><div><b>현상소에 맡기기.</b> 처음에는 "현상 + 스캔"이면 충분합니다. 35mm 컬러는 대략 5천~8천 원. 가까운 곳은 <a href="../../lab/">현상소 목록</a>에서 찾고, 없으면 택배로 보내도 됩니다.</div></li>
+<li><div><b>현상소에 맡기기.</b> 처음에는 "현상 + 스캔"이면 충분합니다. 35mm 컬러는 대략 5천~8천 원이고, 필름값까지 더한 계산은 <a href="../film-cost/">필름 사진 비용 계산</a>에 있습니다. 가까운 곳은 <a href="../../lab/">현상소 목록</a>에서 찾고, 없으면 택배로 보내도 됩니다.</div></li>
 <li><div><b>스캔 파일 받기.</b> 보통 메일이나 다운로드 링크로 옵니다. 휴대폰·SNS용이면 기본 스캔, 크게 인화할 계획이면 고해상도. 스캔 방식은 <a href="../scan-film/">필름 스캔 방법</a>에서 비교했습니다.</div></li>
 <li><div><b>네거티브 보관하기.</b> 현상된 네거티브는 슬리브에 넣어 서늘하고 건조한 곳에. 나중에 언제든 다시 스캔하거나 인화할 수 있습니다. <a href="../storage/">필름 보관법</a>을 참고하세요.</div></li>
 </ol>
@@ -269,6 +281,83 @@ export const GUIDES = [
 <li><b>필름이 안 감긴 채로 36장을 찍음</b>: 감을 때 되감기 노브가 같이 도는지 확인하면 막을 수 있습니다.</li>
 <li><b>실내에서 ISO 100~200 필름</b>: 어둡게 나오기 쉽습니다. 실내가 섞이면 ISO 400을 쓰세요.</li>
 <li><b>모든 컷을 조심스럽게 아껴 찍음</b>: 첫 롤은 연습입니다. 다양한 빛에서 찍어 봐야 다음 롤이 좋아집니다.</li>
+</ul>`},
+  {slug:'buy-camera',t:'필름 카메라 처음 살 때 확인할 것',s:'중고 카메라 10가지 점검 순서와 판매처 고르기',img:'camera.jpg',upd:'2026-11-16',updKo:'2026년 11월',
+    d:'중고 필름 카메라를 처음 살 때 확인할 것. 종류·배터리·예산 정하기, 직접 보고 점검할 10가지(셔터, 렌즈 곰팡이, 노출계, 차광재 등), 판매처 고르기, 받은 뒤 테스트 롤.',
+    body:`<p>필름 카메라는 대부분 수십 년 된 중고입니다. 겉이 깨끗해도 셔터나 노출계가 약해져 있을 수 있습니다. 아래 순서대로 보면 고장 난 카메라로 첫 롤을 버리는 일을 크게 줄일 수 있습니다.</p>
+<h2>사기 전에 정할 것</h2>
+<ul>
+<li><b>어떤 종류로 할지</b>: 찍는 재미가 먼저라면 <a href="../../camera/point-and-shoot/">자동 똑딱이</a>, 노출을 배우고 싶다면 <a href="../../camera/manual-slr/">수동 SLR</a>, 작고 조용한 카메라를 원하면 <a href="../../camera/rangefinder/">레인지파인더</a>, 필름값을 아끼려면 <a href="../../camera/half-frame/">하프프레임</a>입니다. 고르기 어렵다면 <a href="../../#quiz">필름 테스트</a>부터 해 보세요.</li>
+<li><b>배터리가 꼭 필요한지</b>: 기계식 카메라는 배터리 없이도 셔터가 작동하고, 배터리는 노출계에만 씁니다(예: <a href="../../camera/nikon-fm2/">Nikon FM2</a>). 전자식 자동 카메라는 배터리가 없으면 아무것도 작동하지 않습니다. 그 카메라가 쓰는 배터리를 지금도 살 수 있는지 먼저 찾아보세요.</li>
+<li><b>예산</b>: 인기 기종 페이지에 출처가 있는 해외 판매가를 정리했습니다. <a href="../../camera/nikon-fm2/">FM2</a> · <a href="../../camera/pentax-k1000/">K1000</a> · <a href="../../camera/canon-ae-1/">AE-1</a> · <a href="../../camera/olympus-mju-ii/">뮤2</a> · <a href="../../camera/contax-t2/">T2</a>. 국내 중고 시세는 출처를 확인한 자료가 없어 적지 않았습니다. 카메라 외에 필름과 현상비가 롤마다 들어가니 <a href="../film-cost/">필름 사진 비용 계산</a>도 함께 보세요.</li>
+</ul>
+<h2>직접 보고 확인할 10가지</h2>
+<p>판매자를 만나거나 매장에서 볼 때 확인합니다. 작은 손전등(휴대폰 불빛)과 노출계 앱을 준비하면 편합니다.</p>
+<ol class="steps">
+<li><div><b>겉모습과 떨어뜨린 흔적.</b> 모서리가 찌그러졌거나 렌즈 앞 테두리가 휘었다면 안쪽이 틀어졌을 수 있습니다. 긁힘 정도는 사진에 영향이 없습니다.</div></li>
+<li><div><b>배터리 칸.</b> 뚜껑을 열어 초록색·흰색 가루(부식)가 없는지 봅니다. 접점이 상하면 전원이 들어오지 않습니다.</div></li>
+<li><div><b>셔터 속도별 소리.</b> 뒷판을 열고 1초, 1/30초, 1/250초, 가장 빠른 속도 순서로 눌러 봅니다. 느린 속도는 길게, 빠른 속도는 짧게 열려야 합니다. 1초가 짧게 끊기거나 중간에 걸리면 정비가 필요한 상태입니다.</div></li>
+<li><div><b>셔터막.</b> 뒷판을 연 채로 셔터막에 구김이나 구멍이 없는지 봅니다. 손가락으로 만지지 않습니다.</div></li>
+<li><div><b>렌즈 속.</b> 렌즈 뒤에서 불빛을 비추고 앞에서 들여다봅니다. 실뿌리처럼 퍼진 무늬는 곰팡이, 전체가 뿌연 것은 흐림입니다. 작은 먼지는 사진에 거의 나오지 않습니다.</div></li>
+<li><div><b>조리개.</b> 조리개 링을 돌리며 날개가 고르게 움직이는지, 날개에 기름이 번져 있지 않은지 봅니다.</div></li>
+<li><div><b>초점.</b> 먼 곳에 초점을 맞춰 무한대(∞)에서 또렷한지 봅니다. 레인지파인더는 초점 창의 두 상이 위아래로 어긋나지 않는지 확인합니다.</div></li>
+<li><div><b>노출계.</b> 같은 장면을 휴대폰 노출계 앱과 비교합니다. 1스톱 안쪽이면 쓸 만합니다. 노출계가 죽어 있어도 <a href="../sunny-16/">써니 16</a>으로 찍을 수는 있습니다.</div></li>
+<li><div><b>차광재.</b> 뒷판 홈과 경첩 쪽의 스펀지가 끈적이거나 부스러지면 빛이 샙니다. 교체는 가능하지만 정비 비용이 더해집니다.</div></li>
+<li><div><b>감기와 되감기.</b> 감기 레버가 부드럽게 돌아가는지, 필름 카운터가 한 칸씩 올라가는지, 되감기 크랭크가 걸리지 않는지 봅니다. 자동 똑딱이는 전원, 줌, 플래시 충전, 액정 표시까지 확인합니다.</div></li>
+</ol>
+<p class="meta">카메라 종류마다 더 볼 곳이 있습니다. 각 유형 페이지의 "중고로 살 때 확인할 것"에 예시 사진과 함께 정리했습니다. 예: <a href="../../camera/manual-slr/">수동 SLR</a>, <a href="../../camera/rangefinder/">레인지파인더</a>, <a href="../../camera/point-and-shoot/">자동 똑딱이</a>.</p>
+<h2>어디서 살지</h2>
+<ul>
+<li><b>정비·보증이 있는 판매처</b>: 값은 더 높지만 고장이 나도 수리나 반품을 받을 수 있습니다. 예를 들어 미국 Blue Moon Camera는 FM2n 바디를 6개월 보증과 함께 판매합니다(<a href="../../camera/nikon-fm2/">FM2 페이지</a>에 출처).</li>
+<li><b>개인 거래</b>: 값은 낮지만 반품이 어렵습니다. 직접 만나 위 10가지를 확인하고, 판매자가 그 카메라로 찍은 사진이 있으면 보여 달라고 부탁해 보세요.</li>
+<li><b>"작동 확인"과 "정비 완료"는 다릅니다</b>: 작동 확인은 셔터가 눌린다는 뜻입니다. 셔터 속도와 노출계가 정확한지는 따로 물어봐야 합니다.</li>
+</ul>
+<h2>받은 뒤 할 일</h2>
+<ol class="steps">
+<li><div><b>저렴한 필름으로 테스트 롤.</b> <a href="../../film/gold-200/">Gold 200</a>이나 <a href="../../film/kodak-ultramax-400/">UltraMax 400</a>으로 밝은 곳, 그늘, 실내, 여러 셔터 속도를 섞어 찍습니다. 반품 기간이 있다면 받자마자 찍어 그 안에 현상까지 끝냅니다.</div></li>
+<li><div><b>결과로 판단하기.</b> 붉은 줄이나 번진 빛이 있으면 차광재, 한쪽만 어둡게 나오면 셔터막, 전체가 너무 어둡거나 밝으면 노출계나 셔터 속도를 의심합니다.</div></li>
+<li><div><b>필름 넣는 법 익히기.</b> 테스트 롤이 비어 있다면 필름이 감기지 않았을 수도 있습니다. <a href="../load-film/">35mm 필름 넣는 법</a>을 확인해 주세요.</div></li>
+</ol>`},
+  {slug:'film-cost',t:'필름 사진 비용 계산: 한 롤, 한 장에 얼마',s:'필름값과 현상·스캔비로 계산한 롤당·장당 비용',img:'lab.jpg',upd:'2026-11-16',updKo:'2026년 11월',
+    d:`필름 사진 한 롤과 한 장에 드는 비용. 국내 현상소 ${LS.c.n}곳의 35mm 컬러 현상+스캔 가격(가운데 값 ${won(LS.c.med)})과 필름 판매가로 계산한 표와 직접 넣어 보는 계산기.`,
+    body:`<p>필름 사진의 비용은 <b>필름값 + 현상·스캔비</b>입니다. 이것을 컷 수(보통 36장)로 나누면 사진 한 장 값이 나옵니다. 아래 숫자는 모두 출처가 있는 가격으로 계산했습니다.</p>
+<h2>현상·스캔비: 국내 현상소 ${LABS.length}곳 기준</h2>
+<div class="stats">
+<div><b>${won(LS.c.med)}</b><span>35mm 컬러 현상+기본 스캔, 가운데 값 (${LS.c.n}곳, ${won(LS.c.min)}~${won(LS.c.max)})</span></div>
+<div><b>${won(LS.hi.med)}</b><span>35mm 컬러 현상+고해상 스캔, 가운데 값 (${LS.hi.n}곳, ${won(LS.hi.min)}~${won(LS.hi.max)})</span></div>
+<div><b>${won(LS.bw.med)}</b><span>35mm 흑백, 가운데 값 (${LS.bw.n}곳, ${won(LS.bw.min)}~${won(LS.bw.max)})</span></div>
+<div><b>${won(LS.m.med)}</b><span>120 중형 컬러, 가운데 값 (${LS.m.n}곳, ${won(LS.m.min)}~${won(LS.m.max)})</span></div>
+</div>
+<p class="meta">출처: <a href="https://5ftmag.com/labs/">5ft magazine 현상소 목록</a>(2026년 10월 6일 반영)과 각 업체 공지. 가운데 값은 가격을 순서대로 놓았을 때 한가운데 값입니다. 흑백·120 가격은 출처에 스캔 포함 여부가 따로 적혀 있지 않아, 맡기기 전에 현상소에 확인해 주세요. 곳별 가격은 <a href="../../lab/">현상소 목록</a>에 있습니다. 택배 접수를 받는 엘리카메라·파란포토는 35mm 컬러 현상+스캔이 5,000원이고, 택배비는 따로 듭니다.</p>
+<h2>필름별 한 롤 비용</h2>
+<p>필름값은 미국 판매가를 원화로 바꾼 값입니다. 국내 판매가는 공개 자료로 확인하기 어려워 이렇게 계산했습니다. 배송비와 세금은 들어 있지 않습니다.</p>
+<div class="scroll"><table class="labtbl"><thead><tr><th>필름 (판매가 · 판매처)</th><th>필름값</th><th>현상·스캔</th><th>한 롤</th><th>한 장(36컷)</th></tr></thead><tbody>
+${COST_FILMS.map(costRow).join('\n')}
+</tbody></table></div>
+<p class="meta">환율 1달러 = ${won(FX.krw)}(<a href="${FX.url}">${FX.src}</a>, ${FX.date}). 필름 판매가 출처: <a href="https://pellica.app/blog/film-prices-2026-guide/">Pellica 2026 필름 가격 가이드</a>(2026년 10월 20일 갱신). 현상·스캔은 위의 가운데 값(컬러 ${won(LS.c.med)}, 흑백 ${won(LS.bw.med)})입니다. 다른 필름의 가격은 <a href="../../prices/">필름 가격·단종 현황</a>에 있습니다.</p>
+<h2>직접 계산해 보기</h2>
+<p>가지고 있는 필름의 실제 값과 맡길 현상소의 가격을 넣어 보세요.</p>
+<div class="calc" id="costCalc">
+<label>필름 1롤 값(원)<input type="number" id="cFilm" value="${usdKrw('gold-200')}" min="0" step="100" inputmode="numeric"></label>
+<label>현상+스캔 1롤(원)<input type="number" id="cLab" value="${LS.c.med}" min="0" step="500" inputmode="numeric"></label>
+<label>한 롤 컷 수<select id="cCut"><option value="24">24컷</option><option value="36" selected>36컷</option><option value="72">72컷 (하프프레임)</option></select></label>
+<label>롤 수<input type="number" id="cRolls" value="1" min="1" step="1" inputmode="numeric"></label>
+</div>
+<div class="stats" aria-live="polite"><div><b id="oRoll">–</b><span>한 롤 비용</span></div><div><b id="oCut">–</b><span>사진 한 장 비용</span></div><div><b id="oSum">–</b><span>전체 비용</span></div></div>
+<p class="meta">처음 값은 Gold 200(환산가)과 현상소 가운데 값입니다. 하프프레임은 스캔 비용을 따로 받는 곳이 있어 현상소에 확인해 주세요.</p>
+<script>
+(()=>{const $=i=>document.getElementById(i),w=n=>Math.round(n).toLocaleString('ko-KR')+'원';
+const run=()=>{const f=+$('cFilm').value||0,l=+$('cLab').value||0,c=+$('cCut').value,r=Math.max(1,+$('cRolls').value||1),roll=f+l;
+$('oRoll').textContent=w(roll);$('oCut').textContent=w(roll/c);$('oSum').textContent=w(roll*r);};
+['cFilm','cLab','cCut','cRolls'].forEach(i=>$(i).addEventListener('input',run));run();})();
+</script>
+<h2>비용을 줄이는 방법</h2>
+<ul>
+<li><b>하프프레임 카메라</b>: 한 롤에 72장을 찍어 장당 비용이 절반 가까이 줄어듭니다. <a href="../../camera/half-frame/">하프프레임 카메라</a>를 참고하세요.</li>
+<li><b>기본 스캔으로 받기</b>: 휴대폰·SNS용이라면 기본 스캔으로 충분합니다. 위 가운데 값 기준으로 고해상 스캔과 ${won(LS.hi.med - LS.c.med)} 차이가 납니다.</li>
+<li><b>묶음으로 사기</b>: 흑백 필름은 10롤 묶음이 1롤 가격보다 쌉니다. 예: <a href="../../film/ilford-hp5-plus/">HP5 Plus</a>는 10롤 묶음 기준 1롤 ${FILM_PAGES.find(f => f.slug === 'ilford-hp5-plus').usd[0]}입니다.</li>
+<li><b>흑백은 집에서 현상</b>: 처음 장비를 갖추면 그 뒤로는 롤당 비용이 크게 줄어듭니다. <a href="../home-bw-develop/">집에서 흑백 필름 현상하기</a>를 보세요.</li>
+<li><b>스캔 없이 현상만</b>: 직접 스캔한다면 현상만 맡길 수 있습니다. 예: 파란포토는 현상만 3,000원입니다. 방법은 <a href="../scan-film/">필름 스캔 방법</a>에 있습니다.</li>
 </ul>`},
   {slug:'load-film',t:'35mm 필름 넣는 법과 되감기',s:'수동 SLR 기준, 필름이 안 감기는 사고 막기',img:'shoot.jpg',
     d:'35mm 필름 카메라에 필름을 넣는 순서와 다 찍은 뒤 되감는 법. 필름이 안 감기는 사고와 뒷판을 잘못 열었을 때 대처까지.',
