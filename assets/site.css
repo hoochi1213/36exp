@@ -424,5 +424,12 @@ footer p{margin:0;max-width:60ch}
 .vs-pics img{aspect-ratio:3/2;object-fit:cover}
 .vs th[scope=row]{font:500 11px/1.6 var(--f-mono);color:var(--ink-2);white-space:normal;text-align:left;width:6.5em}
 .vs td{width:calc((100% - 6.5em)/2)}
+.rel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0 4px}
+@media (max-width:600px){.rel{grid-template-columns:minmax(0,1fr)}}
+.rel a{display:grid;align-content:start;gap:3px;padding:12px 14px;border:1px solid var(--rule);background:var(--panel);color:var(--ink);text-decoration:none}
+.rel a:hover{border-color:var(--ink)}
+.rel .mono{font-size:10.5px;letter-spacing:.08em;color:var(--ink-2)}
+.rel b{font-family:var(--f-display);font-weight:500;font-size:16px}
+.rel span:last-child{font-size:12.5px;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pagefoot{margin-top:48px;padding:28px 0 40px;border-top:1px solid var(--ink);font-size:12.5px;color:var(--ink-2)}
 .pagefoot ul{list-style:none;padding:0;margin:8px 0 0}

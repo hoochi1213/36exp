@@ -88,6 +88,13 @@ fs.writeFileSync(path.join(ROOT, 'assets/site.css'), css.trim() + `
 .vs-pics img{aspect-ratio:3/2;object-fit:cover}
 .vs th[scope=row]{font:500 11px/1.6 var(--f-mono);color:var(--ink-2);white-space:normal;text-align:left;width:6.5em}
 .vs td{width:calc((100% - 6.5em)/2)}
+.rel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0 4px}
+@media (max-width:600px){.rel{grid-template-columns:minmax(0,1fr)}}
+.rel a{display:grid;align-content:start;gap:3px;padding:12px 14px;border:1px solid var(--rule);background:var(--panel);color:var(--ink);text-decoration:none}
+.rel a:hover{border-color:var(--ink)}
+.rel .mono{font-size:10.5px;letter-spacing:.08em;color:var(--ink-2)}
+.rel b{font-family:var(--f-display);font-weight:500;font-size:16px}
+.rel span:last-child{font-size:12.5px;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pagefoot{margin-top:48px;padding:28px 0 40px;border-top:1px solid var(--ink);font-size:12.5px;color:var(--ink-2)}
 .pagefoot ul{list-style:none;padding:0;margin:8px 0 0}
 `);
@@ -145,6 +152,39 @@ const crumbLd = items => ({'@type':'BreadcrumbList',itemListElement:items.map(([
 const write = (rel, html) => { fs.mkdirSync(path.join(ROOT, rel), {recursive: true}); fs.writeFileSync(path.join(ROOT, rel, 'index.html'), html); };
 const urls = [BASE];
 
+// 2-1) 함께 보면 좋은 페이지: 후보 중 본문에 이미 있는 링크는 빼고 짝수 개(최대 6개)만 카드로 붙임
+const R = {
+  film: s => { const f = filmFull(filmBySlug[s]); return {p: `film/${s}/`, tag: '필름', t: f.n, d: f.why}; },
+  model: md => ({p: `camera/${md.slug}/`, tag: '기종', t: md.n, d: md.lede}),
+  cam: k => ({p: `camera/${CAM_SLUG[k]}/`, tag: '카메라', t: camByKey[k].n, d: camByKey[k].d}),
+  guide: s => { const g = GUIDES.find(x => x.slug === s); return {p: `guide/${s}/`, tag: '가이드', t: g.t, d: g.s}; },
+  cmp: c => ({p: `compare/${c.slug}/`, tag: '비교', t: c.t, d: c.s}),
+  region: r => ({p: `lab/${LAB_REGION_PAGES[r].slug}/`, tag: '현상소', t: `${r} 현상소 ${LABS.filter(l => l.r === r).length}곳`, d: `${r} 지역 현상소의 현상+스캔 가격과 주소`}),
+  lab: () => ({p: 'lab/', tag: '현상소', t: '필름 현상소 목록과 가격', d: `전국 현상소 ${LABS.length}곳의 현상+스캔 가격 비교`}),
+  prices: () => ({p: 'prices/', tag: '가격', t: '필름 가격·단종 현황', d: '필름별 35mm 판매가와 단종·생산 소식'}),
+  faq: () => ({p: 'faq/', tag: '질문', t: '자주 묻는 질문', d: '공항 엑스레이, 유통기한, 현상 비용 등'}),
+};
+const modelsFor = names => MODELS.filter(md => md.films.some(n => names.includes(n)));
+const cmpsFor = slugs => COMPARES.filter(c => slugs.includes(c.a) || slugs.includes(c.b));
+const relCount = {};
+const withRel = (rel, html, cands) => {
+  const here = new URL(`${BASE}${rel}/`);
+  const main = html.slice(html.indexOf('<main'));
+  const seen = new Set([here.pathname, ...[...main.matchAll(/href="([^"#]*)"/g)].map(m => new URL(m[1], here).pathname)]);
+  const out = [];
+  for (const c of cands) { const pth = new URL(c.p, BASE).pathname; if (!seen.has(pth)) { seen.add(pth); out.push(c); } }
+  let pick = out.slice(0, 6); if (pick.length % 2 && pick.length > 1) pick = pick.slice(0, -1);
+  relCount[rel] = pick.length;
+  if (!pick.length) return html;
+  const up = '../'.repeat(rel.split('/').length);
+  const block = `<h2>함께 보면 좋은 페이지</h2>
+<nav class="rel" aria-label="함께 보면 좋은 페이지">${pick.map(c => `<a href="${up}${c.p}"><span class="mono">${c.tag}</span><b>${esc(c.t)}</b><span>${esc(c.d)}</span></a>`).join('')}</nav>
+`;
+  const at = html.indexOf('<nav class="nextprev"') > -1 ? html.indexOf('<nav class="nextprev"') : html.indexOf('\n</main>') + 1;
+  return html.slice(0, at) + block + html.slice(at);
+};
+const writeRel = (rel, html, cands) => write(rel, withRel(rel, html, cands));
+
 // 3) 카메라 페이지
 const camOrder = CAMS.map(c => c.img);
 for (const c of CAMS) {
@@ -157,7 +197,7 @@ for (const c of CAMS) {
   const title = `${c.n} 입문 가이드 — 원리·추천 기종·중고 체크·시세 | 36 EXP.`;
   const desc = `${c.n}(${c.en}) 필름 카메라 가이드. ${c.d} 중고로 살 때 확인할 것과 ${UPDATED_KO} 기준 대략 시세(${m.price}).`;
   urls.push(url);
-  write(`camera/${slug}`, head({title, desc, url, img: 'cam-' + c.img + '.jpg', ld: {'@context':'https://schema.org','@graph':[
+  writeRel(`camera/${slug}`, head({title, desc, url, img: 'cam-' + c.img + '.jpg', ld: {'@context':'https://schema.org','@graph':[
     {'@type':'Article',headline:`${c.n} 입문 가이드`,description:desc,image:`${BASE}photos/cam-${c.img}.jpg`,dateModified:UPDATED,inLanguage:'ko',mainEntityOfPage:url},
     crumbLd([['36 EXP.',BASE],['카메라',BASE+'camera/'],[c.n,url]])]}}) + `
 <p class="crumb"><a href="../../">36 EXP.</a> / <a href="../">카메라</a> / ${esc(c.n)}</p>
@@ -179,7 +219,11 @@ for (const c of CAMS) {
 <ul class="checks">${checks}</ul>
 <p class="meta">사기 전 순서와 판매처 고르기는 <a href="../../guide/buy-camera/">필름 카메라 처음 살 때 확인할 것</a>에 정리했습니다.</p>
 <nav class="nextprev" aria-label="다른 카메라"><a href="../${CAM_SLUG[prev.img]}/">◂ ${esc(prev.n)}</a><a href="../${CAM_SLUG[next.img]}/">${esc(next.n)} ▸</a></nav>
-` + foot([...pics.map(p => p[0]), ...defectPics]));
+` + foot([...pics.map(p => p[0]), ...defectPics]), [
+    ...cmpsFor(m.films.map(n => filmByName[n]?.slug).filter(Boolean)).map(R.cmp),
+    ...modelsFor(m.films).filter(md => md.type !== c.img).slice(0, 2).map(R.model),
+    ...(c.img === 'inst' ? [R.cam('ps'), R.cam('half'), R.guide('storage'), R.faq()]
+      : [...['first-roll', 'film-cost', ...(/35mm/.test(c.f) ? ['load-film'] : []), 'scan-film'].map(R.guide), R.lab(), R.prices()])]);
 }
 
 // 3-1) 인기 기종 페이지
@@ -187,7 +231,7 @@ for (const md of MODELS) {
   const url = `${BASE}camera/${md.slug}/`, t = camByKey[md.type]; urls.push(url);
   const title = `${md.n}(${md.ko}) 중고 구매 가이드 — 사양·체크 포인트·시세 | 36 EXP.`;
   const desc = `${md.ko}(${md.n}) 필름 카메라 가이드. ${md.lede} 사양, 장단점, 중고로 살 때 확인할 것, 2026년 해외 판매가 참고.`;
-  write(`camera/${md.slug}`, head({title, desc, url, img: md.pics[0][0], ld: {'@context':'https://schema.org','@graph':[
+  writeRel(`camera/${md.slug}`, head({title, desc, url, img: md.pics[0][0], ld: {'@context':'https://schema.org','@graph':[
     {'@type':'Article',headline:`${md.n} 중고 구매 가이드`,description:desc,image:`${BASE}photos/${md.pics[0][0]}`,dateModified:UPDATED,inLanguage:'ko',mainEntityOfPage:url},
     crumbLd([['36 EXP.',BASE],['카메라',BASE+'camera/'],[t.n,`${BASE}camera/${CAM_SLUG[md.type]}/`],[md.n,url]])]}}) + `
 <p class="crumb"><a href="../../">36 EXP.</a> / <a href="../">카메라</a> / <a href="../${CAM_SLUG[md.type]}/">${esc(t.n)}</a> / ${esc(md.n)}</p>
@@ -210,7 +254,10 @@ for (const md of MODELS) {
 <p class="meta">국내 거래가는 공개 자료로 확인하기 어려워 해외 판매처 가격을 실었습니다. 정비(CLA)를 마친 판매점 가격이라 개인 거래보다 높을 수 있습니다. 국내 시세는 중고 거래 앱의 거래 완료 매물로 확인하세요.</p>
 <h2>어울리는 필름</h2><div class="links">${md.films.map(f => `<a class="chip" href="${filmLink(f)}">${esc(f)}</a>`).join('')}</div>
 <h2>다른 기종</h2><div class="links">${MODELS.filter(x => x !== md).map(x => `<a class="chip" href="../${x.slug}/">${esc(x.n)}</a>`).join('')}</div>
-` + foot(md.pics.map(p => p[0])));
+` + foot(md.pics.map(p => p[0])), [
+    R.guide('buy-camera'), ...(md.type === 'slr' ? ['load-film', 'sunny-16'] : ['first-roll']).map(R.guide),
+    ...cmpsFor(md.films.map(n => filmByName[n]?.slug).filter(Boolean)).map(R.cmp),
+    R.guide('film-cost'), R.lab(), R.guide('scan-film')]);
 }
 
 // 4) 필름 페이지
@@ -223,7 +270,7 @@ FILM_PAGES.forEach((f0, i) => {
   const title = `${f.n} 특징·노출 팁·가격 — 필름 가이드 | 36 EXP.`;
   const desc = `${f.n}(ISO ${f.iso}, ${pr[0]}) 필름 리뷰. ${f.why} ${f.usd ? `${UPDATED_KO} 해외 판매가 ${f.usd[0]}.` : ''}`;
   urls.push(url);
-  write(`film/${f.slug}`, head({title, desc, url, img: f.img, ld: {'@context':'https://schema.org','@graph':[
+  writeRel(`film/${f.slug}`, head({title, desc, url, img: f.img, ld: {'@context':'https://schema.org','@graph':[
     {'@type':'Article',headline:`${f.n} 필름 가이드`,description:desc,image:`${BASE}photos/${f.img}`,dateModified:UPDATED,inLanguage:'ko',mainEntityOfPage:url},
     crumbLd([['36 EXP.',BASE],['필름',BASE+'film/'],[f.n,url]])]}}) + `
 <p class="crumb"><a href="../../">36 EXP.</a> / <a href="../">필름</a> / ${esc(f.n)}</p>
@@ -245,7 +292,10 @@ FILM_PAGES.forEach((f0, i) => {
 <h2>비슷한 필름</h2><div class="links">${f.alt.map(s => `<a class="chip" href="../${s}/">${esc(filmBySlug[s].n)}</a>`).join('')}</div>${COMPARES.filter(c => c.a === f.slug || c.b === f.slug).map(c => `
 <h2>비교해 보기</h2><div class="links"><a class="chip" href="../../compare/${c.slug}/">${esc(c.t)}</a></div>`).join('')}
 <nav class="nextprev" aria-label="다른 필름"><a href="../${prev.slug}/">◂ ${esc(prev.n)}</a><a href="../${next.slug}/">${esc(next.n)} ▸</a></nav>
-` + foot([f.img]));
+` + foot([f.img]), [
+    ...modelsFor([f.n]).map(R.model),
+    ...(f.p === 'bw' ? ['home-bw-develop'] : []).map(R.guide),
+    R.guide('film-cost'), R.prices(), R.lab(), ...['scan-film', 'storage'].map(R.guide)]);
 });
 
 // 5) 목록 페이지 (카메라 / 필름)
@@ -272,7 +322,7 @@ COMPARES.forEach(c => {
   const fig = f => `<figure><img src="../../photos/${f.img}" alt="${esc(f.cap || f.n + '로 찍은 사진')}" loading="lazy"><figcaption>${esc(f.cap || f.n + '로 찍은 사진')}</figcaption></figure>`;
   const rows = [['감도', `ISO ${a.iso}`, `ISO ${b.iso}`], ['현상', `${a.kind || KIND[a.p]} · ${PROCESS[a.p][0]}`, `${b.kind || KIND[b.p]} · ${PROCESS[b.p][0]}`],
     ...(a.formats && b.formats ? [['판형', a.formats, b.formats]] : []), ...c.rows];
-  write(`compare/${c.slug}`, head({title, desc, url, img: a.img, ld: {'@context':'https://schema.org','@graph':[
+  writeRel(`compare/${c.slug}`, head({title, desc, url, img: a.img, ld: {'@context':'https://schema.org','@graph':[
     {'@type':'Article',headline:`${c.t} 비교`,description:desc,image:`${BASE}photos/${a.img}`,dateModified:UPDATED,inLanguage:'ko',mainEntityOfPage:url,about:[a.n,b.n]},
     crumbLd([['36 EXP.',BASE],['필름 비교',BASE+'compare/'],[c.t,url]])]}}) + `
 <p class="crumb"><a href="../../">36 EXP.</a> / <a href="../">필름 비교</a> / ${esc(c.t)}</p>
@@ -292,7 +342,10 @@ ${c.body}
 <h2>각 필름 자세히 보기</h2><div class="links"><a class="chip" href="../../film/${a.slug}/">${esc(a.n)} 가이드</a><a class="chip" href="../../film/${b.slug}/">${esc(b.n)} 가이드</a><a class="chip" href="../../prices/">필름 가격·단종 현황</a><a class="chip" href="../../lab/">현상소 찾기</a></div>
 <h2>다른 비교</h2><div class="links">${COMPARES.filter(x => x !== c).map(x => `<a class="chip" href="../${x.slug}/">${esc(x.t)}</a>`).join('')}</div>
 <h2>출처</h2><ul><li>가격: 위 표의 판매처 링크(${UPDATED_KO} 확인)</li><li>필름 특징: 이 사이트의 각 필름 가이드</li>${c.src.map(([t, u]) => `<li><a href="${u}" rel="nofollow noopener">${esc(t)}</a> (2026년 11월 13일 확인)</li>`).join('')}</ul>
-` + foot([a.img, b.img]));
+` + foot([a.img, b.img]), [
+    ...modelsFor([a.n, b.n]).map(R.model),
+    ...(a.p === 'bw' || b.p === 'bw' ? ['home-bw-develop'] : []).map(R.guide),
+    ...['film-cost', 'scan-film', 'storage', 'first-roll'].map(R.guide)]);
 });
 listPage('compare', '필름 비교', '헷갈리는 필름 두 가지를 나란히 놓고 색감, 입자, 노출 관용도, 가격을 비교했습니다.',
   COMPARES.map(c => { const a = filmFull(filmBySlug[c.a]); return {href: `${c.slug}/`, img: a.img, n: c.t, tag: 'VS', d: c.s}; }), 'film.jpg');
@@ -309,10 +362,21 @@ listPage('compare', '필름 비교', '헷갈리는 필름 두 가지를 나란�
 }
 
 // 6-1) 가이드
+const mdl = s => R.model(MODELS.find(md => md.slug === s));
+const GUIDE_REL = {
+  'first-roll': [R.film('gold-200'), R.film('kodak-ultramax-400'), R.cam('ps'), R.cam('slr')],
+  'buy-camera': [mdl('pentax-k1000'), mdl('nikon-fm2'), mdl('canon-ae-1'), mdl('olympus-mju-ii')],
+  'film-cost': [R.film('kodak-ultramax-400'), R.film('kentmere-pan-400'), R.cmp(COMPARES[0]), R.region('서울')],
+  'load-film': [mdl('pentax-k1000'), mdl('nikon-fm2'), mdl('canon-ae-1'), R.cam('slr')],
+  'sunny-16': [mdl('nikon-fm2'), mdl('pentax-k1000'), R.film('kentmere-pan-400'), R.film('gold-200')],
+  'home-bw-develop': [R.film('kodak-tri-x-400'), R.film('ilford-hp5-plus'), R.film('kentmere-pan-400'), R.film('fomapan-100'), R.cmp(COMPARES[1])],
+  'scan-film': [R.region('서울'), R.region('경기'), R.region('부산'), R.region('대구')],
+  'storage': [R.film('portra-400'), R.film('cinestill-800t'), R.film('ilford-hp5-plus'), R.cam('ps')],
+};
 GUIDES.forEach((g, i) => {
   const url = `${BASE}guide/${g.slug}/`; urls.push(url);
   const prev = GUIDES[(i + GUIDES.length - 1) % GUIDES.length], next = GUIDES[(i + 1) % GUIDES.length];
-  write(`guide/${g.slug}`, head({title: `${g.t} — 36 EXP.`, desc: g.d, url, img: g.img, ld: {'@context':'https://schema.org','@graph':[
+  writeRel(`guide/${g.slug}`, head({title: `${g.t} — 36 EXP.`, desc: g.d, url, img: g.img, ld: {'@context':'https://schema.org','@graph':[
     {'@type':'Article',headline:g.t,description:g.d,image:`${BASE}photos/${g.img}`,dateModified:g.upd || UPDATED,inLanguage:'ko',mainEntityOfPage:url},
     crumbLd([['36 EXP.',BASE],['가이드',BASE+'guide/'],[g.t,url]])]}}) + `
 <p class="crumb"><a href="../../">36 EXP.</a> / <a href="../">가이드</a> / ${esc(g.t)}</p>
@@ -325,7 +389,7 @@ ${g.body}
 </div>
 <h2>다른 가이드</h2><div class="links">${GUIDES.filter(x => x !== g).map(x => `<a class="chip" href="../${x.slug}/">${esc(x.t)}</a>`).join('')}</div>
 <nav class="nextprev" aria-label="다른 가이드"><a href="../${prev.slug}/">◂ ${esc(prev.t)}</a><a href="../${next.slug}/">${esc(next.t)} ▸</a></nav>
-` + foot([g.img]));
+` + foot([g.img]), [...(GUIDE_REL[g.slug] || []), R.lab(), R.prices(), R.faq(), R.film('portra-400')]);
 });
 listPage('guide', '필름 사진 가이드', '첫 롤 완주부터 필름 넣기, 노출, 자가 현상, 스캔, 보관까지. 필름 사진을 시작할 때 필요한 방법을 단계별로 정리했습니다.',
   GUIDES.map(g => ({href: `${g.slug}/`, img: g.img, n: g.t, tag: '', d: g.s})), 'film.jpg');
@@ -431,7 +495,7 @@ ${LABS.filter(l => l.r === r).map(l => `<tr><td>${l.u ? `<a href="${l.u}" rel="n
     const kinds = `서비스별로 보면 ${yes}에서 가격이 확인됩니다.${no.length ? ` ${no.join('·')}는 가격이 확인된 곳이 없어, 가까운 지역이나 택배 접수를 함께 보시면 좋습니다.` : ''}`;
     const nearLinks = near.filter(n => regions.includes(n)).map(n => `<a class="chip" href="../${LAB_REGION_PAGES[n].slug}/">${n} ${LABS.filter(l => l.r === n).length}</a>`).join('');
     const desc = `${r} 지역 필름 현상소 ${ls.length}곳의 35mm 컬러·흑백·슬라이드·120 현상+스캔 가격과 주소.${base.length ? ` 35mm 컬러 현상+기본 스캔은 ${won(base[0])}원부터.` : ''} 택배로 맡길 수 있는 곳도 함께 정리했습니다.`;
-    write(`lab/${slug}`, head({title: `${r} 필름 현상소 ${ls.length}곳 가격 비교 (${UPDATED_KO}) — 36 EXP.`, desc, url, img: 'lab.jpg',
+    writeRel(`lab/${slug}`, head({title: `${r} 필름 현상소 ${ls.length}곳 가격 비교 (${UPDATED_KO}) — 36 EXP.`, desc, url, img: 'lab.jpg',
       ld: {'@context':'https://schema.org','@graph':[crumbLd([['36 EXP.',BASE],['현상소',`${BASE}lab/`],[r,url]])]}}) + `
 <p class="crumb"><a href="../../">36 EXP.</a> / <a href="../">현상소</a> / ${r}</p>
 <h1>${r} 필름 현상소와 가격</h1>
@@ -459,7 +523,8 @@ ${nearLinks ? `<h2>가까운 지역 현상소</h2>
 <li>현상 방식은 필름마다 다릅니다. <a href="../../film/">필름별 가이드</a>에서 현상 방식(C-41·흑백·E-6)을 확인할 수 있습니다.</li>
 <li>전국 ${LABS.length}곳 가격은 <a href="../">현상소 전체 목록</a>에서 한 번에 비교할 수 있습니다.</li>
 </ul>
-` + foot(['lab.jpg']));
+` + foot(['lab.jpg']), [...['film-cost', 'first-roll', 'scan-film'].map(R.guide),
+      ...(has(ls, 'bw') ? [] : [R.guide('home-bw-develop')]), R.prices(), R.film('kodak-ultramax-400'), R.faq()]);
   }
 }
 
@@ -477,4 +542,5 @@ fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="
 ${urls.map(u => `  <url>\n    <loc>${u}</loc>\n    <lastmod>${UPDATED}</lastmod>\n  </url>`).join('\n')}
 </urlset>
 `);
-console.log(`built ${urls.length} urls`);
+const rc = Object.values(relCount);
+console.log(`built ${urls.length} urls · 함께 보면 좋은 페이지 ${rc.filter(Boolean).length}쪽, 링크 ${rc.reduce((a, b) => a + b, 0)}개 (0개인 쪽: ${Object.keys(relCount).filter(k => !relCount[k]).join(', ') || '없음'})`);
