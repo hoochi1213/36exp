@@ -1,14 +1,4 @@
-# 36 EXP.
+# 36 EXP. (이전됨)
 
-필름카메라, 필름, 촬영, 현상, 인화에 관한 정보를 모은 개인 아카이브.
-
-사진 출처와 라이선스는 페이지 하단에 표기되어 있습니다.
-
-## 개별 페이지 만들기
-
-카메라·필름 개별 페이지(`camera/`, `film/`, `faq/`)와 `sitemap.xml`은 생성된 파일입니다. 직접 고치지 말고,
-`index.html`의 데이터(CAMS, CAM_MORE, RES, FILMS)나 `tools/pages-data.mjs`를 고친 뒤 아래를 실행하세요.
-
-```
-node tools/build.mjs
-```
+사이트와 원본 코드는 https://github.com/hoochi1213/hoochi1213.github.io 로 옮겼습니다.
+이 저장소는 예전 주소(/36exp/)를 새 주소로 넘겨주는 안내 페이지만 남겨 둔 것입니다.
