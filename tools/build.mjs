@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {UPDATED, UPDATED_KO, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LAB_REGIONS, LAB_REGION_PAGES, LABS_SRC, MAIL_LABS, GUIDES, MODELS, STATUS_SRC, FUJI_LIVE, FUJI_GONE, COMPARES} from './pages-data.mjs';
+import {UPDATED, UPDATED_KO, PRICE_CHECK, CAM_SLUG, FILM_PAGES, PROCESS, FAQ, PHOTO_CREDIT, LABS, LAB_REGIONS, LAB_REGION_PAGES, LABS_SRC, MAIL_LABS, GUIDES, MODELS, STATUS_SRC, FUJI_LIVE, FUJI_GONE, COMPARES} from './pages-data.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'https://hoochi1213.github.io/36exp/';
@@ -250,7 +250,7 @@ for (const md of MODELS) {
 <h2>중고로 살 때 확인할 것</h2><ul class="checks">${md.check.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
 <p>${esc(t.n)} 전반의 점검 방법과 결함 사진은 <a href="../${CAM_SLUG[md.type]}/">${esc(t.n)} 가이드</a>에 있습니다.</p>
 <h2>시세 참고 (해외 판매가, ${UPDATED_KO} 확인)</h2>
-<div class="scroll"><table class="labtbl"><thead><tr><th>판매처</th><th>가격</th><th>비고</th></tr></thead><tbody>${md.price.map(([w, pr, note, u]) => `<tr><td><a href="${u}" rel="nofollow noopener">${esc(w)}</a></td><td class="n">${esc(pr)}</td><td>${esc(note)}</td></tr>`).join('')}</tbody></table></div>
+<div class="scroll"><table class="labtbl"><thead><tr><th>판매처</th><th>가격</th><th>비고</th></tr></thead><tbody>${md.price.map(([w, pr, note, u]) => `<tr><td>${u ? `<a href="${u}" rel="nofollow noopener">${esc(w)}</a>` : esc(w)}</td><td class="n">${esc(pr)}</td><td>${esc(note)}</td></tr>`).join('')}</tbody></table></div>
 <p class="meta">국내 거래가는 공개 자료로 확인하기 어려워 해외 판매처 가격을 실었습니다. 정비(CLA)를 마친 판매점 가격이라 개인 거래보다 높을 수 있습니다. 국내 시세는 중고 거래 앱의 거래 완료 매물로 확인하세요.</p>
 <h2>어울리는 필름</h2><div class="links">${md.films.map(f => `<a class="chip" href="${filmLink(f)}">${esc(f)}</a>`).join('')}</div>
 <h2>다른 기종</h2><div class="links">${MODELS.filter(x => x !== md).map(x => `<a class="chip" href="../${x.slug}/">${esc(x.n)}</a>`).join('')}</div>
@@ -404,6 +404,7 @@ listPage('guide', '필름 사진 가이드', '첫 롤 완주부터 필름 넣기
 <h1>필름 가격·단종 현황</h1>
 <p class="lede">필름값은 자주 오르고, 어떤 필름은 조용히 사라집니다. 지금 살 수 있는 필름의 가격과 단종 소식을 한곳에 모았습니다. 매월 갱신합니다.</p>
 <p class="meta">${UPDATED_KO} 기준 · 국내 판매가는 공개 자료로 확인하기 어려워 해외 판매가(미국)를 출처와 함께 실었습니다.</p>
+<p class="meta">판매처 가격 다시 확인: ${PRICE_CHECK.ko}. 같은 판매처에서 가격이 그대로인 필름: ${PRICE_CHECK.same.map(esc).join(' · ')}. ${esc(PRICE_CHECK.note)}</p>
 <div class="stats">
   <div><b>${priced[0].usd[0]}</b><span>가장 저렴: ${esc(priced[0].n)}</span></div>
   <div><b>${priced[priced.length - 1].usd[0]}</b><span>가장 비쌈: ${esc(priced[priced.length - 1].n)}</span></div>

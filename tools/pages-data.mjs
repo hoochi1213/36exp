@@ -1,6 +1,8 @@
 // 개별 페이지 전용 데이터. 카메라·필름의 기본 데이터는 index.html(CAMS, CAM_MORE, DEFECTS, RES, FILMS)에서 읽어 온다.
 export const UPDATED = '2026-10-22';
 export const UPDATED_KO = '2026년 10월';
+// 판매처 가격 재확인(가격 갱신 점검). 같은 판매처 페이지를 직접 열어 확인한 것만 적습니다.
+export const PRICE_CHECK = {ko:'2026년 11월 18일', same:['Kodak Portra 400','Kodak Ektar 100','Harman Phoenix 200'], note:'CineStill 400D는 CineStill 공식 스토어와 Brooklyn Film Camera 모두 품절 표시였습니다. 나머지 판매처(B&H·Film Supply Club)는 자동 접속을 막아 10월 가격을 그대로 두었습니다. 출처인 Pellica 가이드와 5ft magazine 현상소 목록도 10월 이후 갱신되지 않았습니다.'};
 
 // 카메라 img 키 → 주소
 export const CAM_SLUG = {
@@ -82,7 +84,7 @@ export const FILM_PAGES = [
     when:'맑은 날 야외, 실험적인 색을 원할 때',cam:'수동 SLR, 자동 똑딱이',
     tip:'노출을 넉넉히(한 스톱 밝게) 주는 편이 색이 안정적입니다. 결과가 매번 다를 수 있다는 걸 즐기세요.',
     char:['대비가 강하고 색이 독특하게 틀어짐','밝은 빛 주위로 헐레이션이 두드러짐','입자가 보이는 편'],
-    usd:['$13.99','CineStill 온라인 스토어','https://cinestillfilm.com/products/phoenix200-color-negative-film-35mm'],cams:['slr','ps'],alt:['kodak-ultramax-400','cinestill-400d'],
+    usd:['$13.99','CineStill 온라인 스토어, 개선판 Phoenix II 200','https://cinestillfilm.com/products/harm-phx2-36exp'],cams:['slr','ps'],alt:['kodak-ultramax-400','cinestill-400d'],
     more:'"무난한 색"이 아니라 "우연한 색"을 원할 때 고르는 필름입니다. 같은 롤 안에서도 빛에 따라 결과가 크게 달라집니다. 이후 개선판인 Phoenix II도 나왔습니다. 예시 사진은 Olympus Pen FT로 찍은 Phoenix 200입니다.'},
   {slug:'ilford-xp2-super',kind:'흑백 네거티브',n:'Ilford XP2 Super',iso:400,p:'c41',img:'f-xp2.jpg',
     why:'컬러 현상(C-41)으로 처리하는 흑백 필름. 흑백을 찍고 싶은데 흑백 현상소가 멀 때 정답입니다.',
@@ -519,7 +521,7 @@ export const MODELS = [
     good:['단렌즈라 같은 시대 줌 똑딱이보다 화질이 좋음','작고 가벼워 늘 들고 다니기 좋음','비 오는 날에도 쓸 수 있는 생활 방수'],
     bad:['전원을 켤 때마다 플래시가 자동 모드로 돌아감 — 끄려면 매번 설정','고장 나면 수리할 곳이 거의 없음','Zoom 80 등 비슷한 이름의 줌 모델과 헷갈리기 쉬움'],
     check:['렌즈 덮개를 열면 렌즈가 나오고 전원이 들어오는지','뒷면 액정에 컷 수와 배터리 표시가 정상인지','렌즈 안 흐림과 액정 번짐','모델명이 "μ[mju:]-II"인지(줌 모델은 "Zoom" 표기)'],
-    price:[['The Pixel Connection (미국) 테스트 완료품','$349','','https://thepixelconnection.com/products/olympus-stylus-epic-mju-ii-qd-35mm-point-and-shoot-camera-champagne-used'],['eBay 거래 완료 (2026년 6월)','$279.51','배송비 별도','https://www.ebay.de/itm/297029115416']],
+    price:[['The Pixel Connection (미국) 테스트 완료품','$349','2026년 11월 18일 확인 시 판매 완료',''],['eBay 거래 완료 (2026년 6월)','$279.51','배송비 별도','https://www.ebay.de/itm/297029115416']],
     films:['Kodak Portra 400','Kodak Gold 200','Ilford HP5 Plus'],
     src:'https://en.wikipedia.org/wiki/Olympus_Stylus_Epic'},
   {slug:'contax-t2',type:'ps',n:'Contax T2',ko:'콘탁스 T2',
