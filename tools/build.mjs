@@ -97,6 +97,8 @@ fs.writeFileSync(path.join(ROOT, 'assets/site.css'), css.trim() + `
 .rel span:last-child{font-size:12.5px;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pagefoot{margin-top:48px;padding:28px 0 40px;border-top:1px solid var(--ink);font-size:12.5px;color:var(--ink-2)}
 .pagefoot ul{list-style:none;padding:0;margin:8px 0 0}
+.sitelinks{margin:10px 0 14px;font-size:13px}
+.sitelinks a{color:var(--ink)}
 `);
 
 // 2) 공용 틀
@@ -142,6 +144,7 @@ const foot = photos => `
 </main>
 <footer class="wrap pagefoot">
   <p>36 EXP.는 필름 사진을 처음 시작하는 사람을 위한 개인 아카이브입니다. 가격은 ${UPDATED_KO} 기준의 대략적인 참고치입니다.</p>
+  <nav class="sitelinks" aria-label="사이트 정보"><a href="../../about/">소개</a> · <a href="../../contact/">문의</a> · <a href="../../privacy/">개인정보처리방침</a> · <a href="../../terms/">이용약관</a></nav>
   ${creditList(photos)}
 </footer>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "caf3a7a3608e4a4e802395a9ab54a818"}'></script><!-- End Cloudflare Web Analytics -->
@@ -361,6 +364,121 @@ listPage('compare', '필름 비교', '헷갈리는 필름 두 가지를 나란�
 ` + foot([]).replaceAll('../../', '../'));
 }
 
+// 6-1) 사이트 정보 페이지 (소개·문의·개인정보처리방침·이용약관)
+const OWNER = '김재현 (hoochi)', MAIL = 'hoochi1213@gmail.com', POLICY_DATE = '2026-11-18', POLICY_DATE_KO = '2026년 11월 18일';
+const POLICY = [
+  {slug: 'about', t: '소개', title: '36 EXP. 소개 — 필름 사진 입문 아카이브', type: 'AboutPage',
+   desc: '36 EXP.는 필름 카메라, 필름, 촬영, 현상, 스캔, 현상소 정보를 한곳에 모은 필름 사진 입문 아카이브입니다. 운영자와 정보 작성 원칙을 소개합니다.',
+   lede: '필름 사진을 처음 시작하는 사람이 첫 롤을 끝까지 완주하도록 돕는 개인 아카이브입니다.',
+   body: `<h2>무엇을 다루나요</h2>
+<p>카메라 고르기부터 필름 선택, 촬영, 현상, 인화, 스캔, 보관, 현상소 이용까지 필름 사진의 전 과정을 순서대로 정리합니다. 카메라 유형 10가지와 인기 기종 5종, 필름 20종, 필름 비교 3편, 따라 하기 가이드 8편, 전국 지역별 현상소 목록을 제공합니다.</p>
+<h2>직접 써 보는 도구</h2>
+<ul>
+<li><a href="../#quiz">필름 테스트</a> — 6개 질문에 답하면 나에게 맞는 필름을 추천합니다.</li>
+<li><a href="../#sim">필름 시뮬레이터</a> — 내 사진에 필름 느낌을 입혀 비교하고 저장합니다. 사진은 기기 안에서만 처리됩니다.</li>
+<li><a href="../guide/sunny-16/">써니 16 계산기</a> — 노출계 없이 조리개와 셔터 속도를 정합니다.</li>
+<li><a href="../#develop">흑백 현상 타이머</a> — 현상 단계별 시간을 안내합니다.</li>
+</ul>
+<h2>정보 작성 원칙</h2>
+<ul>
+<li>필름 사양과 현상 방식은 제조사(Kodak, Ilford, Fujifilm 등) 공식 자료를 기준으로 합니다.</li>
+<li>가격과 현상소 정보에는 기준 시점과 출처를 함께 적고, 바뀐 내용은 확인하는 대로 고칩니다.</li>
+<li>사진은 출처와 라이선스를 페이지마다 밝힙니다.</li>
+<li>특정 판매처나 현상소에서 대가를 받고 쓴 글은 없습니다.</li>
+</ul>
+<h2>운영자</h2>
+<dl class="facts"><dt>운영</dt><dd>${OWNER}</dd><dt>문의</dt><dd><a href="mailto:${MAIL}">${MAIL}</a></dd><dt>시작</dt><dd>2026년 10월</dd></dl>
+<p>틀린 정보나 바뀐 가격, 새로 생긴 현상소를 알려 주시면 확인한 뒤 반영합니다. 자세한 방법은 <a href="../contact/">문의</a> 페이지를 보세요.</p>`},
+  {slug: 'contact', t: '문의', title: '문의하기 — 36 EXP.', type: 'ContactPage',
+   desc: '36 EXP. 정보 오류 제보, 현상소 정보 추가·수정, 사진 저작권, 기타 문의 방법을 안내합니다.',
+   lede: '정보 오류, 현상소 정보 수정, 사진 저작권 등 무엇이든 메일로 보내 주세요.',
+   body: `<h2>메일</h2>
+<p class="bigprice"><a href="mailto:${MAIL}">${MAIL}</a></p>
+<p>운영자 ${OWNER}가 직접 읽고 답장합니다.</p>
+<h2>이런 내용을 받습니다</h2>
+<ul>
+<li><b>정보 오류</b> — 필름 사양, 현상 방식, 용어 설명이 틀린 경우. 해당 페이지 주소를 함께 적어 주세요.</li>
+<li><b>현상소 정보</b> — 가격 변경, 폐업, 이전, 새로 생긴 현상소. 현상소 운영자의 직접 제보도 환영합니다.</li>
+<li><b>가격·단종</b> — 판매가 변동이나 단종 소식. 확인할 수 있는 링크가 있으면 더 빨리 반영할 수 있습니다.</li>
+<li><b>사진 저작권</b> — 사진 표기에 문제가 있으면 바로 고치거나 내립니다.</li>
+<li><b>제휴·기타</b> — 그 밖의 제안이나 질문.</li>
+</ul>
+<h2>보내기 전에</h2>
+<p>자주 받는 질문은 <a href="../faq/">자주 묻는 질문</a>에 정리해 두었습니다. 보내 주신 메일 주소는 답장에만 쓰며, 자세한 내용은 <a href="../privacy/">개인정보처리방침</a>을 보세요.</p>`},
+  {slug: 'privacy', t: '개인정보처리방침', title: '개인정보처리방침 — 36 EXP.', type: 'WebPage',
+   desc: '36 EXP.가 수집하는 정보, 쿠키와 광고(Google AdSense), 방문 통계, 이용자의 권리를 안내하는 개인정보처리방침입니다.',
+   lede: `36 EXP.(이하 "사이트")는 이용자의 개인정보를 소중히 다루며, 「개인정보 보호법」 등 관련 법령을 지킵니다. 시행일: ${POLICY_DATE_KO}`,
+   body: `<h2>1. 수집하는 정보</h2>
+<p>사이트는 회원가입이나 로그인 없이 이용할 수 있으며, 이름·연락처 같은 개인정보를 직접 입력받지 않습니다. 다만 아래 정보가 자동으로 생기거나, 이용자가 직접 보낼 수 있습니다.</p>
+<ul>
+<li><b>메일 문의</b> — 이용자가 보낸 메일 주소와 내용. 답장에만 쓰고, 처리가 끝나면 1년 안에 지웁니다.</li>
+<li><b>방문 통계</b> — 방문 페이지, 브라우저 종류, 대략적인 국가 등 개인을 알아볼 수 없는 정보.</li>
+<li><b>기기 저장 설정</b> — 화면 테마(밝게/어둡게) 선택을 이용자 브라우저(localStorage)에만 저장합니다. 사이트 서버로 보내지 않습니다.</li>
+</ul>
+<h2>2. 필름 시뮬레이터의 사진</h2>
+<p>시뮬레이터에 올린 사진은 이용자 기기의 브라우저 안에서만 처리되며, 어떤 서버로도 업로드되지 않습니다. 페이지를 닫으면 사라집니다.</p>
+<h2>3. 쿠키와 광고</h2>
+<p>사이트는 Google AdSense 광고를 게재할 수 있습니다. 이 경우 다음이 적용됩니다.</p>
+<ul>
+<li>Google을 포함한 제3자 광고 사업자는 쿠키를 사용해 이용자의 이 사이트 및 다른 사이트 방문 기록을 바탕으로 광고를 보여줄 수 있습니다.</li>
+<li>Google은 광고 쿠키를 사용해 이용자에게 맞춤 광고를 제공합니다.</li>
+<li>이용자는 <a href="https://adssettings.google.com/" rel="nofollow noopener">Google 광고 설정</a>에서 맞춤 광고를 끌 수 있고, <a href="https://www.aboutads.info/choices/" rel="nofollow noopener">aboutads.info</a>에서 다른 제3자 사업자의 맞춤 광고 쿠키를 거부할 수 있습니다.</li>
+<li>Google이 정보를 어떻게 사용하는지는 <a href="https://policies.google.com/technologies/partner-sites?hl=ko" rel="nofollow noopener">Google 파트너 사이트 정보 이용 안내</a>에서 확인할 수 있습니다.</li>
+</ul>
+<p>브라우저 설정에서 쿠키 저장을 거부할 수 있으며, 이 경우에도 사이트의 글과 도구는 그대로 이용할 수 있습니다.</p>
+<h2>4. 외부 서비스</h2>
+<ul>
+<li><b>Cloudflare Web Analytics</b> — 쿠키 없이 방문 수를 집계합니다.</li>
+<li><b>hits.sh</b> — 첫 화면의 방문 수 표시에 씁니다.</li>
+<li><b>Google Fonts</b> — 글꼴을 불러오는 과정에서 IP 주소가 Google에 전달될 수 있습니다.</li>
+<li><b>GitHub Pages</b> — 사이트를 호스팅하며, 보안을 위해 접속 기록을 남길 수 있습니다.</li>
+</ul>
+<h2>5. 제3자 제공</h2>
+<p>사이트는 이용자의 개인정보를 판매하거나 제3자에게 제공하지 않습니다. 법령에 따른 요청이 있는 경우는 예외입니다.</p>
+<h2>6. 이용자의 권리</h2>
+<p>이용자는 사이트가 가진 자신의 정보(문의 메일 등)를 열람·정정·삭제해 달라고 요청할 수 있습니다. 아래 연락처로 보내 주시면 지체 없이 처리합니다.</p>
+<h2>7. 개인정보 보호책임자</h2>
+<dl class="facts"><dt>책임자</dt><dd>${OWNER}</dd><dt>연락처</dt><dd><a href="mailto:${MAIL}">${MAIL}</a></dd></dl>
+<h2>8. 변경</h2>
+<p>이 방침을 바꾸면 이 페이지에 시행일과 함께 알립니다. 현재 방침은 ${POLICY_DATE_KO}부터 시행합니다.</p>`},
+  {slug: 'terms', t: '이용약관', title: '이용약관 — 36 EXP.', type: 'WebPage',
+   desc: '36 EXP. 이용약관 — 콘텐츠 저작권, 사진 라이선스, 가격·현상소 정보의 한계, 외부 링크와 책임 범위를 안내합니다.',
+   lede: `36 EXP.를 이용하기 전에 읽어 주세요. 시행일: ${POLICY_DATE_KO}`,
+   body: `<h2>1. 목적</h2>
+<p>이 약관은 36 EXP.(이하 "사이트")가 제공하는 필름 사진 정보와 도구의 이용 조건을 정합니다. 사이트를 이용하면 이 약관에 동의한 것으로 봅니다.</p>
+<h2>2. 콘텐츠 저작권</h2>
+<ul>
+<li>사이트의 글, 표, 도구(필름 테스트, 시뮬레이터, 계산기, 타이머)의 저작권은 운영자에게 있습니다.</li>
+<li>개인적인 학습과 비영리 목적의 인용은 출처(36 EXP.와 페이지 주소)를 밝히면 허용합니다.</li>
+<li>글 전체를 옮겨 싣거나 상업적으로 이용하려면 미리 <a href="../contact/">문의</a>해 주세요.</li>
+</ul>
+<h2>3. 사진</h2>
+<p>사이트의 사진 상당수는 Wikimedia Commons 등에서 가져온 것으로, 각 사진의 저작자와 라이선스(CC BY, CC BY-SA, 퍼블릭 도메인 등)를 페이지 하단에 표기합니다. 이 사진들은 사이트 약관이 아니라 각 원본 라이선스를 따릅니다.</p>
+<h2>4. 정보의 정확성</h2>
+<ul>
+<li>가격, 단종 여부, 현상소 정보는 표기한 기준 시점의 참고치이며 수시로 바뀝니다. 구매하거나 맡기기 전에 판매처와 현상소에 직접 확인하세요.</li>
+<li>현상 시간, 노출값 등 기술 정보는 일반적인 기준입니다. 필름과 약품 제조사의 최신 안내를 우선하세요.</li>
+<li>현상 약품은 사용 설명서와 안전 수칙을 지켜 다루세요.</li>
+</ul>
+<h2>5. 외부 링크와 광고</h2>
+<p>사이트에는 판매처, 현상소, 제조사 등 외부 사이트 링크와 광고가 포함될 수 있습니다. 외부 사이트의 내용과 거래는 해당 사이트의 책임입니다.</p>
+<h2>6. 책임의 한계</h2>
+<p>운영자는 정확한 정보를 위해 노력하지만, 사이트 정보를 이용해 생긴 필름·장비 손상이나 거래 손해에 대해 고의나 중대한 과실이 없는 한 책임지지 않습니다.</p>
+<h2>7. 변경과 문의</h2>
+<p>약관을 바꾸면 이 페이지에 시행일과 함께 알립니다. 문의: <a href="mailto:${MAIL}">${MAIL}</a></p>`},
+];
+for (const p of POLICY) {
+  const url = `${BASE}${p.slug}/`; urls.push(url);
+  write(p.slug, head({title: p.title, desc: p.desc, url, img: 'og.jpg',
+    ld: {'@context':'https://schema.org','@graph':[{'@type':p.type,name:p.t,url,inLanguage:'ko',dateModified:POLICY_DATE,isPartOf:{'@type':'WebSite',name:'36 EXP.',url:BASE}},crumbLd([['36 EXP.',BASE],[p.t,url]])]}}).replaceAll('../../', '../') + `
+<p class="crumb"><a href="../">36 EXP.</a> / ${p.t}</p>
+<h1>${p.t}</h1><p class="lede">${p.lede}</p>
+<div style="max-width:760px">
+${p.body}
+</div>
+` + foot([]).replaceAll('../../', '../'));
+}
+
 // 6-1) 가이드
 const mdl = s => R.model(MODELS.find(md => md.slug === s));
 const GUIDE_REL = {
@@ -540,7 +658,7 @@ fs.writeFileSync(indexPath, index);
 // 8) 사이트맵
 fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(u => `  <url>\n    <loc>${u}</loc>\n    <lastmod>${UPDATED}</lastmod>\n  </url>`).join('\n')}
+${urls.map(u => `  <url>\n    <loc>${u}</loc>\n    <lastmod>${POLICY.some(p => u === `${BASE}${p.slug}/`) ? POLICY_DATE : UPDATED}</lastmod>\n  </url>`).join('\n')}
 </urlset>
 `);
 const rc = Object.values(relCount);
